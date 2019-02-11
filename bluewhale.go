@@ -38,7 +38,7 @@ func init() {
 
 func main() {
 	// strat db
-	db, err = sql.Open("sqlite3", "./sail_school.db")
+	db, err = sql.Open("sqlite3", "./bluewhale.db")
 	defer db.Close()
 	err = db.Ping()
 	checkErr(err)

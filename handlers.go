@@ -2,6 +2,7 @@ package main
 
 import (
   "fmt"
+  "github.com/douglasmg7/bluetang"
   "github.com/julienschmidt/httprouter"
   _ "github.com/mattn/go-sqlite3"
   "html/template"
@@ -53,13 +54,14 @@ func student_save(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
   fieldErr.Email = req.FormValue("email")
   fieldErr.Mobile = req.FormValue("mobile")
 
-  if len(req.FormValue("name")) > 0 {
-    fieldErr.NameErr = ""
-    // fmt.Fprintln(w, "nome ok")
-  } else {
-    fieldErr.NameErr = "Campo inválido"
-    // fmt.Fprintln(w, "nome inválido")
-  }
+  fieldErr.Name, fieldErr.NameErr = bluetang.Name(req.FormValue("name"))
+  // if len(req.FormValue("name")) > 0 {
+  //   fieldErr.NameErr = ""
+  //   // fmt.Fprintln(w, "nome ok")
+  // } else {
+  //   fieldErr.NameErr = "Campo inválido"
+  //   // fmt.Fprintln(w, "nome inválido")
+  // }
 
   // student := struct {
   //   Name   string
