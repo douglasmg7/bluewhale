@@ -1,0 +1,9 @@
+templates
+  https://github.com/yosssi/ace
+  https://github.com/eknkc/amber
+
+http router
+  https://github.com/julienschmidt/httprouter
+  https://github.com/gorilla/mux
+
+https://en.wikipedia.org/wiki/The_7_Habits_of_Highly_Effective_People

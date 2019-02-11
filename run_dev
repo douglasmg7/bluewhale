@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+CompileDaemon -build="go build bluewhale.go handlers.go" -command="./bluewhale dev"
