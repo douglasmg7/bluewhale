@@ -31,9 +31,9 @@ func entrance_add(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
   HandleError(w, err)
 }
 
+// show new student page
 func student_new(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
   // fmt.Fprintf(w, "teste")
-
   if dev == true {
     tmplAll["student_new"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student_new.tpl"))
   }
@@ -41,26 +41,28 @@ func student_new(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
   HandleError(w, err)
 }
 
+// create a new student
 func student_save(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
   type vm struct {
     Value string
     Msg   string
   }
-
   formValues := struct {
     Name   vm
     Email  vm
     Mobile vm
   }{}
-
   formValues.Name.Value, formValues.Name.Msg = bluetang.Name(req.FormValue("name"))
   formValues.Email.Value, formValues.Email.Msg = bluetang.Email(req.FormValue("email"))
   formValues.Mobile.Value, formValues.Mobile.Msg = bluetang.Mobile(req.FormValue("mobile"))
-
-  // fmt.Println(formValues)
-
-  err := tmplAll["student_new"].ExecuteTemplate(w, "student_new.tpl", formValues)
-  HandleError(w, err)
+  // return page with erros
+  if formValues.Name.Msg != "" || formValues.Email.Msg != "" || formValues.Mobile.Msg != "" {
+    err := tmplAll["student_new"].ExecuteTemplate(w, "student_new.tpl", formValues)
+    HandleError(w, err)
+    // save student
+  } else {
+    http.Redirect(w, req, "/", http.StatusSeeOther)
+  }
 }
 
 func user(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
