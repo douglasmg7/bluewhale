@@ -42,48 +42,24 @@ func student_new(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
 }
 
 func student_save(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-  fieldErr := struct {
-    Name      string
-    NameErr   string
-    Email     string
-    EmailErr  string
-    Mobile    string
-    MobileErr string
+  type vm struct {
+    Value string
+    Msg   string
+  }
+
+  formValues := struct {
+    Name   vm
+    Email  vm
+    Mobile vm
   }{}
-  fieldErr.Name = req.FormValue("name")
-  fieldErr.Email = req.FormValue("email")
-  fieldErr.Mobile = req.FormValue("mobile")
 
-  fieldErr.Name, fieldErr.NameErr = bluetang.Name(req.FormValue("name"))
-  // if len(req.FormValue("name")) > 0 {
-  //   fieldErr.NameErr = ""
-  //   // fmt.Fprintln(w, "nome ok")
-  // } else {
-  //   fieldErr.NameErr = "Campo inválido"
-  //   // fmt.Fprintln(w, "nome inválido")
-  // }
+  formValues.Name.Value, formValues.Name.Msg = bluetang.Name(req.FormValue("name"))
+  formValues.Email.Value, formValues.Email.Msg = bluetang.Email(req.FormValue("email"))
+  formValues.Mobile.Value, formValues.Mobile.Msg = bluetang.Mobile(req.FormValue("mobile"))
 
-  // student := struct {
-  //   Name   string
-  //   Email  string
-  //   Mobile string
-  // }{
-  //   "Luis",
-  //   "luis@asdf.com",
-  //   "989",
-  // }
-  // err := tmplAll["student_new"].ExecuteTemplate(w, "student_new.tpl", student)
-  // HandleError(w, err)
+  // fmt.Println(formValues)
 
-  // type student struct {
-  //   Name   string
-  //   Email  string
-  //   Mobile string
-  // }
-  // err := tmplAll["student_new"].ExecuteTemplate(w, "student_new.tpl", student{"Julio", "julio@asdf.com", "1234"})
-  // HandleError(w, err)
-
-  err := tmplAll["student_new"].ExecuteTemplate(w, "student_new.tpl", fieldErr)
+  err := tmplAll["student_new"].ExecuteTemplate(w, "student_new.tpl", formValues)
   HandleError(w, err)
 }
 

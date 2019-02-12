@@ -15,7 +15,7 @@
   <div class="navbar-menu" id="navbarBasicExample">
     <!-- <div class="navbar-start"> -->
     <div class="navbar-end">
-      <a class="navbar-item" href="/student-new">
+      <a class="navbar-item" href="/student/new">
         Novo aluno
       </a>
 

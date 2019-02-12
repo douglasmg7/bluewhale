@@ -51,8 +51,8 @@ func main() {
 	router.GET("/user_add", user_add)
 	router.GET("/entrance-add", entrance_add)
 
-	router.GET("/student-new", student_new)
-	router.POST("/student-save", student_save)
+	router.GET("/student/new", student_new)
+	router.POST("/student/save", student_save)
 
 	router.GET("/user/:name", user)
 	router.GET("/blog/:category/:article", blogRead)
