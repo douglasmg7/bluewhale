@@ -36,6 +36,12 @@ func entrance_add(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
 
 // list all stundents
 func student_all(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+
+  http.SetCookie(w, &http.Cookie{
+    Name:  "asdf",
+    Value: time.Now().String(),
+  })
+
   // fmt.Fprintf(w, "teste")
   names := make([]string, 0)
   // rows, err := db.Query("select name from student where id = ?", 1)
@@ -68,10 +74,18 @@ func student_all(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
 // show new student page
 func student_new(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
   // fmt.Fprintf(w, "teste")
+  c, err := req.Cookie("asdf")
+  if err != nil {
+    log.Fatal(err)
+  }
+  if c != nil {
+    log.Println("cookie-asdf:", c.String())
+  }
+
   if dev == true {
     tmplAll["student_new"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student_new.tpl"))
   }
-  err := tmplAll["student_new"].ExecuteTemplate(w, "student_new.tpl", nil)
+  err = tmplAll["student_new"].ExecuteTemplate(w, "student_new.tpl", nil)
   HandleError(w, err)
 }
 
