@@ -20,6 +20,11 @@ var dev bool = false
 const port = "8080"
 
 func init() {
+	// set log
+	log.SetFlags(log.Ldate | log.Lmicroseconds | log.Lshortfile)
+	// log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
+	// log.SetFlags(log.LstdFlags | log.Ldate | log.Lshortfile)
+	// log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 	// production or development mode
 	setMode()
 
@@ -38,10 +43,15 @@ func init() {
 
 func main() {
 	// strat db
-	db, err = sql.Open("sqlite3", "./bluewhale.db")
+	db, err = sql.Open("sqlite3", "./db/bluewhale.db")
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer db.Close()
 	err = db.Ping()
-	checkErr(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// init router
 	router := httprouter.New()
@@ -76,12 +86,6 @@ func setMode() {
 		}
 	}
 	log.Println("production mode")
-}
-
-func checkErr(err error) {
-	if err != nil {
-		log.Println(err)
-	}
 }
 
 func errExample(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {

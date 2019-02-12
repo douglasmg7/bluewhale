@@ -23,6 +23,16 @@ create table user (
 );
 create index idx_user_name on user(name);
 
+create table student (
+  id integer primary key autoincrement,
+  name varchar(64) not null,
+  -- mobile number
+  mobile varchar(64) null,
+  email varchar(64) null,
+  created date not null
+);
+create index idx_student_name on student(name);
+
 -- create table parent(a primary key, b unique, c, d, e, f);
 -- create unique index i1 on parent(c, d);
 -- create index i2 on parent(e);

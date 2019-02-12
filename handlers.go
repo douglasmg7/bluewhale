@@ -6,13 +6,21 @@ import (
   "github.com/julienschmidt/httprouter"
   _ "github.com/mattn/go-sqlite3"
   "html/template"
+  "log"
   "net/http"
+  "time"
 )
 
 func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
   if dev == true {
     tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
     tmplAll["index"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
+  }
+  // fmt.Fprintln(w, "ola")
+  if tmplAll["index"] == nil {
+    log.Println("tmpl index is nil")
+  } else {
+    log.Println("tmpl index not nil")
   }
   err := tmplAll["index"].ExecuteTemplate(w, "index.tpl", nil)
   HandleError(w, err)
@@ -47,20 +55,29 @@ func student_save(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
     Value string
     Msg   string
   }
-  formValues := struct {
+  fv := struct {
     Name   vm
     Email  vm
     Mobile vm
   }{}
-  formValues.Name.Value, formValues.Name.Msg = bluetang.Name(req.FormValue("name"))
-  formValues.Email.Value, formValues.Email.Msg = bluetang.Email(req.FormValue("email"))
-  formValues.Mobile.Value, formValues.Mobile.Msg = bluetang.Mobile(req.FormValue("mobile"))
+  fv.Name.Value, fv.Name.Msg = bluetang.Name(req.FormValue("name"))
+  fv.Email.Value, fv.Email.Msg = bluetang.Email(req.FormValue("email"))
+  fv.Mobile.Value, fv.Mobile.Msg = bluetang.Mobile(req.FormValue("mobile"))
   // return page with erros
-  if formValues.Name.Msg != "" || formValues.Email.Msg != "" || formValues.Mobile.Msg != "" {
-    err := tmplAll["student_new"].ExecuteTemplate(w, "student_new.tpl", formValues)
+  if fv.Name.Msg != "" || fv.Email.Msg != "" || fv.Mobile.Msg != "" {
+    err := tmplAll["student_new"].ExecuteTemplate(w, "student_new.tpl", fv)
     HandleError(w, err)
     // save student
   } else {
+    stmt, err := db.Prepare(`INSERT INTO student(name, mobile, email, created) VALUES(?, ?, ?, ?)`)
+    if err != nil {
+      log.Fatal(err)
+    }
+    defer stmt.Close()
+    _, err = stmt.Exec(fv.Name.Value, fv.Email.Value, fv.Mobile.Value, time.Now().String())
+    if err != nil {
+      log.Fatal(err)
+    }
     http.Redirect(w, req, "/", http.StatusSeeOther)
   }
 }
