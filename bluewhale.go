@@ -31,8 +31,10 @@ func init() {
 	// load templates
 	tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
 	tmplAll = make(map[string]*template.Template)
+	tmplAll["index"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
 	tmplAll["user_add"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/user_add.tpl"))
 	tmplAll["entrance_add"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/entrance_add.tpl"))
+	tmplAll["student_all"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student_all.tpl"))
 	tmplAll["student_new"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student_new.tpl"))
 
 	// debug templates
@@ -61,6 +63,7 @@ func main() {
 	router.GET("/user_add", user_add)
 	router.GET("/entrance-add", entrance_add)
 
+	router.GET("/student/all", student_all)
 	router.GET("/student/new", student_new)
 	router.POST("/student/save", student_save)
 

@@ -18,7 +18,7 @@ create table user (
   rg varchar(64) null,
   -- mobile number
   mobile varchar(64) null,
-  email varchar(64) null,
+  email varchar(64) not null unique,
   created date not null
 );
 create index idx_user_name on user(name);
@@ -28,7 +28,7 @@ create table student (
   name varchar(64) not null,
   -- mobile number
   mobile varchar(64) null,
-  email varchar(64) null,
+  email varchar(64) not null unique,
   created date not null
 );
 create index idx_student_name on student(name);

@@ -12,15 +12,10 @@ import (
 )
 
 func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+  // fmt.Fprintln(w, "ola")
   if dev == true {
     tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
     tmplAll["index"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
-  }
-  // fmt.Fprintln(w, "ola")
-  if tmplAll["index"] == nil {
-    log.Println("tmpl index is nil")
-  } else {
-    log.Println("tmpl index not nil")
   }
   err := tmplAll["index"].ExecuteTemplate(w, "index.tpl", nil)
   HandleError(w, err)
@@ -36,6 +31,37 @@ func entrance_add(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
     tmplAll["entrance_add"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/entrance_add.tpl"))
   }
   err := tmplAll["entrance_add"].ExecuteTemplate(w, "entrance_add.tpl", nil)
+  HandleError(w, err)
+}
+
+// list all stundents
+func student_all(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+  // fmt.Fprintf(w, "teste")
+  names := make([]string, 0)
+  // rows, err := db.Query("select name from student where id = ?", 1)
+  rows, err := db.Query("select name from student")
+  if err != nil {
+    log.Fatal(err)
+  }
+  defer rows.Close()
+
+  for rows.Next() {
+    var name string
+    err := rows.Scan(&name)
+    if err != nil {
+      log.Fatal(err)
+    }
+    names = append(names, name)
+    // log.Println(id, name)
+  }
+  if err = rows.Err(); err != nil {
+    log.Fatal(err)
+  }
+
+  if dev == true {
+    tmplAll["student_all"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student_all.tpl"))
+  }
+  err = tmplAll["student_all"].ExecuteTemplate(w, "student_all.tpl", names)
   HandleError(w, err)
 }
 
@@ -63,22 +89,42 @@ func student_save(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
   fv.Name.Value, fv.Name.Msg = bluetang.Name(req.FormValue("name"))
   fv.Email.Value, fv.Email.Msg = bluetang.Email(req.FormValue("email"))
   fv.Mobile.Value, fv.Mobile.Msg = bluetang.Mobile(req.FormValue("mobile"))
-  // return page with erros
+  // return page with field erros
   if fv.Name.Msg != "" || fv.Email.Msg != "" || fv.Mobile.Msg != "" {
     err := tmplAll["student_new"].ExecuteTemplate(w, "student_new.tpl", fv)
     HandleError(w, err)
     // save student
   } else {
-    stmt, err := db.Prepare(`INSERT INTO student(name, mobile, email, created) VALUES(?, ?, ?, ?)`)
+    // verify if student name alredy exist
+    rows, err := db.Query("select email from student where email = ?", fv.Email.Value)
     if err != nil {
       log.Fatal(err)
     }
-    defer stmt.Close()
-    _, err = stmt.Exec(fv.Name.Value, fv.Email.Value, fv.Mobile.Value, time.Now().String())
-    if err != nil {
+    defer rows.Close()
+
+    for rows.Next() {
+      fv.Email.Msg = "Email já cadastrado"
+    }
+    if err = rows.Err(); err != nil {
       log.Fatal(err)
     }
-    http.Redirect(w, req, "/", http.StatusSeeOther)
+    // student alredy registered
+    if fv.Email.Msg != "" {
+      err := tmplAll["student_new"].ExecuteTemplate(w, "student_new.tpl", fv)
+      HandleError(w, err)
+      // insert student into db
+    } else {
+      stmt, err := db.Prepare(`INSERT INTO student(name, email, mobile, created) VALUES(?, ?, ?, ?)`)
+      if err != nil {
+        log.Fatal(err)
+      }
+      defer stmt.Close()
+      _, err = stmt.Exec(fv.Name.Value, fv.Email.Value, fv.Mobile.Value, time.Now().String())
+      if err != nil {
+        log.Fatal(err)
+      }
+      http.Redirect(w, req, "/", http.StatusSeeOther)
+    }
   }
 }
 

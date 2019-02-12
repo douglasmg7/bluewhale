@@ -15,13 +15,14 @@
   <div class="navbar-menu" id="navbarBasicExample">
     <!-- <div class="navbar-start"> -->
     <div class="navbar-end">
+      <a class="navbar-item" href="/student/all">
+        Alunos
+      </a>
       <a class="navbar-item" href="/student/new">
         Novo aluno
       </a>
 
-      <a class="navbar-item">
-        Documentation
-      </a>
+
 
 <!--       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link">
