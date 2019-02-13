@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-var tmplMaster *template.Template
+var tmplMaster, tmplAuthSignup, tmplAuthSignin *template.Template
 var tmplAll map[string]*template.Template
 var db *sql.DB
 var err error
@@ -31,11 +31,18 @@ func init() {
 	// load templates
 	tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
 	tmplAll = make(map[string]*template.Template)
+
+	// auth
+	tmplAuthSignup = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signup.tpl"))
+	tmplAuthSignin = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signin.tpl"))
+
 	tmplAll["index"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
-	tmplAll["user_add"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/user_add.tpl"))
-	tmplAll["entrance_add"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/entrance_add.tpl"))
+
 	tmplAll["student_all"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student_all.tpl"))
 	tmplAll["student_new"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student_new.tpl"))
+	tmplAll["user_add"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/user_add.tpl"))
+
+	tmplAll["entrance_add"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/entrance_add.tpl"))
 
 	// debug templates
 	// for _, tplItem := range tmplAll["user_add"].Templates() {
@@ -59,6 +66,11 @@ func main() {
 	router := httprouter.New()
 	router.GET("/favicon.ico", faviconHandler)
 	router.GET("/", index)
+
+	router.GET("/auth/signup", signup)
+	router.POST("/auth/signup", signup_post)
+	router.GET("/auth/signin", signin)
+	router.POST("/auth/signin", signin_post)
 
 	router.GET("/user_add", user_add)
 	router.GET("/entrance-add", entrance_add)

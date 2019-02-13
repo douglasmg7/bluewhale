@@ -16,12 +16,21 @@ create table user (
   name varchar(64) not null,
   -- carteira de identidade
   rg varchar(64) null,
+  email varchar(64) not null unique,
+  password varchar(64) not null,
   -- mobile number
   mobile varchar(64) null,
-  email varchar(64) not null unique,
-  created date not null
+  created date not null,
+  updated date not null
 );
 create index idx_user_name on user(name);
+
+create table session (
+  uuid varchar(64) primary key,
+  user_id varchar(64) not null,
+  created date not null
+);
+foreign key(user_id) references user(id)
 
 create table student (
   id integer primary key autoincrement,

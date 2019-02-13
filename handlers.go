@@ -5,6 +5,7 @@ import (
   "github.com/douglasmg7/bluetang"
   "github.com/julienschmidt/httprouter"
   _ "github.com/mattn/go-sqlite3"
+  "github.com/satori/go.uuid"
   "html/template"
   "log"
   "net/http"
@@ -37,9 +38,15 @@ func entrance_add(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
 // list all stundents
 func student_all(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
+  id, err := uuid.NewV4()
+  if err != nil {
+    log.Fatal(err)
+  }
   http.SetCookie(w, &http.Cookie{
-    Name:  "asdf",
-    Value: time.Now().String(),
+    Name:  "uuid",
+    Value: id.String(),
+    // Secure: true, // to use only in https
+    HttpOnly: true, // can't be used into js client
   })
 
   // fmt.Fprintf(w, "teste")
@@ -74,8 +81,10 @@ func student_all(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
 // show new student page
 func student_new(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
   // fmt.Fprintf(w, "teste")
-  c, err := req.Cookie("asdf")
-  if err != nil {
+  c, err := req.Cookie("uuid")
+  if err == http.ErrNoCookie {
+    log.Println("No uuid cookie set")
+  } else if err != nil {
     log.Fatal(err)
   }
   if c != nil {
