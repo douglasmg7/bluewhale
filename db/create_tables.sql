@@ -25,12 +25,21 @@ create table user (
 );
 create index idx_user_name on user(name);
 
+create table email_certify (
+  uuid varchar(64) primary key,
+  name varchar(64) not null,
+  email varchar(64) not null unique,
+  password varchar(64) not null,
+  created date not null
+);
+create index idx_email_certify_created on email_certify(name);
+
 create table session (
   uuid varchar(64) primary key,
   user_id varchar(64) not null,
-  created date not null
+  created date not null,
+  foreign key(user_id) references user(id)
 );
-foreign key(user_id) references user(id)
 
 create table student (
   id integer primary key autoincrement,

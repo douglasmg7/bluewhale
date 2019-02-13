@@ -15,7 +15,7 @@ var tmplAll map[string]*template.Template
 var db *sql.DB
 var err error
 
-var dev bool = false
+var devMode bool = false
 
 const port = "8080"
 
@@ -95,7 +95,7 @@ func main() {
 func setMode() {
 	for _, arg := range os.Args[1:] {
 		if arg == "dev" {
-			dev = true
+			devMode = true
 			log.Println("development mode")
 			return
 		}

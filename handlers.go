@@ -14,7 +14,7 @@ import (
 
 func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
   // fmt.Fprintln(w, "ola")
-  if dev == true {
+  if devMode == true {
     tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
     tmplAll["index"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
   }
@@ -28,7 +28,7 @@ func user_add(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 }
 
 func entrance_add(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-  if dev == true {
+  if devMode == true {
     tmplAll["entrance_add"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/entrance_add.tpl"))
   }
   err := tmplAll["entrance_add"].ExecuteTemplate(w, "entrance_add.tpl", nil)
@@ -71,7 +71,7 @@ func student_all(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
     log.Fatal(err)
   }
 
-  if dev == true {
+  if devMode == true {
     tmplAll["student_all"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student_all.tpl"))
   }
   err = tmplAll["student_all"].ExecuteTemplate(w, "student_all.tpl", names)
@@ -91,7 +91,7 @@ func student_new(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
     log.Println("cookie-asdf:", c.String())
   }
 
-  if dev == true {
+  if devMode == true {
     tmplAll["student_new"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student_new.tpl"))
   }
   err = tmplAll["student_new"].ExecuteTemplate(w, "student_new.tpl", nil)
