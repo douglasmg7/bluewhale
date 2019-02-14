@@ -73,7 +73,7 @@ func signup_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
     if err != nil {
       log.Fatal(err)
     }
-    if count > 1 {
+    if count > 0 {
       fv.WarnMsg = "O email " + fv.Email.Value + " já foi cadastrado anteriormente, falta confirmação do cadastro atravéz do link enviado para o respectivo email"
       fv.Name.Value = ""
       fv.Email.Value = ""

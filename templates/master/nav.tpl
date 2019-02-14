@@ -21,11 +21,11 @@
       <a class="navbar-item" href="/student/new">
         Novo aluno
       </a>
-      <a class="navbar-item" href="/auth/signup">
-        Signup
-      </a>
       <a class="navbar-item" href="/auth/signin">
-        Signin
+        Entrar
+      </a>
+      <a class="navbar-item" href="/auth/signout">
+        Sair
       </a>
 
 

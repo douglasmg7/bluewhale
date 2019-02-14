@@ -1,43 +1,57 @@
 {{template "base" .}}
 
-{{define "title"}}Adicionar aluno{{end}}
+{{define "title"}}Autenticação{{end}}
 
 {{define "body"}}
   <section class="section">
-    <form class="container" action="/student/save" method="post" style="max-width:400px;">
-
-      <h1 class="title">Adicionar aluno</h2>
-
-      <div class="field">
-        <label for="name" class="label">Nome completo</label>
-        <div class="control">
-          <input class="input" type="text" placeholder="" id="name" name="name" value={{.Name.Value}}>
+    <form class="container has-text-centered" action="/auth/signin" method="post" style="max-width:300px;">
+      <!-- title -->
+      <h1 class="subtitle is-3">Autenticação</h2>
+      <!-- message -->
+      {{if .Msg}}
+        <div class="notification is-success">
+          <!-- Seu cadastro foi confirmado, você já pode se autenticar -->
+          {{.Msg}}
         </div>
-        <p class="help is-danger">{{.Name.Msg}}</p>
-      </div>
-
+      {{end}}
+      <!-- email -->
       <div class="field">
-        <label for="email" class="label">e-mail</label>
-        <div class="control">
-          <input class="input" type="text" placeholder="" id="email" name="email" value={{.Email.Value}}>
+        <div class="control has-icons-left">
+          <input class="input" type="text" placeholder="E-mail" id="email" name="email"  value={{.Email.Value}}>
+          <span class="icon is-small is-left">
+            <i class="fas fa-envelope"></i>
+          </span>
         </div>
         <p class="help is-danger">{{.Email.Msg}}</p>
       </div>
 
+      <!-- password -->
       <div class="field">
-        <label for="mobile" class="label">Celular</label>
-        <div class="control">
-          <input class="input" type="text" placeholder="" id="mobile" name="mobile" value={{.Mobile.Value}}>
+        <div class="control has-icons-left">
+          <input class="input" type="text" placeholder="Senha" id="password" name="password" value={{.Password.Value}}>
+          <span class="icon is-small is-left">
+            <i class="fas fa-key"></i>
+          </span>
         </div>
-        <p class="help is-danger">{{.Mobile.Msg}}</p>
+      </div>
+      <p class="help is-danger">{{.Password.Msg}}</p>
+
+      <!-- submit -->
+      <div class="field">
+        <div class="control">
+          <button type="submit" class="button is-info is-fullwidth">Entrar</button>
+        </div>
       </div>
 
-      <div class="field is-grouped">
-        <div class="control">
-          <button class="button is-link">Adicionar</button>
+      <div class="field">
+        <div class="control has-text-centered">
+          <a href="/auth/reset_password">Esqueceu a senha?</a>
         </div>
-        <div class="control">
-          <button class="button is-text">Cancelar</button>
+      </div>
+
+      <div class="field">
+        <div class="control has-text-centered">
+          <p>Não tem cadastro?<a href="/auth/signup"> Criar cadastro</a></p>
         </div>
       </div>
 
