@@ -13,11 +13,11 @@ create table entrance (
 
 create table user (
   id integer primary key autoincrement,
+  email varchar(64) not null unique,
   name varchar(64) not null,
+  password blob not null,
   -- carteira de identidade
   rg varchar(64) null,
-  email varchar(64) not null unique,
-  password varchar(64) not null,
   -- mobile number
   mobile varchar(64) null,
   created date not null,
@@ -30,7 +30,7 @@ create table email_certify (
   uuid varchar(64) primary key,
   name varchar(64) not null,
   email varchar(64) not null unique,
-  password varchar(64) not null,
+  password blob not null,
   created date not null
 );
 create index idx_email_certify_created on email_certify(name);

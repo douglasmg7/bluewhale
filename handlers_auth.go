@@ -7,6 +7,7 @@ import (
   // _ "github.com/mattn/go-sqlite3"
   "database/sql"
   "github.com/satori/go.uuid"
+  "golang.org/x/crypto/bcrypt"
   "html/template"
   "log"
   "net/http"
@@ -57,6 +58,7 @@ func signup_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
   if fd.Name.Msg != "" || fd.Email.Msg != "" || fd.Password.Msg != "" || fd.PasswordConfirm.Msg != "" {
     err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", fd)
     HandleError(w, err)
+    return
     // save student
   } else {
     // verify if email alredy registered
@@ -100,17 +102,23 @@ func signup_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
     if err != nil {
       log.Fatal(err)
     }
+    // encrypt password
+    cryptedPassword, err := bcrypt.GenerateFromPassword([]byte(fd.Password.Value), bcrypt.DefaultCost)
+    if err != nil {
+      http.Error(w, "Erro interno do servidor", http.StatusInternalServerError)
+      return
+    }
     stmt, err := db.Prepare(`INSERT INTO email_certify(uuid, name, email, password, created) VALUES(?, ?, ?, ?, ?)`)
     if err != nil {
       log.Fatal(err)
     }
     defer stmt.Close()
-    _, err = stmt.Exec(uuid.String(), fd.Name.Value, fd.Email.Value, fd.Password.Value, time.Now().String())
+    _, err = stmt.Exec(uuid.String(), fd.Name.Value, fd.Email.Value, cryptedPassword, time.Now().String())
     if err != nil {
       log.Fatal(err)
     }
     if devMode {
-      log.Println(`http://localhost:8080/auth/email/certify/confirm/` + uuid.String())
+      log.Println(`http://localhost:8080/auth/signup/confirmation/` + uuid.String())
     }
     fd.SuccessMsg = "Foi enviado um e-mail para " + fd.Email.Value + " com instruções para completar o cadastro."
     fd.Name.Value = ""
@@ -127,7 +135,8 @@ func signup_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
 func email_confirm(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
   // find email certify
   uuid := ps.ByName("uuid")
-  var name, email, password string
+  var name, email string
+  var password []byte
   var fd form_data_signin_tpl
   err = db.QueryRow("SELECT name, email, password FROM email_certify WHERE uuid = ?", uuid).Scan(&name, &email, &password)
   if err != nil && err != sql.ErrNoRows {
@@ -181,6 +190,49 @@ func signin(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 }
 
 func signin_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+  var fd form_data_signin_tpl
+  // test email format
+  fd.Email.Value, fd.Email.Msg = bluetang.Email(req.FormValue("email"))
+  if fd.Email.Msg != "" {
+    err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", fd)
+    HandleError(w, err)
+    return
+  }
+  // get user by email
+  var id int
+  var name, email string
+  var cryptedPassword []byte
+  err = db.QueryRow("SELECT id, name, email, password FROM user WHERE email = ?", fd.Email.Value).Scan(&id, &name, &email, &cryptedPassword)
+  // no registred user
+  if err == sql.ErrNoRows {
+    fd.Email.Msg = "Email não cadastrado"
+    err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", fd)
+    HandleError(w, err)
+    return
+  }
+  // internal error
+  if err != nil && err != sql.ErrNoRows {
+    log.Fatal(err)
+  }
+  // test password format
+  fd.Password.Value, fd.Password.Msg = bluetang.Password(req.FormValue("password"))
+  if fd.Password.Msg != "" {
+    err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", fd)
+    HandleError(w, err)
+    return
+  }
+  // test password
+  err = bcrypt.CompareHashAndPassword(cryptedPassword, []byte(fd.Password.Value))
+  // incorrect password
+  if err != nil {
+    fd.Password.Msg = "Senha incorreta"
+    err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", fd)
+    HandleError(w, err)
+    return
+  }
+  err = tmplAll["index"].ExecuteTemplate(w, "index.tpl", nil)
+  HandleError(w, err)
+  return
 }
 
 // let emailOptions = {
