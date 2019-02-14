@@ -67,8 +67,11 @@ func main() {
 	router.GET("/favicon.ico", faviconHandler)
 	router.GET("/", index)
 
+	// auth - signup
 	router.GET("/auth/signup", signup)
 	router.POST("/auth/signup", signup_post)
+	router.GET("/auth/signup/confirmation/:uuid", email_confirm)
+	// auth - signin
 	router.GET("/auth/signin", signin)
 	router.POST("/auth/signin", signin_post)
 

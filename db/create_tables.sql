@@ -25,6 +25,7 @@ create table user (
 );
 create index idx_user_name on user(name);
 
+-- email certify
 create table email_certify (
   uuid varchar(64) primary key,
   name varchar(64) not null,

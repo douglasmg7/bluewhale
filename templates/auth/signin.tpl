@@ -10,7 +10,6 @@
       <!-- message -->
       {{if .Msg}}
         <div class="notification is-success">
-          <!-- Seu cadastro foi confirmado, você já pode se autenticar -->
           {{.Msg}}
         </div>
       {{end}}
