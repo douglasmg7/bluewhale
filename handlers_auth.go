@@ -199,10 +199,9 @@ func signin_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
     return
   }
   // get user by email
-  var id int
-  var name, email string
+  var userId int
   var cryptedPassword []byte
-  err = db.QueryRow("SELECT id, name, email, password FROM user WHERE email = ?", fd.Email.Value).Scan(&id, &name, &email, &cryptedPassword)
+  err = db.QueryRow("SELECT id, password FROM user WHERE email = ?", fd.Email.Value).Scan(&userId, &cryptedPassword)
   // no registred user
   if err == sql.ErrNoRows {
     fd.Email.Msg = "Email não cadastrado"
@@ -230,6 +229,12 @@ func signin_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
     HandleError(w, err)
     return
   }
+  // create session
+  err = NewSession(w, userId)
+  if err != nil {
+    log.Fatal(err)
+  }
+  // go to index
   err = tmplAll["index"].ExecuteTemplate(w, "index.tpl", nil)
   HandleError(w, err)
   return
