@@ -5,6 +5,7 @@ import (
   "github.com/douglasmg7/bluetang"
   "github.com/julienschmidt/httprouter"
   // _ "github.com/mattn/go-sqlite3"
+  "database/sql"
   "github.com/satori/go.uuid"
   "html/template"
   "log"
@@ -17,11 +18,12 @@ type value_message struct {
   Msg   string
 }
 type form_data_signin_tpl struct {
-  Email      value_message
-  Password   value_message
-  WarnMsg    string
-  SuccessMsg string
-  Msg        string
+  Email            value_message
+  Password         value_message
+  WarnMsgHead      string
+  SuccessMsgHead   string
+  WarnMsgFooter    string
+  SuccessMsgFooter string
 }
 type form_data_signup_tpl struct {
   Name            value_message
@@ -124,9 +126,11 @@ func signup_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
 
 func email_confirm(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
   // find email certify
+  uuid := ps.ByName("uuid")
   var name, email, password string
-  err = db.QueryRow("SELECT name, email, password FROM email_certify WHERE uuid = ?", ps.ByName("uuid")).Scan(&name, &email, &password)
-  if err != nil {
+  var fd form_data_signin_tpl
+  err = db.QueryRow("SELECT name, email, password FROM email_certify WHERE uuid = ?", uuid).Scan(&name, &email, &password)
+  if err != nil && err != sql.ErrNoRows {
     log.Fatal(err)
   }
   // create a user from email certify
@@ -142,16 +146,27 @@ func email_confirm(w http.ResponseWriter, req *http.Request, ps httprouter.Param
       log.Fatal(err)
     }
     // delete email certify
-
+    stmt, err = db.Prepare(`DELETE from email_certify WHERE uuid == ?`)
+    if err != nil {
+      log.Fatal(err)
+    }
+    defer stmt.Close()
+    _, err = stmt.Exec(uuid)
+    if err != nil {
+      log.Fatal(err)
+    }
+    fd.SuccessMsgHead = "Seu cadastro foi confirmado, você já pode se autenticar"
+    fd.WarnMsgHead = ""
   }
-
-  var fd form_data_signin_tpl
-  // fmt.Fprint(w, ps.ByName("uuid"))
+  // no email certify exist
+  if name == "" {
+    fd.SuccessMsgHead = ""
+    fd.WarnMsgHead = "Seu cadastro já foi confirmado ou link para a confirmação expirou."
+  }
   if devMode == true {
     tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
     tmplAuthSignin = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signin.tpl"))
   }
-  fd.Msg = "Seu cadastro foi confirmado, você já pode se autenticar"
   err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", fd)
   HandleError(w, err)
 }
