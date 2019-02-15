@@ -1,5 +1,4 @@
 // todo - concurret access to session map can cause incosistence
-
 package main
 
 import (
@@ -11,77 +10,124 @@ import (
   "time"
 )
 
-type session_data struct {
-  name string
-}
-
-// [session]user_id
+// User id from each session, different sessions can point to same user id.
 var userIdMap = map[string]int{}
 
-// [user_id]session_data
-var sessionDataMap = map[int]session_data{}
-
-func data(int) {
-
+// Keep data that is retrive on every request when user is logged.
+// So keep it small and cached.
+// Every time some data into db that is keeped in the cache is changed,
+// the session data must be deleted, to be update on new request.
+type SessionData struct {
+  UserId int
+  Name   string
 }
 
-// get user from uuid session
-func UserId(req *http.Request) (int, error) {
+// Session data from user id.
+var sessionDataMap = map[int]SessionData{}
+
+// Writing a cookie on client and keep a reletion of cookie -> user id.
+func NewSession(w http.ResponseWriter, userId int) error {
+  // create cookie
+  sUUID, err := uuid.NewV4()
+  if err != nil {
+    return err
+  }
+  sUUIDString := sUUID.String()
+  // save cookie
+  http.SetCookie(w, &http.Cookie{
+    Name:  "sessionUUID",
+    Value: sUUIDString,
+    // Secure: true, // to use only in https
+    HttpOnly: true, // Can't be used into js client
+  })
+  // Save session UUID on db.
+  stmt, err := db.Prepare(`INSERT INTO sessionUUID(uuid, user_id, created) VALUES( ?, ?, ?)`)
+  if err != nil {
+    return err
+  }
+  defer stmt.Close()
+  _, err = stmt.Exec(sUUIDString, userId, time.Now().String())
+  if err != nil {
+    return err
+  }
+  // Save on cache.
+  userIdMap[sUUIDString] = userId
+  return nil
+}
+
+// Retrive session data.
+func GetSessionData(req *http.Request) (sData *SessionData, err error) {
+  userId, err := userIdfromSessionUUID(req)
+  // Some error.
+  if err != nil {
+    return nil, err
+    // No user id.
+  } else if userId == 0 {
+    return nil, nil
+    // Found user.
+  } else {
+    return sessionDataFromUserId(userId)
+  }
+}
+
+// Get user id from session uuid.
+// Try the cache first.
+func userIdfromSessionUUID(req *http.Request) (int, error) {
   cookie, err := req.Cookie("session")
-  // no cookie.
+  // No cookie.
   if err == http.ErrNoCookie {
     return 0, nil
     // some error
   } else if err != nil {
     return 0, err
   }
-  // some
+  // Have a cookie.
   if cookie != nil {
-    session := cookie.String()
-    userId := userIdMap[session]
+    sessionUUID := cookie.String()
+    userId := userIdMap[sessionUUID]
+    // Found on cache.
     if userId != 0 {
       return userId, nil
     } else {
-      // get from db
-      err = db.QueryRow("select user_id from session where uuid = ?", cookie.String()).Scan(&userId)
+      // Get from db.
+      err = db.QueryRow("select user_id from sessionUUID where uuid = ?", cookie.String()).Scan(&userId)
       if err != nil {
+        // No user id for the sessionUUID.
         return 0, err
       }
+      // Found the user id.
       if userId != 0 {
-        userIdMap[session] = userId
+        userIdMap[sessionUUID] = userId
         return userId, nil
       }
     }
   }
-  // no cookie
+  // No cookie
   return 0, nil
 }
 
-func NewSession(w http.ResponseWriter, userId int) error {
-  // create cookie
-  session, err := uuid.NewV4()
-  if err != nil {
-    return err
+// Session data from cache.
+// If not cached, cache it.
+func sessionDataFromUserId(userId int) (sData *SessionData, err error) {
+  sDateTemp := sessionDataMap[userId]
+  sData = &sDateTemp
+  if sData.Name != "" {
+    return sData, nil
+  } else {
+    return cacheSession(userId)
   }
-  sessinoString := session.String()
-  // save cookie
-  http.SetCookie(w, &http.Cookie{
-    Name:  "session",
-    Value: session.String(),
-    // Secure: true, // to use only in https
-    HttpOnly: true, // can't be used into js client
-  })
-  // save cache on db
-  stmt, err := db.Prepare(`INSERT INTO session(uuid, user_id, created) VALUES( ?, ?, ?)`)
+}
+
+// Cache session data and return it.
+func cacheSession(userId int) (sData *SessionData, err error) {
+  // Get data from db(s).
+  err = db.QueryRow("select name from user where id = ?", userId).Scan(&sData.Name)
   if err != nil {
-    return err
+    return sData, err
   }
-  defer stmt.Close()
-  _, err = stmt.Exec(session, userId, time.Now().String())
-  if err != nil {
-    return err
+  // Cache it.
+  if sData.Name != "" {
+    sessionDataMap[userId] = sData
   }
-  // set session cache
-  userIdMap[sessinoString] = userId
-  return nil
+  return sData, nil
 }

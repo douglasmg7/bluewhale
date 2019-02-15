@@ -35,7 +35,7 @@ create table email_certify (
 );
 create index idx_email_certify_created on email_certify(name);
 
-create table session (
+create table sessionUUID (
   uuid varchar(64) primary key,
   user_id varchar(64) not null,
   created date not null,
