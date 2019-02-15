@@ -127,7 +127,7 @@ func cacheSession(userId int) (sData *SessionData, err error) {
   }
   // Cache it.
   if sData.Name != "" {
-    sessionDataMap[userId] = sData
+    sessionDataMap[userId] = *sData
   }
   return sData, nil
 }
