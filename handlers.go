@@ -23,10 +23,10 @@ func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
     tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
     tmplAll["index"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
   }
-  session, err := GetSessionData(req)
-  fd.Session = *session
+  // session, err := GetSessionData(req)
+  // fd.Session = *session
 
-  log.Println("session.UserId:", fd.Session.UserId)
+  // log.Println("session.UserId:", fd.Session.UserId)
   err = tmplAll["index"].ExecuteTemplate(w, "index.tpl", fd)
   HandleError(w, err)
 }

@@ -248,21 +248,47 @@ func signin_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
 
 // Signin page.
 func signout(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+  // c, err := req.Cookie("sessionUUID")
+  // if err != nil {
+
+  //   http.Redirect(w, req, "/set", http.StatusSeeOther)
+  //   return
+  // }
+  // c.Value = ""
+  // c.MaxAge = -1 // delete cookie
+  // c.Path = "/"
+  // http.SetCookie(w, c)
+  // // http.Redirect(w, req, "/", http.StatusSeeOther)
+  // fmt.Fprintf(w, "Ok")
+  // fmt.Println(c)
+
   c, err := req.Cookie("sessionUUID")
   // log.Println("cookie:", c)
   // log.Println("cookie-err:", err)
   // No cookie.
-  if err != nil && err != http.ErrNoCookie {
-    // log.Println("No cookie")
-    return err
+  if err != nil {
+    log.Println("No cookie")
+    http.Redirect(w, req, "/", http.StatusSeeOther)
   } else {
     // Delete cookie.
+    // c.Value = "asdf"
     c.MaxAge = -1
+    c.Path = "/"
     log.Println("changed cookie:", c)
     http.SetCookie(w, c)
     http.Redirect(w, req, "/", http.StatusSeeOther)
   }
   // RemoveSession(w, req)
+}
+
+func expire(w http.ResponseWriter, req *http.Request) {
+  c, err := req.Cookie("session")
+  if err != nil {
+    return
+  }
+  c.MaxAge = -1 // delete cookie
+  http.SetCookie(w, c)
+  http.Redirect(w, req, "/", http.StatusSeeOther)
 }
 
 // let emailOptions = {

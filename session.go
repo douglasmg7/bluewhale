@@ -42,7 +42,7 @@ func NewSession(w http.ResponseWriter, userId int) error {
     Value: sUUIDString,
     Path:  "/",
     // Secure: true, // to use only in https
-    HttpOnly: true, // Can't be used into js client
+    // HttpOnly: true, // Can't be used into js client
   })
   // Save session UUID on db.
   stmt, err := db.Prepare(`INSERT INTO sessionUUID(uuid, user_id, created) VALUES( ?, ?, ?)`)
