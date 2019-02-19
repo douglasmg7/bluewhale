@@ -4,8 +4,8 @@ package main
 import (
   // _ "github.com/mattn/go-sqlite3"
   // "github.com/satori/go.uuid"
-  // "log"
   "github.com/satori/go.uuid"
+  "log"
   "net/http"
   "time"
 )
@@ -13,13 +13,16 @@ import (
 // User id from each session, different sessions can point to same user id.
 var userIdMap = map[string]int{}
 
+// Measure execution time to retrive the session.
+// var timeToGetSession time.Time
+
 // Keep data that is retrive on every request when user is logged.
 // So keep it small and cached.
 // Every time some data into db that is keeped in the cache is changed,
 // the session data must be deleted, to be update on new request.
 type SessionData struct {
-  UserId int
-  Name   string
+  UserId   int
+  UserName string
 }
 
 // Session data from user id.
@@ -37,6 +40,7 @@ func NewSession(w http.ResponseWriter, userId int) error {
   http.SetCookie(w, &http.Cookie{
     Name:  "sessionUUID",
     Value: sUUIDString,
+    Path:  "/",
     // Secure: true, // to use only in https
     HttpOnly: true, // Can't be used into js client
   })
@@ -57,6 +61,7 @@ func NewSession(w http.ResponseWriter, userId int) error {
 
 // Retrive session data.
 func GetSessionData(req *http.Request) (sData *SessionData, err error) {
+  // timeToGetSession = time.Now()
   userId, err := userIdfromSessionUUID(req)
   // Some error.
   if err != nil {
@@ -66,14 +71,20 @@ func GetSessionData(req *http.Request) (sData *SessionData, err error) {
     return nil, nil
     // Found user.
   } else {
-    return sessionDataFromUserId(userId)
+    sData, err := sessionDataFromUserId(userId)
+    if err != nil {
+      log.Fatal(err)
+    }
+    // log.Println("Time to get session:", time.Since(timeToGetSession))
+    return sData, err
+    // return sessionDataFromUserId(userId)
   }
 }
 
 // Get user id from session uuid.
 // Try the cache first.
 func userIdfromSessionUUID(req *http.Request) (int, error) {
-  cookie, err := req.Cookie("session")
+  cookie, err := req.Cookie("sessionUUID")
   // No cookie.
   if err == http.ErrNoCookie {
     return 0, nil
@@ -83,20 +94,22 @@ func userIdfromSessionUUID(req *http.Request) (int, error) {
   }
   // Have a cookie.
   if cookie != nil {
-    sessionUUID := cookie.String()
+    sessionUUID := cookie.Value
     userId := userIdMap[sessionUUID]
     // Found on cache.
     if userId != 0 {
+      // log.Println("userId from cache", userId)
       return userId, nil
     } else {
       // Get from db.
-      err = db.QueryRow("select user_id from sessionUUID where uuid = ?", cookie.String()).Scan(&userId)
+      err = db.QueryRow("select user_id from sessionUUID where uuid = ?", sessionUUID).Scan(&userId)
       if err != nil {
         // No user id for the sessionUUID.
         return 0, err
       }
       // Found the user id.
       if userId != 0 {
+        // log.Println("userId from db", userId)
         userIdMap[sessionUUID] = userId
         return userId, nil
       }
@@ -111,7 +124,8 @@ func userIdfromSessionUUID(req *http.Request) (int, error) {
 func sessionDataFromUserId(userId int) (sData *SessionData, err error) {
   sDateTemp := sessionDataMap[userId]
   sData = &sDateTemp
-  if sData.Name != "" {
+  if sData.UserName != "" {
+    // log.Println("Get from cache:", sData.UserName)
     return sData, nil
   } else {
     return cacheSession(userId)
@@ -119,15 +133,18 @@ func sessionDataFromUserId(userId int) (sData *SessionData, err error) {
 }
 
 // Cache session data and return it.
-func cacheSession(userId int) (sData *SessionData, err error) {
+// func cacheSession(userId int) (sData *SessionData, err error) {
+func cacheSession(userId int) (*SessionData, error) {
   // Get data from db(s).
-  err = db.QueryRow("select name from user where id = ?", userId).Scan(&sData.Name)
+  var sData SessionData
+  err := db.QueryRow("select name from user where id = ?", userId).Scan(&sData.UserName)
+  // log.Println("Retrive from db:", sData.UserName)
   if err != nil {
-    return sData, err
+    return &sData, err
   }
   // Cache it.
-  if sData.Name != "" {
-    sessionDataMap[userId] = *sData
+  if sData.UserName != "" {
+    sessionDataMap[userId] = sData
   }
-  return sData, nil
+  return &sData, nil
 }

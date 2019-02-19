@@ -12,13 +12,25 @@ import (
   "time"
 )
 
+type form_data_index struct {
+  Session SessionData
+}
+
 func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+  var fd form_data_index
   // fmt.Fprintln(w, "ola")
   if devMode == true {
     tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
     tmplAll["index"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
   }
-  err := tmplAll["index"].ExecuteTemplate(w, "index.tpl", nil)
+  session, err := GetSessionData(req)
+  fd.Session = *session
+  // if session != nil {
+  //   log.Println("session:", session.UserName)
+  // } else {
+  //   log.Println("no session found")
+  // }
+  err = tmplAll["index"].ExecuteTemplate(w, "index.tpl", fd)
   HandleError(w, err)
 }
 
