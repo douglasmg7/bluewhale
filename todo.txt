@@ -1,10 +1,8 @@
-templates
-  https://github.com/yosssi/ace
-  https://github.com/eknkc/amber
+put session into package session
 
-http router
-  https://github.com/julienschmidt/httprouter
-  https://github.com/gorilla/mux
+put handle files into a separete file
+
+rename hadle_auth to auth
 
 https://en.wikipedia.org/wiki/The_7_Habits_of_Highly_Effective_People
 

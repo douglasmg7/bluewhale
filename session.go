@@ -60,21 +60,21 @@ func NewSession(w http.ResponseWriter, userId int) error {
 }
 
 // Remove the session.
-func RemoveSession(w http.ResponseWriter, req *http.Request) error {
+func RemoveSession(w http.ResponseWriter, req *http.Request) {
   c, err := req.Cookie("sessionUUID")
-  // log.Println("cookie:", c)
-  // log.Println("cookie-err:", err)
   // No cookie.
-  if err != nil && err != http.ErrNoCookie {
+  if err == http.ErrNoCookie {
     // log.Println("No cookie")
-    return err
+    http.Redirect(w, req, "/", http.StatusSeeOther)
+    // Some error.
+  } else if err != nil {
+    log.Fatal(err)
   } else {
-    // Delete cookie.
     c.MaxAge = -1
-    log.Println("changed cookie:", c)
+    c.Path = "/"
+    // log.Println("changed cookie:", c)
     http.SetCookie(w, c)
     http.Redirect(w, req, "/", http.StatusSeeOther)
-    return nil
   }
 }
 
