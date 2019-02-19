@@ -27,8 +27,8 @@
       <a class="navbar-item" href="/auth/signout">
         Sair
       </a>
-      <a class="navbar-item" href="/auth/signout">
-        {{if .Session}} ola {{end}}
+      <a class="navbar-item" href="/">
+        {{if .Session.UserId }} {{ .Session.UserName }} {{end}}
       </a>
 
 

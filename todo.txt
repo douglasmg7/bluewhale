@@ -12,3 +12,5 @@ https://play.golang.org/p/mlTh2OUM_Tk
 
 put into all field message erros
 class="has-text-danger"
+
+Clean up session on cache and db from time to time.

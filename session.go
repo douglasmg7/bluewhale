@@ -36,7 +36,7 @@ func NewSession(w http.ResponseWriter, userId int) error {
     return err
   }
   sUUIDString := sUUID.String()
-  // save cookie
+  // Save cookie.
   http.SetCookie(w, &http.Cookie{
     Name:  "sessionUUID",
     Value: sUUIDString,
@@ -57,6 +57,25 @@ func NewSession(w http.ResponseWriter, userId int) error {
   // Save on cache.
   userIdMap[sUUIDString] = userId
   return nil
+}
+
+// Remove the session.
+func RemoveSession(w http.ResponseWriter, req *http.Request) error {
+  c, err := req.Cookie("sessionUUID")
+  // log.Println("cookie:", c)
+  // log.Println("cookie-err:", err)
+  // No cookie.
+  if err != nil && err != http.ErrNoCookie {
+    // log.Println("No cookie")
+    return err
+  } else {
+    // Delete cookie.
+    c.MaxAge = -1
+    log.Println("changed cookie:", c)
+    http.SetCookie(w, c)
+    http.Redirect(w, req, "/", http.StatusSeeOther)
+    return nil
+  }
 }
 
 // Retrive session data.
@@ -85,6 +104,8 @@ func GetSessionData(req *http.Request) (sData *SessionData, err error) {
 // Try the cache first.
 func userIdfromSessionUUID(req *http.Request) (int, error) {
   cookie, err := req.Cookie("sessionUUID")
+  // log.Println("Cookie:", cookie.Value)
+  // log.Println("Cookie-err:", err)
   // No cookie.
   if err == http.ErrNoCookie {
     return 0, nil
@@ -137,7 +158,7 @@ func sessionDataFromUserId(userId int) (sData *SessionData, err error) {
 func cacheSession(userId int) (*SessionData, error) {
   // Get data from db(s).
   var sData SessionData
-  err := db.QueryRow("select name from user where id = ?", userId).Scan(&sData.UserName)
+  err := db.QueryRow("select id, name from user where id = ?", userId).Scan(&sData.UserId, &sData.UserName)
   // log.Println("Retrive from db:", sData.UserName)
   if err != nil {
     return &sData, err

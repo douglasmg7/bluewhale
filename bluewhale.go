@@ -71,9 +71,10 @@ func main() {
 	router.GET("/auth/signup", signup)
 	router.POST("/auth/signup", signup_post)
 	router.GET("/auth/signup/confirmation/:uuid", email_confirm)
-	// auth - signin
+	// auth - signin/signout
 	router.GET("/auth/signin", signin)
 	router.POST("/auth/signin", signin_post)
+	router.GET("/auth/signout", signout)
 
 	router.GET("/user_add", user_add)
 	router.GET("/entrance-add", entrance_add)

@@ -25,11 +25,8 @@ func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
   }
   session, err := GetSessionData(req)
   fd.Session = *session
-  // if session != nil {
-  //   log.Println("session:", session.UserName)
-  // } else {
-  //   log.Println("no session found")
-  // }
+
+  log.Println("session.UserId:", fd.Session.UserId)
   err = tmplAll["index"].ExecuteTemplate(w, "index.tpl", fd)
   HandleError(w, err)
 }

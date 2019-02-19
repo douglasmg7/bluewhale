@@ -246,6 +246,25 @@ func signin_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
   return
 }
 
+// Signin page.
+func signout(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+  c, err := req.Cookie("sessionUUID")
+  // log.Println("cookie:", c)
+  // log.Println("cookie-err:", err)
+  // No cookie.
+  if err != nil && err != http.ErrNoCookie {
+    // log.Println("No cookie")
+    return err
+  } else {
+    // Delete cookie.
+    c.MaxAge = -1
+    log.Println("changed cookie:", c)
+    http.SetCookie(w, c)
+    http.Redirect(w, req, "/", http.StatusSeeOther)
+  }
+  // RemoveSession(w, req)
+}
+
 // let emailOptions = {
 //   from: '',
 //   to: req.body.email,
