@@ -1,14 +1,18 @@
-put session into package session
+Verify map in session, use test to verify valid values not 0.
 
-put handle files into a separete file
+Use function receiver for session.
 
-rename hadle_auth to auth
+Put session into package session
+
+Put handle files into a separete file
+
+Rename hadle_auth to auth
 
 https://en.wikipedia.org/wiki/The_7_Habits_of_Highly_Effective_People
 
 https://play.golang.org/p/mlTh2OUM_Tk
 
-put into all field message erros
+Put into all field message erros
 class="has-text-danger"
 
 Clean up session on cache and db from time to time.
