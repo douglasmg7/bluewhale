@@ -15,21 +15,11 @@
   <div class="navbar-menu" id="navbarBasicExample">
     <!-- <div class="navbar-start"> -->
     <div class="navbar-end">
-      <a class="navbar-item" href="/student/all">
-        Alunos
-      </a>
-      <a class="navbar-item" href="/student/new">
-        Novo aluno
-      </a>
-      <a class="navbar-item" href="/auth/signin">
-        Entrar
-      </a>
-      <a class="navbar-item" href="/auth/signout">
-        Sair
-      </a>
-      <a class="navbar-item" href="/">
-        {{if .Session.UserId }} {{ .Session.UserName }} {{end}}
-      </a>
+      <a class="navbar-item" href="/student/all"> Alunos </a>
+      <a class="navbar-item" href="/student/new"> Novo aluno </a>
+      <a class="navbar-item" href="/auth/signin"> Entrar </a>
+      <a class="navbar-item" href="/auth/signout"> Sair </a>
+      <a class="navbar-item" href="/"> {{if .Session.UserId }} {{ .Session.UserName }} {{end}} </a>
 
 
 
