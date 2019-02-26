@@ -14,7 +14,7 @@ import (
 
 // Form data index.
 type form_data_index struct {
-	Session *SessionData
+	S *Session
 }
 
 // Handler index.
@@ -25,8 +25,8 @@ func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 		tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
 		tmplAll["index"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
 	}
-	fd.Session, err = GetSessionData(req)
-	fmt.Println("session: ", fd.Session)
+	fd.S, err = sessions.GetSession(req)
+	fmt.Println("session: ", fd.S)
 	err = tmplAll["index"].ExecuteTemplate(w, "index.tpl", fd)
 	HandleError(w, err)
 }

@@ -20,7 +20,7 @@ type Session struct {
 }
 
 // Cached data.
-type Cache struct {
+type Sessions struct {
 	// UserId from uuidSession.
 	userIds map[string]int
 	// Session from userId.
@@ -28,7 +28,7 @@ type Cache struct {
 }
 
 // Create a session, writing a cookie on client and keep a reletion of cookie -> user id.
-func (cache *Cache) CreateSession(w http.ResponseWriter, userId int) error {
+func (s *Sessions) CreateSession(w http.ResponseWriter, userId int) error {
 	// create cookie
 	sUUID, err := uuid.NewV4()
 	if err != nil {
@@ -54,12 +54,12 @@ func (cache *Cache) CreateSession(w http.ResponseWriter, userId int) error {
 		return err
 	}
 	// Save on cache.
-	cache.userIds[sUUIDString] = userId
+	s.userIds[sUUIDString] = userId
 	return nil
 }
 
 // Remove the session.
-func (cache *Cache) RemoveSession(w http.ResponseWriter, req *http.Request) {
+func (s *Sessions) RemoveSession(w http.ResponseWriter, req *http.Request) {
 	c, err := req.Cookie("sessionUUID")
 	// No cookie.
 	if err == http.ErrNoCookie {
@@ -76,14 +76,14 @@ func (cache *Cache) RemoveSession(w http.ResponseWriter, req *http.Request) {
 		http.SetCookie(w, c)
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 		// Delete userId session.
-		delete(cache.userIds, c.Value)
+		delete(s.userIds, c.Value)
 	}
 }
 
 // Get session.
-func (cache *Cache) GetSession(req *http.Request) (*Session, error) {
+func (s *Sessions) GetSession(req *http.Request) (*Session, error) {
 	// timeToGetSession = time.Now()
-	userId, err := cache.getUserIdfromSessionUUID(req)
+	userId, err := s.getUserIdfromSessionUUID(req)
 	// Some error.
 	if err != nil {
 		return nil, err
@@ -92,7 +92,7 @@ func (cache *Cache) GetSession(req *http.Request) (*Session, error) {
 		return nil, nil
 		// Found user.
 	} else {
-		session, err := cache.getSessionFromUserId(userId)
+		session, err := s.getSessionFromUserId(userId)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -104,7 +104,7 @@ func (cache *Cache) GetSession(req *http.Request) (*Session, error) {
 
 // Get user id from session uuid.
 // Try the cache first.
-func (cache *Cache) getUserIdfromSessionUUID(req *http.Request) (int, error) {
+func (s *Sessions) getUserIdfromSessionUUID(req *http.Request) (int, error) {
 	cookie, err := req.Cookie("sessionUUID")
 	// log.Println("Cookie:", cookie.Value)
 	// log.Println("Cookie-err:", err)
@@ -118,7 +118,7 @@ func (cache *Cache) getUserIdfromSessionUUID(req *http.Request) (int, error) {
 	// Have a cookie.
 	if cookie != nil {
 		sessionUUID := cookie.Value
-		userId := cache.userIds[sessionUUID]
+		userId := s.userIds[sessionUUID]
 		// Found on cache.
 		if userId != 0 {
 			// log.Println("userId from cache", userId)
@@ -133,7 +133,7 @@ func (cache *Cache) getUserIdfromSessionUUID(req *http.Request) (int, error) {
 			// Found the user id.
 			if userId != 0 {
 				// log.Println("userId from db", userId)
-				cache.userIds[sessionUUID] = userId
+				s.userIds[sessionUUID] = userId
 				return userId, nil
 			}
 		}
@@ -144,19 +144,19 @@ func (cache *Cache) getUserIdfromSessionUUID(req *http.Request) (int, error) {
 
 // Get session from cache.
 // If not cached, cache it.
-func (cache *Cache) getSessionFromUserId(userId int) (*Session, error) {
-	sessionTemp := cache.sessions[userId]
+func (s *Sessions) getSessionFromUserId(userId int) (*Session, error) {
+	sessionTemp := s.sessions[userId]
 	session := &sessionTemp
 	if session.UserName != "" {
 		// log.Println("Get from cache:", session.UserName)
 		return session, nil
 	} else {
-		return cache.cacheSession(userId)
+		return s.cacheSession(userId)
 	}
 }
 
 // Cache session data and return it.
-func (cache *Cache) cacheSession(userId int) (*Session, error) {
+func (s *Sessions) cacheSession(userId int) (*Session, error) {
 	// Get data from db(s).
 	var session Session
 	err := db.QueryRow("select id, name from user where id = ?", userId).Scan(&session.UserId, &session.UserName)
@@ -166,7 +166,7 @@ func (cache *Cache) cacheSession(userId int) (*Session, error) {
 	}
 	// Cache it.
 	if session.UserName != "" {
-		cache.sessions[userId] = session
+		s.sessions[userId] = session
 	}
 	return &session, nil
 }

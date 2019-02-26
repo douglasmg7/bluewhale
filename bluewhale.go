@@ -19,6 +19,11 @@ var devMode bool = false
 
 const port = "8080"
 
+// Sessions from each user.
+var sessions Sessions
+
+sessions.userIds["asdf"] = 3
+
 func init() {
 	// set log
 	log.SetFlags(log.Ldate | log.Lmicroseconds | log.Lshortfile)

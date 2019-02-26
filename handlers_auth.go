@@ -236,7 +236,7 @@ func signin_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
 		return
 	}
 	// Create session.
-	err = NewSession(w, userId)
+	err = sessions.CreateSession(w, userId)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -250,7 +250,7 @@ func signin_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
 
 // Signout.
 func signout(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	RemoveSession(w, req)
+	sessions.RemoveSession(w, req)
 }
 
 // let emailOptions = {

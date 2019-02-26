@@ -17,9 +17,9 @@
     <div class="navbar-end">
       <a class="navbar-item" href="/student/all"> Alunos </a>
       <a class="navbar-item" href="/student/new"> Novo aluno </a>
-      {{if not .Session}}<a class="navbar-item" href="/auth/signin"> Entrar </a>{{end}}
-      {{if .Session}}<a class="navbar-item" href="/auth/signout"> Sair </a>{{end}}
-      {{if .Session}}<a class="navbar-item" href="/">{{.Session.UserName}}</a>{{end}}
+      {{if not .S}}<a class="navbar-item" href="/auth/signin"> Entrar </a>{{end}}
+      {{if .S}}<a class="navbar-item" href="/auth/signout"> Sair </a>{{end}}
+      {{if .S}}<a class="navbar-item" href="/">{{.S.UserName}}</a>{{end}}
 
 
 
