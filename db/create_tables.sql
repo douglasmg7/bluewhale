@@ -21,7 +21,9 @@ create table user (
   -- mobile number
   mobile varchar(64) null,
   created date not null,
-  updated date not null
+  updated date not null,
+  permission integer default 0,
+  saved boolean default true
 );
 create index idx_user_name on user(name);
 

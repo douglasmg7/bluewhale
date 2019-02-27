@@ -1,4 +1,3 @@
-// todo - concurret access to session map can cause incosistence
 package main
 
 import (
@@ -15,8 +14,51 @@ import (
 
 // Data need for each session.
 type Session struct {
-	UserId   int
-	UserName string
+	UserId     int
+	UserName   string
+	Permission uint64
+	Saved      bool // If false, session must be saved on db.
+}
+
+// Check for a specific permission.
+func (s *Session) CheckPermission(p string) bool {
+	// Admin.
+	if s.Permission&1 == 1 {
+		return true
+	}
+	// Permissions.
+	switch p {
+	case "editStudent":
+		return s.Permission&2 == 2
+	case "editPrice":
+		return s.Permission&4 == 4
+	default:
+		return false
+	}
+}
+
+// Set permissions.
+func (s *Session) SetPermission(p string) {
+	switch p {
+	case "admin":
+		s.Permission = s.Permission | 1
+	case "editStudent":
+		s.Permission = s.Permission | 2
+	case "editPrice":
+		s.Permission = s.Permission | 4
+	}
+}
+
+// Unset permissions.
+func (s *Session) UnsetPermission(p string) {
+	switch p {
+	case "king":
+		s.Permission = s.Permission ^ 1
+	case "editStudent":
+		s.Permission = s.Permission ^ 2
+	case "editPrice":
+		s.Permission = s.Permission ^ 4
+	}
 }
 
 // Cached data.
@@ -159,7 +201,7 @@ func (s *Sessions) getSessionFromUserId(userId int) (*Session, error) {
 func (s *Sessions) cacheSession(userId int) (*Session, error) {
 	// Get data from db(s).
 	var session Session
-	err := db.QueryRow("select id, name from user where id = ?", userId).Scan(&session.UserId, &session.UserName)
+	err := db.QueryRow("select id, name, permission from user where id = ?", userId).Scan(&session.UserId, &session.UserName, &session.Permission)
 	// log.Println("Retrive from db:", session.UserName)
 	if err != nil {
 		return nil, err
@@ -169,4 +211,10 @@ func (s *Sessions) cacheSession(userId int) (*Session, error) {
 		s.sessions[userId] = session
 	}
 	return &session, nil
+}
+
+// Clean the cache session.
+func (s *Sessions) CleanSessions() {
+	s.sessions = map[int]Session{}
+	log.Println("Sessions cache cleaned")
 }

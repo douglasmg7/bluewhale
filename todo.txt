@@ -1,12 +1,3 @@
-Verify map in session, use test to verify valid values not 0.
-
-Use function receiver for session.
-
-Put session into package session
-
-Put handle files into a separete file
-
-Rename hadle_auth to auth
 
 https://en.wikipedia.org/wiki/The_7_Habits_of_Highly_Effective_People
 

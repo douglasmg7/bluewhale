@@ -72,6 +72,8 @@ func main() {
 	router := httprouter.New()
 	router.GET("/favicon.ico", faviconHandler)
 	router.GET("/", index)
+	// Clean the session cache.
+	router.GET("/clean_sessions", cleanSessions)
 
 	// auth - signup
 	router.GET("/auth/signup", signup)

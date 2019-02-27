@@ -19,6 +19,7 @@ type value_message struct {
 	Msg   string
 }
 type form_data_signin_tpl struct {
+	Session          Session
 	Email            value_message
 	Password         value_message
 	WarnMsgHead      string
@@ -27,6 +28,7 @@ type form_data_signin_tpl struct {
 	SuccessMsgFooter string
 }
 type form_data_signup_tpl struct {
+	Session         Session
 	Name            value_message
 	Email           value_message
 	Password        value_message

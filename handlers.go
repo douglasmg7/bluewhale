@@ -31,6 +31,12 @@ func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	HandleError(w, err)
 }
 
+// Clean sessions cache, needed when some db update occurs.
+func cleanSessions(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	sessions.CleanSessions()
+	fmt.Fprintln(w, "Cache cleaned")
+}
+
 func user_add(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	err := tmplAll["user_add"].ExecuteTemplate(w, "user_add.tpl", nil)
 	HandleError(w, err)
