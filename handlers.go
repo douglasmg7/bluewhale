@@ -17,6 +17,20 @@ type form_data_index struct {
 	Session *Session
 }
 
+// Check permission.
+func checkPermission(w http.ResponseWriter, req *http.Request, session *Session, permission string) bool {
+	if session == nil {
+		http.Redirect(w, req, "/auth/signin", http.StatusSeeOther)
+		return false
+	}
+	if session.CheckPermission(permission) {
+		return true
+	} else {
+		fmt.Fprintln(w, "Not allowed")
+		return false
+	}
+}
+
 // Handler index.
 func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	var fd form_data_index
@@ -33,9 +47,14 @@ func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 // Clean sessions cache, needed when some db update occurs.
 func cleanSessions(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	sessions.CleanSessions()
-	http.Redirect(w, req, "/", http.StatusSeeOther)
-	// fmt.Fprintln(w, "Cache cleaned")
+	session, err := sessions.GetSession(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if checkPermission(w, req, session, "admin") {
+		sessions.CleanSessions()
+		http.Redirect(w, req, "/", http.StatusSeeOther)
+	}
 }
 
 func user_add(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
