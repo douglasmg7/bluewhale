@@ -20,9 +20,10 @@ var devMode bool = false
 const port = "8080"
 
 // Sessions from each user.
-var sessions Sessions
-
-sessions.userIds["asdf"] = 3
+var sessions = Sessions{
+	userIds:  map[string]int{},
+	sessions: map[int]Session{},
+}
 
 func init() {
 	// set log
