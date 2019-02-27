@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-var tmplMaster, tmplAuthSignup, tmplAuthSignin *template.Template
+var tmplMaster, tmplAuthSignup, tmplAuthSignin, tmplProhibitedAccess *template.Template
 var tmplAll map[string]*template.Template
 var db *sql.DB
 var err error
@@ -34,13 +34,15 @@ func init() {
 	// production or development mode
 	setMode()
 
-	// load templates
+	// Load templates
 	tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
 	tmplAll = make(map[string]*template.Template)
 
-	// auth
+	// Auth.
 	tmplAuthSignup = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signup.tpl"))
 	tmplAuthSignin = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signin.tpl"))
+	// Prohibited access.
+	tmplProhibitedAccess = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/prohibited_access.tpl"))
 
 	tmplAll["index"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
 
