@@ -15,37 +15,48 @@
   <div class="navbar-menu" id="navbarBasicExample">
     <!-- <div class="navbar-start"> -->
     <div class="navbar-end">
-      <a class="navbar-item" href="/student/all"> Alunos </a>
-      <a class="navbar-item" href="/student/new"> Novo aluno </a>
-      {{if not .Session}}<a class="navbar-item" href="/auth/signin"> Entrar </a>{{end}}
-      {{if .Session}}<a class="navbar-item" href="/auth/signout"> Sair </a>{{end}}
-      {{if .Session}}<a class="navbar-item" href="/">{{.Session.UserName}}</a>{{end}}
-      <a class="navbar-item" href="/student/new"> - {{.Session.CheckPermission "admin"}} - </a>
-
-
-
-
-<!--       <div class="navbar-item has-dropdown is-hoverable">
+      <!-- Admin -->
+      {{if .Session }} {{if .Session.CheckPermission "admin"}}
+      <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link">
-          More
+          Admin
         </a>
         <div class="navbar-dropdown">
-          <a class="navbar-item">
-            About
-          </a>
-          <a class="navbar-item">
-            Jobs
+          <a class="navbar-item" href="/clean_sessions">
+            Clean session
           </a>
           <a class="navbar-item">
             Contact
           </a>
           <hr class="navbar-divider">
           <a class="navbar-item">
-            Report an issue
+           Temp 
           </a>
         </div>
-      </div> -->
-
+      </div>
+      {{end}} {{end}}
+      <!-- End Admin -->
+      <!-- Student -->
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link" href="/stuent/all">
+          Aluno
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="/student/new">
+            Alunos
+          </a>
+          <a class="navbar-item">
+            Novo aluno
+          </a>
+        </div>
+      </div>
+      <!-- End Student -->
+      <!-- Login -->
+      {{if not .Session}}<a class="navbar-item" href="/auth/signin"> Entrar </a>{{end}}
+      <!-- User name -->
+      {{if .Session}}<a class="navbar-item" href="/">{{.Session.UserName}}</a>{{end}}
+      <!-- Logout -->
+      {{if .Session}}<a class="navbar-item" href="/auth/signout"> Sair </a>{{end}}
     </div>
 
 <!--     <div class="navbar-end">

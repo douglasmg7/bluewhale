@@ -34,7 +34,8 @@ func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 // Clean sessions cache, needed when some db update occurs.
 func cleanSessions(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	sessions.CleanSessions()
-	fmt.Fprintln(w, "Cache cleaned")
+	http.Redirect(w, req, "/", http.StatusSeeOther)
+	// fmt.Fprintln(w, "Cache cleaned")
 }
 
 func user_add(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
