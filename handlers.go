@@ -12,43 +12,50 @@ import (
 	"time"
 )
 
-// Form data index.
-type form_data_index struct {
-	Session *Session
-}
-
-// Form data prohibited access.
-type form_data_prohibited_access struct {
-	Session *Session
-}
-
 // Check permission.
 func checkPermission(w http.ResponseWriter, req *http.Request, session *Session, permission string) bool {
+	// Not signed.
 	if session == nil {
 		http.Redirect(w, req, "/auth/signin", http.StatusSeeOther)
 		return false
 	}
+	// Have permission.
 	if session.CheckPermission(permission) {
 		return true
+		// No Permission.
 	} else {
 		// fmt.Fprintln(w, "Not allowed")
-		var fd form_data_prohibited_access
-		fd.Session = session
-		err = tmplProhibitedAccess.ExecuteTemplate(w, "prohibited_access.tpl", fd)
+		data := struct{ Session *Session }{session}
+		err = tmplProhibitedAccess.ExecuteTemplate(w, "prohibited_access.tpl", data)
 		HandleError(w, err)
 		return false
 	}
 }
 
-// Handler index.
+// Handler error.
+func HandleError(w http.ResponseWriter, err error) {
+	if err != nil {
+		// http.Error(w, "Some thing wrong", 404)
+		http.Error(w, "Alguma coisa deu errado :(", http.StatusInternalServerError)
+		log.Println(err.Error())
+		return
+	}
+}
+
+// Favicon handler.
+func faviconHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	http.ServeFile(w, req, "./static/img/favicon.ico")
+}
+
+// Index handler.
 func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	var fd form_data_index
-	fd.Session, err = sessions.GetSession(req)
+	session, err := sessions.GetSession(req)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("session: ", fd.Session)
-	err = tmplIndex.ExecuteTemplate(w, "index.tpl", fd)
+	data := struct{ Session *Session }{session}
+	// fmt.Println("session: ", data.Session)
+	err = tmplIndex.ExecuteTemplate(w, "index.tpl", data)
 	HandleError(w, err)
 }
 

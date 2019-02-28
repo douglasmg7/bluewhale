@@ -59,7 +59,7 @@ func init() {
 }
 
 func main() {
-	// strat db
+	// Start data base.
 	db, err = sql.Open("sqlite3", "./db/bluewhale.db")
 	if err != nil {
 		log.Fatal(err)
@@ -70,25 +70,30 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// init router
+	// Init router.
 	router := httprouter.New()
 	router.GET("/favicon.ico", faviconHandler)
-	router.GET("/", index)
+	// router.GET("/", index)
+	router.GET("/", newSess(index, "asdf"))
+
 	// Clean the session cache.
 	router.GET("/clean_sessions", cleanSessions)
 
-	// auth - signup
+	// Auth - signup.
 	router.GET("/auth/signup", signup)
 	router.POST("/auth/signup", signup_post)
 	router.GET("/auth/signup/confirmation/:uuid", email_confirm)
-	// auth - signin/signout
+
+	// Auth - signin/signout.
 	router.GET("/auth/signin", signin)
 	router.POST("/auth/signin", signin_post)
 	router.GET("/auth/signout", signout)
 
+	// Entrance.
 	router.GET("/user_add", user_add)
 	router.GET("/entrance-add", entrance_add)
 
+	// Student.
 	router.GET("/student/all", student_all)
 	router.GET("/student/new", student_new)
 	router.POST("/student/save", student_save)
@@ -96,13 +101,25 @@ func main() {
 	router.GET("/user/:name", user)
 	router.GET("/blog/:category/:article", blogRead)
 
-	router.GET("/err", errExample)
-
 	// start server
 	router.ServeFiles("/static/*filepath", http.Dir("./static/"))
 	log.Println("listen port", port)
 	// Why log.Fall work here?
 	log.Fatal(http.ListenAndServe(":"+port, router))
+}
+
+type sess struct {
+	handler http.Handler
+	txt     string
+}
+
+func (s *sess) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	log.Println("Using middleware sess:", s.txt)
+	s.handler.ServeHTTP(w, r)
+}
+
+func newSess(handler http.Handler, txt string) *sess {
+	return &sess{handler: handler, txt: txt}
 }
 
 // production or development mode
@@ -115,20 +132,4 @@ func setMode() {
 		}
 	}
 	log.Println("production mode")
-}
-
-func errExample(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	http.Error(w, "Some thing wrong", 404)
-	return
-}
-
-func faviconHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	http.ServeFile(w, req, "./static/img/favicon.ico")
-}
-
-func HandleError(w http.ResponseWriter, err error) {
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Fatalln(err)
-	}
 }
