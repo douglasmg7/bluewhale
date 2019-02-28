@@ -17,6 +17,11 @@ type form_data_index struct {
 	Session *Session
 }
 
+// Form data prohibited access.
+type form_data_prohibited_access struct {
+	Session *Session
+}
+
 // Check permission.
 func checkPermission(w http.ResponseWriter, req *http.Request, session *Session, permission string) bool {
 	if session == nil {
@@ -26,7 +31,11 @@ func checkPermission(w http.ResponseWriter, req *http.Request, session *Session,
 	if session.CheckPermission(permission) {
 		return true
 	} else {
-		fmt.Fprintln(w, "Not allowed")
+		// fmt.Fprintln(w, "Not allowed")
+		var fd form_data_prohibited_access
+		fd.Session = session
+		err = tmplProhibitedAccess.ExecuteTemplate(w, "prohibited_access.tpl", fd)
+		HandleError(w, err)
 		return false
 	}
 }
@@ -34,14 +43,12 @@ func checkPermission(w http.ResponseWriter, req *http.Request, session *Session,
 // Handler index.
 func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	var fd form_data_index
-	// fmt.Fprintln(w, "ola")
-	if devMode == true {
-		tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
-		tmplAll["index"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
-	}
 	fd.Session, err = sessions.GetSession(req)
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Println("session: ", fd.Session)
-	err = tmplAll["index"].ExecuteTemplate(w, "index.tpl", fd)
+	err = tmplIndex.ExecuteTemplate(w, "index.tpl", fd)
 	HandleError(w, err)
 }
 
