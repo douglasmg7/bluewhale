@@ -8,9 +8,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
-var tmplMaster, tmplIndex, tmplAuthSignup, tmplAuthSignin, tmplProhibitedAccess *template.Template
+// var tmplMaster, tmplIndex, tmplAuthSignup, tmplAuthSignin, tmplDeniedAccess *template.Template
+var tmplMaster, tmplIndex, tmplAuthSignup, tmplAuthSignin, tmplDeniedAccess *template.Template
 var tmplAll map[string]*template.Template
 var db *sql.DB
 var err error
@@ -42,7 +44,7 @@ func init() {
 	tmplAuthSignup = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signup.tpl"))
 	tmplAuthSignin = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signin.tpl"))
 	// Prohibited access.
-	tmplProhibitedAccess = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/prohibited_access.tpl"))
+	tmplDeniedAccess = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/denied_access.tpl"))
 	// Index.
 	tmplIndex = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
 
@@ -73,56 +75,132 @@ func main() {
 	// Init router.
 	router := httprouter.New()
 	router.GET("/favicon.ico", faviconHandler)
-	// router.GET("/", index)
-	router.GET("/", newSess(index, "asdf"))
+	router.GET("/", getSession(indexHandler))
 
 	// Clean the session cache.
-	router.GET("/clean_sessions", cleanSessions)
+	router.GET("/clean_sessions", checkPermission(cleanSessionsHandler, "admin"))
 
 	// Auth - signup.
-	router.GET("/auth/signup", signup)
-	router.POST("/auth/signup", signup_post)
-	router.GET("/auth/signup/confirmation/:uuid", email_confirm)
+	router.GET("/auth/signup", confirmNoLogged(authSignupHandler))
+	router.POST("/auth/signup", confirmNoLogged(authSignupHandlerPost))
+	router.GET("/auth/signup/confirmation/:uuid", confirmNoLogged(authSignupConfirmationHandler))
 
 	// Auth - signin/signout.
-	router.GET("/auth/signin", signin)
-	router.POST("/auth/signin", signin_post)
-	router.GET("/auth/signout", signout)
+	router.GET("/auth/signin", confirmNoLogged(authSigninHandler))
+	router.POST("/auth/signin", confirmNoLogged(authSigninHandlerPost))
+	router.GET("/auth/signout", authSignoutHandler)
 
 	// Entrance.
-	router.GET("/user_add", user_add)
-	router.GET("/entrance-add", entrance_add)
+	router.GET("/user_add", userAddHandler)
+	router.GET("/entrance-add", entranceAddHandler)
 
 	// Student.
-	router.GET("/student/all", student_all)
-	router.GET("/student/new", student_new)
-	router.POST("/student/save", student_save)
+	router.GET("/student/all", studentAllHandler)
+	router.GET("/student/new", studentNewHandler)
+	router.POST("/student/save", studentSaveHandlerPost)
 
-	router.GET("/user/:name", user)
-	router.GET("/blog/:category/:article", blogRead)
+	router.GET("/user/:name", userHandler)
 
 	// start server
 	router.ServeFiles("/static/*filepath", http.Dir("./static/"))
 	log.Println("listen port", port)
 	// Why log.Fall work here?
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	// log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Fatal(http.ListenAndServe(":"+port, newLogger(router)))
 }
 
-type sess struct {
+/**************************************************************************************************
+* Middleware
+**************************************************************************************************/
+
+// Handle with session.
+type handleS func(w http.ResponseWriter, req *http.Request, p httprouter.Params, session *Session)
+
+// Get session middleware.
+func getSession(h handleS) httprouter.Handle {
+	return func(w http.ResponseWriter, req *http.Request, p httprouter.Params) {
+		// Get session.
+		session, err := sessions.GetSession(req)
+		if err != nil {
+			log.Fatal(err)
+		}
+		h(w, req, p, session)
+	}
+}
+
+// Check permission middleware.
+func checkPermission(h handleS, permission string) httprouter.Handle {
+	return func(w http.ResponseWriter, req *http.Request, p httprouter.Params) {
+		// Get session.
+		session, err := sessions.GetSession(req)
+		if err != nil {
+			log.Fatal(err)
+		}
+		// Not signed.
+		if session == nil {
+			http.Redirect(w, req, "/auth/signin", http.StatusSeeOther)
+			return
+		}
+		// Have the permission.
+		if permission == "" || session.CheckPermission(permission) {
+			h(w, req, p, session)
+			// No Permission.
+		} else {
+			// fmt.Fprintln(w, "Not allowed")
+			data := struct{ Session *Session }{session}
+			err = tmplDeniedAccess.ExecuteTemplate(w, "denied_access.tpl", data)
+			HandleError(w, err)
+		}
+	}
+}
+
+// Check if not logged.
+func confirmNoLogged(h httprouter.Handle) httprouter.Handle {
+	return func(w http.ResponseWriter, req *http.Request, p httprouter.Params) {
+		// Get session.
+		session, err := sessions.GetSession(req)
+		if err != nil {
+			log.Fatal(err)
+		}
+		// Not signed.
+		if session == nil {
+			h(w, req, p)
+			return
+		} else {
+			// fmt.Fprintln(w, "Not allowed")
+			data := struct{ Session *Session }{session}
+			err = tmplDeniedAccess.ExecuteTemplate(w, "denied_access.tpl", data)
+			HandleError(w, err)
+		}
+	}
+}
+
+/**************************************************************************************************
+* Logger middleware
+**************************************************************************************************/
+
+// Logger struct.
+type logger struct {
 	handler http.Handler
-	txt     string
 }
 
-func (s *sess) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Println("Using middleware sess:", s.txt)
-	s.handler.ServeHTTP(w, r)
+// Handle interface.
+func (l *logger) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	start := time.Now()
+	l.handler.ServeHTTP(w, req)
+	log.Printf("%s %s %v", req.Method, req.URL.Path, time.Since(start))
 }
 
-func newSess(handler http.Handler, txt string) *sess {
-	return &sess{handler: handler, txt: txt}
+// New logger.
+func newLogger(h http.Handler) *logger {
+	return &logger{handler: h}
 }
 
-// production or development mode
+/**************************************************************************************************
+* Run mode.
+**************************************************************************************************/
+
+// Define production or development mode.
 func setMode() {
 	for _, arg := range os.Args[1:] {
 		if arg == "dev" {

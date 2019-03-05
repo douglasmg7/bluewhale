@@ -19,7 +19,7 @@ type value_message struct {
 	Msg   string
 }
 type form_data_signin_tpl struct {
-	Session          Session
+	Session          *Session
 	Email            value_message
 	Password         value_message
 	WarnMsgHead      string
@@ -28,7 +28,7 @@ type form_data_signin_tpl struct {
 	SuccessMsgFooter string
 }
 type form_data_signup_tpl struct {
-	Session         Session
+	Session         *Session
 	Name            value_message
 	Email           value_message
 	Password        value_message
@@ -37,7 +37,12 @@ type form_data_signup_tpl struct {
 	SuccessMsg      string
 }
 
-func signup(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+/**************************************************************************************************
+* Signup
+**************************************************************************************************/
+
+// Signup page.
+func authSignupHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	if devMode == true {
 		tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
 		tmplAuthSignup = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signup.tpl"))
@@ -46,7 +51,8 @@ func signup(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	HandleError(w, err)
 }
 
-func signup_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+// Signup post.
+func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	var fd form_data_signup_tpl
 	fd.Name.Value, fd.Name.Msg = bluetang.Name(req.FormValue("name"))
 	fd.Email.Value, fd.Email.Msg = bluetang.Email(req.FormValue("email"))
@@ -137,7 +143,8 @@ func signup_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
 	}
 }
 
-func email_confirm(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+// Signup confirmation.
+func authSignupConfirmationHandler(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
 	// Find email certify.
 	uuid := ps.ByName("uuid")
 	var name, email string
@@ -186,8 +193,12 @@ func email_confirm(w http.ResponseWriter, req *http.Request, ps httprouter.Param
 	HandleError(w, err)
 }
 
+/**************************************************************************************************
+* Signin
+**************************************************************************************************/
+
 // Signin page.
-func signin(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func authSigninHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	if devMode == true {
 		tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
 		tmplAuthSignin = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signin.tpl"))
@@ -197,7 +208,7 @@ func signin(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 }
 
 // Signin post.
-func signin_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func authSigninHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	var fd form_data_signin_tpl
 	// Test email format.
 	fd.Email.Value, fd.Email.Msg = bluetang.Email(req.FormValue("email"))
@@ -251,7 +262,7 @@ func signin_post(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
 }
 
 // Signout.
-func signout(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func authSignoutHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	sessions.RemoveSession(w, req)
 }
 

@@ -12,31 +12,15 @@ import (
 	"time"
 )
 
-// Check permission.
-func checkPermission(w http.ResponseWriter, req *http.Request, session *Session, permission string) bool {
-	// Not signed.
-	if session == nil {
-		http.Redirect(w, req, "/auth/signin", http.StatusSeeOther)
-		return false
-	}
-	// Have permission.
-	if session.CheckPermission(permission) {
-		return true
-		// No Permission.
-	} else {
-		// fmt.Fprintln(w, "Not allowed")
-		data := struct{ Session *Session }{session}
-		err = tmplProhibitedAccess.ExecuteTemplate(w, "prohibited_access.tpl", data)
-		HandleError(w, err)
-		return false
-	}
-}
-
 // Handler error.
 func HandleError(w http.ResponseWriter, err error) {
 	if err != nil {
 		// http.Error(w, "Some thing wrong", 404)
-		http.Error(w, "Alguma coisa deu errado :(", http.StatusInternalServerError)
+		if devMode {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		} else {
+			http.Error(w, "Alguma coisa deu errado", http.StatusInternalServerError)
+		}
 		log.Println(err.Error())
 		return
 	}
@@ -48,11 +32,7 @@ func faviconHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 }
 
 // Index handler.
-func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	session, err := sessions.GetSession(req)
-	if err != nil {
-		log.Fatal(err)
-	}
+func indexHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
 	data := struct{ Session *Session }{session}
 	// fmt.Println("session: ", data.Session)
 	err = tmplIndex.ExecuteTemplate(w, "index.tpl", data)
@@ -60,23 +40,17 @@ func index(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 }
 
 // Clean sessions cache, needed when some db update occurs.
-func cleanSessions(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	session, err := sessions.GetSession(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if checkPermission(w, req, session, "admin") {
-		sessions.CleanSessions()
-		http.Redirect(w, req, "/", http.StatusSeeOther)
-	}
+func cleanSessionsHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+	sessions.CleanSessions()
+	http.Redirect(w, req, "/", http.StatusSeeOther)
 }
 
-func user_add(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func userAddHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	err := tmplAll["user_add"].ExecuteTemplate(w, "user_add.tpl", nil)
 	HandleError(w, err)
 }
 
-func entrance_add(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func entranceAddHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	if devMode == true {
 		tmplAll["entrance_add"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/entrance_add.tpl"))
 	}
@@ -85,7 +59,7 @@ func entrance_add(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
 }
 
 // list all stundents
-func student_all(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func studentAllHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 	// id, err := uuid.NewV4()
 	// if err != nil {
@@ -128,7 +102,7 @@ func student_all(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
 }
 
 // show new student page
-func student_new(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func studentNewHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	// fmt.Fprintf(w, "teste")
 	// c, err := req.Cookie("uuid")
 	// if err == http.ErrNoCookie {
@@ -148,7 +122,7 @@ func student_new(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
 }
 
 // create a new student
-func student_save(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func studentSaveHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	type vm struct {
 		Value string
 		Msg   string
@@ -200,11 +174,6 @@ func student_save(w http.ResponseWriter, req *http.Request, _ httprouter.Params)
 	}
 }
 
-func user(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+func userHandler(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
 	fmt.Fprintf(w, "USER, %s!\n", ps.ByName("name"))
-}
-
-func blogRead(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
-	fmt.Fprintf(w, "READ CATEGORY, %s!\n", ps.ByName("category"))
-	fmt.Fprintf(w, "READ ARTICLE, %s!\n", ps.ByName("article"))
 }
