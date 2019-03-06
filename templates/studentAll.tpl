@@ -6,7 +6,7 @@
   <section class="section">
     <h1 class="title">Alunos</h2>
     <div class="container">
-      {{range .}}
+      {{range .Names}}
         <h2 class="subtitle">
           <a href="">{{.}}</a>
         </h2>

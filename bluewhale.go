@@ -11,12 +11,27 @@ import (
 	"time"
 )
 
-// var tmplMaster, tmplIndex, tmplAuthSignup, tmplAuthSignin, tmplDeniedAccess *template.Template
-var tmplMaster, tmplIndex, tmplAuthSignup, tmplAuthSignin, tmplDeniedAccess *template.Template
-var tmplAll map[string]*template.Template
+/************************************************************************************************
+* Templates
+************************************************************************************************/
+// Geral.
+var tmplMaster, tmplIndex, tmplDeniedAccess *template.Template
+
+// Auth.
+var tmplAuthSignup, tmplAuthSignin *template.Template
+
+// Student.
+var tmplStudentAll, tmplStudentNew *template.Template
 var db *sql.DB
 var err error
 
+// User.
+var tmplUserAdd *template.Template
+
+// Entrance.
+var tmplEntreanceAdd *template.Template
+
+// Development mode.
 var devMode bool = false
 
 const port = "8080"
@@ -36,23 +51,23 @@ func init() {
 	// production or development mode
 	setMode()
 
-	// Load templates
+	/************************************************************************************************
+	* Load templates
+	************************************************************************************************/
+	// Geral.
 	tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
-	tmplAll = make(map[string]*template.Template)
-
+	tmplIndex = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
+	tmplDeniedAccess = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/deniedAccess.tpl"))
 	// Auth.
 	tmplAuthSignup = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signup.tpl"))
 	tmplAuthSignin = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signin.tpl"))
-	// Prohibited access.
-	tmplDeniedAccess = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/denied_access.tpl"))
-	// Index.
-	tmplIndex = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
-
-	tmplAll["student_all"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student_all.tpl"))
-	tmplAll["student_new"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student_new.tpl"))
-	tmplAll["user_add"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/user_add.tpl"))
-
-	tmplAll["entrance_add"] = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/entrance_add.tpl"))
+	// Student.
+	tmplStudentAll = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/studentAll.tpl"))
+	tmplStudentNew = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/studentNew.tpl"))
+	// User.
+	tmplUserAdd = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/userAdd.tpl"))
+	// Entrance.
+	tmplEntreanceAdd = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/entranceAdd.tpl"))
 
 	// debug templates
 	// for _, tplItem := range tmplAll["user_add"].Templates() {
@@ -95,10 +110,11 @@ func main() {
 	router.GET("/entrance-add", entranceAddHandler)
 
 	// Student.
-	router.GET("/student/all", studentAllHandler)
-	router.GET("/student/new", studentNewHandler)
-	router.POST("/student/save", studentSaveHandlerPost)
+	router.GET("/student/all", checkPermission(studentAllHandler, "editStudent"))
+	router.GET("/student/new", checkPermission(studentNewHandler, "editStudent"))
+	router.POST("/student/save", checkPermission(studentSaveHandlerPost, "editStudent"))
 
+	// Example.
 	router.GET("/user/:name", userHandler)
 
 	// start server

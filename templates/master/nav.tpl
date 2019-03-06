@@ -15,6 +15,7 @@
   <div class="navbar-menu" id="navbarBasicExample">
     <!-- <div class="navbar-start"> -->
     <div class="navbar-end">
+      
       <!-- Admin -->
       {{if .Session }} {{if .Session.CheckPermission "admin"}}
       <div class="navbar-item has-dropdown is-hoverable">
@@ -36,21 +37,23 @@
       </div>
       {{end}} {{end}}
       <!-- End Admin -->
+
       <!-- Student -->
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link" href="/stuent/all">
           Aluno
         </a>
         <div class="navbar-dropdown">
-          <a class="navbar-item" href="/student/new">
+          <a class="navbar-item" href="/student/all">
             Alunos
           </a>
-          <a class="navbar-item">
+          <a class="navbar-item" href="/student/new">
             Novo aluno
           </a>
         </div>
       </div>
       <!-- End Student -->
+
       <!-- Login -->
       {{if not .Session}}<a class="navbar-item" href="/auth/signin"> Entrar </a>{{end}}
       <!-- User name -->

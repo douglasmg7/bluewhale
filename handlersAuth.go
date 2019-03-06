@@ -14,14 +14,10 @@ import (
 	"time"
 )
 
-type value_message struct {
-	Value string
-	Msg   string
-}
 type form_data_signin_tpl struct {
 	Session          *Session
-	Email            value_message
-	Password         value_message
+	Email            valueMsg
+	Password         valueMsg
 	WarnMsgHead      string
 	SuccessMsgHead   string
 	WarnMsgFooter    string
@@ -29,10 +25,10 @@ type form_data_signin_tpl struct {
 }
 type form_data_signup_tpl struct {
 	Session         *Session
-	Name            value_message
-	Email           value_message
-	Password        value_message
-	PasswordConfirm value_message
+	Name            valueMsg
+	Email           valueMsg
+	Password        valueMsg
+	PasswordConfirm valueMsg
 	WarnMsg         string
 	SuccessMsg      string
 }
@@ -255,9 +251,6 @@ func authSigninHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 	}
 	// Logged, redirect to main page.
 	http.Redirect(w, req, "/", http.StatusSeeOther)
-	// Render index page.
-	// err = tmplAll["index"].ExecuteTemplate(w, "index.tpl", nil)
-	// HandleError(w, err)
 	return
 }
 

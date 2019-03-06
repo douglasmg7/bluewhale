@@ -17,7 +17,7 @@
       </div>
 
       <div class="field">
-        <label for="email" class="label">e-mail</label>
+        <label for="email" class="label">E-mail</label>
         <div class="control">
           <input class="input" type="text" placeholder="" id="email" name="email" value={{.Email.Value}}>
         </div>
