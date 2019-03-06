@@ -21,7 +21,7 @@ var tmplMaster, tmplIndex, tmplDeniedAccess *template.Template
 var tmplAuthSignup, tmplAuthSignin *template.Template
 
 // Student.
-var tmplStudentAll, tmplStudentNew *template.Template
+var tmplStudent, tmplStudentAll, tmplStudentNew *template.Template
 var db *sql.DB
 var err error
 
@@ -62,6 +62,7 @@ func init() {
 	tmplAuthSignup = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signup.tpl"))
 	tmplAuthSignin = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signin.tpl"))
 	// Student.
+	tmplStudent = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student.tpl"))
 	tmplStudentAll = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/studentAll.tpl"))
 	tmplStudentNew = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/studentNew.tpl"))
 	// User.
@@ -110,9 +111,10 @@ func main() {
 	router.GET("/entrance-add", entranceAddHandler)
 
 	// Student.
-	router.GET("/student/all", checkPermission(studentAllHandler, "editStudent"))
-	router.GET("/student/new", checkPermission(studentNewHandler, "editStudent"))
-	router.POST("/student/save", checkPermission(studentSaveHandlerPost, "editStudent"))
+	router.GET("/student/all", checkPermission(allStudentHandler, "editStudent"))
+	router.GET("/student/new", checkPermission(newStudentHandler, "editStudent"))
+	router.POST("/student/new", checkPermission(newStudentHandlerPost, "editStudent"))
+	router.GET("/student/id/:id", checkPermission(studentByIdHandler, "editStudent"))
 
 	// Example.
 	router.GET("/user/:name", userHandler)

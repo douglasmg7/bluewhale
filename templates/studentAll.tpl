@@ -6,9 +6,9 @@
   <section class="section">
     <h1 class="title">Alunos</h2>
     <div class="container">
-      {{range .Names}}
+      {{range .Students}}
         <h2 class="subtitle">
-          <a href="">{{.}}</a>
+          <a href="/student/id/{{.Id}}">{{.Name}}</a>
         </h2>
       {{end}}
     </div>

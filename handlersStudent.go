@@ -4,13 +4,14 @@ import (
 	"github.com/douglasmg7/bluetang"
 	"github.com/julienschmidt/httprouter"
 	// _ "github.com/mattn/go-sqlite3"
+	"database/sql"
 	"log"
 	"net/http"
 	"time"
 )
 
-// List one student.
-func studentHandler(w http.ResponseWriter, req *http.Request, p httprouter.Params, session *Session) {
+// Student by email.
+func studentByIdHandler(w http.ResponseWriter, req *http.Request, p httprouter.Params, session *Session) {
 	data := struct {
 		Session *Session
 		Name    string
@@ -20,7 +21,7 @@ func studentHandler(w http.ResponseWriter, req *http.Request, p httprouter.Param
 		Session: session,
 	}
 	// Get the student.
-	err := db.QueryRow("select name, email, mobile from student where email = ?", p.ByName("email")).Scan(&data.Name, &data.Email, &data.Mobile)
+	err := db.QueryRow("select name, email, mobile from student where id = ?", p.ByName("id")).Scan(&data.Name, &data.Email, &data.Mobile)
 	if err != nil && err != sql.ErrNoRows {
 		log.Fatal(err)
 	}
@@ -29,29 +30,33 @@ func studentHandler(w http.ResponseWriter, req *http.Request, p httprouter.Param
 }
 
 // List all stundents.
-func studentAllHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func allStudentHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+	type student struct {
+		Id   string
+		Name string
+	}
 	data := struct {
-		Session *Session
-		Names   []string
+		Session  *Session
+		Students []student
 	}{
-		Session: session,
-		Names:   []string{},
+		Session:  session,
+		Students: []student{},
 	}
 	// names := make([]string, 0)
 	// Get all students.
-	rows, err := db.Query("select name from student")
+	rows, err := db.Query("select id, name from student")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var name string
-		err := rows.Scan(&name)
+		var student student
+		err := rows.Scan(&student.Id, &student.Name)
 		if err != nil {
 			log.Fatal(err)
 		}
-		data.Names = append(data.Names, name)
+		data.Students = append(data.Students, student)
 		// log.Println(id, name)
 	}
 	if err = rows.Err(); err != nil {
@@ -62,7 +67,7 @@ func studentAllHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Pa
 }
 
 // New student page.
-func studentNewHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func newStudentHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
 	data := struct {
 		Session *Session
 		Name    valueMsg
@@ -76,7 +81,7 @@ func studentNewHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Pa
 }
 
 // Save new student.
-func studentSaveHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func newStudentHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
 	data := struct {
 		Session *Session
 		Name    valueMsg

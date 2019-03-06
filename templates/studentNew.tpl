@@ -4,7 +4,7 @@
 
 {{define "body"}}
   <section class="section">
-    <form class="container" action="/student/save" method="post">
+    <form class="container" action="/student/new" method="post">
 
       <h1 class="title">Adicionar aluno</h2>
 
