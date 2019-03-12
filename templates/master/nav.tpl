@@ -26,13 +26,13 @@
           <a class="navbar-item" href="/clean_sessions">
             Clean session
           </a>
-          <a class="navbar-item">
+<!--           <a class="navbar-item">
             Contact
           </a>
           <hr class="navbar-divider">
           <a class="navbar-item">
            Temp 
-          </a>
+          </a> -->
         </div>
       </div>
       {{end}} {{end}}
