@@ -2,10 +2,11 @@
 
 {{define "title"}}Adicionar aluno{{end}}
 
-{{define "body"}}
+{{define "main"}}
+<div class="main">
   <section class="section">
-    <h1 class="title">Alunos</h2>
     <div class="container">
+      <h1 class="title">Alunos</h2>
       {{range .Students}}
         <h2 class="subtitle">
           <a href="/student/id/{{.Id}}">{{.Name}}</a>
@@ -13,4 +14,5 @@
       {{end}}
     </div>
   </section>
+</div>
 {{end}}

@@ -13,9 +13,10 @@
         <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700'>
     </head>
     <body>
-        {{template "nav" .}}
-        {{template "body" .}}
-        <!-- {{template "footer" .}} -->
+        {{template "message" .}}
+        {{template "header" .}}
+        {{template "main" .}}
+        {{template "footer" .}}
     </body>
 </html>
 {{end}}

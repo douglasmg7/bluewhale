@@ -15,13 +15,16 @@ import (
 * Templates
 ************************************************************************************************/
 // Geral.
-var tmplMaster, tmplIndex, tmplIndexBanner, tmplDeniedAccess *template.Template
+var tmplMaster, tmplIndex, tmplDeniedAccess *template.Template
+
+// Info.
+var tmplInstitutional *template.Template
 
 // Auth.
 var tmplAuthSignup, tmplAuthSignin *template.Template
 
 // Student.
-var tmplStudent, tmplStudentAll, tmplStudentNew *template.Template
+var tmplStudent, tmplAllStudent, tmplNewStudent *template.Template
 var db *sql.DB
 var err error
 
@@ -57,15 +60,16 @@ func init() {
 	// Geral.
 	tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
 	tmplIndex = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
-	tmplIndexBanner = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/indexBanner.tpl"))
 	tmplDeniedAccess = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/deniedAccess.tpl"))
+	// Info.
+	tmplInstitutional = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/institutional.tpl"))
 	// Auth.
 	tmplAuthSignup = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signup.tpl"))
 	tmplAuthSignin = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signin.tpl"))
 	// Student.
 	tmplStudent = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student.tpl"))
-	tmplStudentAll = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/studentAll.tpl"))
-	tmplStudentNew = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/studentNew.tpl"))
+	tmplAllStudent = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/allStudent.tpl"))
+	tmplNewStudent = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/newStudent.tpl"))
 	// User.
 	tmplUserAdd = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/userAdd.tpl"))
 	// Entrance.
@@ -92,11 +96,13 @@ func main() {
 	// Init router.
 	router := httprouter.New()
 	router.GET("/favicon.ico", faviconHandler)
-	router.GET("/", getSession(indexBannerHandler))
-	router.GET("/_", getSession(indexHandler))
+	router.GET("/", getSession(indexHandler))
 
 	// Clean the session cache.
 	router.GET("/clean_sessions", checkPermission(cleanSessionsHandler, "admin"))
+
+	// Info.
+	router.GET("/info/institutional", getSession(institutionalHandler))
 
 	// Auth - signup.
 	router.GET("/auth/signup", confirmNoLogged(authSignupHandler))
@@ -167,8 +173,11 @@ func checkPermission(h handleS, permission string) httprouter.Handle {
 			// No Permission.
 		} else {
 			// fmt.Fprintln(w, "Not allowed")
-			data := struct{ Session *Session }{session}
-			err = tmplDeniedAccess.ExecuteTemplate(w, "denied_access.tpl", data)
+			data := struct {
+				Session     *Session
+				HeadMessage string
+			}{Session: session}
+			err = tmplDeniedAccess.ExecuteTemplate(w, "deniedAccess.tpl", data)
 			HandleError(w, err)
 		}
 	}

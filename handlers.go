@@ -38,17 +38,12 @@ func faviconHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 
 // Index handler.
 func indexHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
-	data := struct{ Session *Session }{session}
+	data := struct {
+		Session     *Session
+		HeadMessage string
+	}{session, "Aviso de regatta na Lagoa dos Ingleses, dia 18/03/2019"}
 	// fmt.Println("session: ", data.Session)
 	err = tmplIndex.ExecuteTemplate(w, "index.tpl", data)
-	HandleError(w, err)
-}
-
-// Index handler.
-func indexBannerHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
-	data := struct{ Session *Session }{session}
-	// fmt.Println("session: ", data.Session)
-	err = tmplIndexBanner.ExecuteTemplate(w, "indexBanner.tpl", data)
 	HandleError(w, err)
 }
 

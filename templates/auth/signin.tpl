@@ -1,8 +1,9 @@
 {{template "base" .}}
 {{define "title"}}Autenticação{{end}}
-{{define "body"}}
+{{define "main"}}
+<div class="main">
   <section class="section">
-    <form class="container has-text-centered" action="/auth/signin" method="post" style="max-width:300px;">
+    <form class="container has-text-centered box" action="/auth/signin" method="post" style="max-width:300px;">
       <!-- title -->
       <h1 class="subtitle is-3">Autenticação</h2>
       <!-- message success head-->
@@ -69,4 +70,5 @@
       {{end}}
     </form>
   </section>
+</div>
 {{end}}

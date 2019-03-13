@@ -1,11 +1,13 @@
 {{template "base" .}}
 
-{{define "title"}}Página inicial{{end}}
+{{define "title"}}Acesso negado.{{end}}
 
-{{define "body"}}
+{{define "main"}}
+<div class="main">
   <section class="section">
     <div class="container">
       <h1 class="title">Acesso negado</h2>
     </div>
   </section>
+</div>
 {{end}}

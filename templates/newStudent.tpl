@@ -1,8 +1,7 @@
 {{template "base" .}}
-
 {{define "title"}}Adicionar aluno{{end}}
-
-{{define "body"}}
+{{define "main"}}
+<div class="main">
   <section class="section">
     <form class="container" action="/student/new" method="post">
 
@@ -43,4 +42,5 @@
 
     </form>
   </section>
+</div>
 {{end}}

@@ -13,10 +13,11 @@ import (
 // Student by email.
 func studentByIdHandler(w http.ResponseWriter, req *http.Request, p httprouter.Params, session *Session) {
 	data := struct {
-		Session *Session
-		Name    string
-		Email   string
-		Mobile  string
+		Session     *Session
+		HeadMessage string
+		Name        string
+		Email       string
+		Mobile      string
 	}{
 		Session: session,
 	}
@@ -36,12 +37,10 @@ func allStudentHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Pa
 		Name string
 	}
 	data := struct {
-		Session  *Session
-		Students []student
-	}{
-		Session:  session,
-		Students: []student{},
-	}
+		Session     *Session
+		HeadMessage string
+		Students    []student
+	}{session, "", []student{}}
 	// names := make([]string, 0)
 	// Get all students.
 	rows, err := db.Query("select id, name from student")
@@ -62,31 +61,33 @@ func allStudentHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Pa
 	if err = rows.Err(); err != nil {
 		log.Fatal(err)
 	}
-	err = tmplStudentAll.ExecuteTemplate(w, "studentAll.tpl", data)
+	err = tmplAllStudent.ExecuteTemplate(w, "allStudent.tpl", data)
 	HandleError(w, err)
 }
 
 // New student page.
 func newStudentHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
 	data := struct {
-		Session *Session
-		Name    valueMsg
-		Email   valueMsg
-		Mobile  valueMsg
+		Session     *Session
+		HeadMessage string
+		Name        valueMsg
+		Email       valueMsg
+		Mobile      valueMsg
 	}{
 		Session: session,
 	}
-	err = tmplStudentNew.ExecuteTemplate(w, "studentNew.tpl", data)
+	err = tmplNewStudent.ExecuteTemplate(w, "newStudent.tpl", data)
 	HandleError(w, err)
 }
 
 // Save new student.
 func newStudentHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
 	data := struct {
-		Session *Session
-		Name    valueMsg
-		Email   valueMsg
-		Mobile  valueMsg
+		Session     *Session
+		HeadMessage string
+		Name        valueMsg
+		Email       valueMsg
+		Mobile      valueMsg
 	}{
 		Session: session,
 	}
@@ -95,7 +96,7 @@ func newStudentHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 	data.Mobile.Value, data.Mobile.Msg = bluetang.Mobile(req.FormValue("mobile"))
 	// return page with field erros
 	if data.Name.Msg != "" || data.Email.Msg != "" || data.Mobile.Msg != "" {
-		err := tmplStudentNew.ExecuteTemplate(w, "studentNew.tpl", data)
+		err := tmplNewStudent.ExecuteTemplate(w, "newStudent.tpl", data)
 		HandleError(w, err)
 		// save student
 	} else {
@@ -114,7 +115,7 @@ func newStudentHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 		}
 		// student alredy registered
 		if data.Email.Msg != "" {
-			err := tmplStudentNew.ExecuteTemplate(w, "studentNew.tpl", data)
+			err := tmplNewStudent.ExecuteTemplate(w, "newStudent.tpl", data)
 			HandleError(w, err)
 			// insert student into db
 		} else {

@@ -7,6 +7,7 @@
 <header>
   <nav class="navbar">
     <div class="container">
+
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
           <img style="max-height: 36px;" src="/static/img/sail2.jpg">
@@ -18,7 +19,48 @@
           <span aria-hidden="true"></span>
         </a>
       </div>
+
       <div class="navbar-menu" id="mainNav">
+
+        <div class="navbar-start">
+          <!-- Institutional. -->
+          <a class="navbar-item" href="/info/institutional"> Institucional </a>
+          <!-- Admin -->
+          <div class="navbar-item has-dropdown is-hoverable">
+            <!-- <a class="navbar-link is-arrowless"> -->
+            <a class="navbar-link">
+              Cursos e serviços
+            </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="/info">
+                Aulas de vela para crianças
+              </a>
+              <a class="navbar-item" href="/info">
+                Aulas de vela para adultos
+              </a>
+              <a class="navbar-item" href="/info">
+                Passeios
+              </a>
+              <a class="navbar-item" href="/info">
+                Aluguel de veleiros
+              </a>
+              <a class="navbar-item" href="/info">
+                Aulas de remo
+              </a>
+              <a class="navbar-item" href="/info">
+                Aluguel de caiaques e bikes aquáticas
+              </a>
+              <a class="navbar-item" href="/info">
+                Fábrica náutica
+              </a>
+            </div>
+          </div>
+          <a class="navbar-item" href="/info">Projetos e iniciativas</a>
+          <a class="navbar-item" href="/info">Contato</a>
+          <a class="navbar-item" href="/info">Blog</a>
+          <a class="navbar-item" href="/info">Área do aluno</a>
+        </div>
+
         <!-- <div class="navbar-start"> -->
         <div class="navbar-end">
           <!-- Admin -->
@@ -37,6 +79,7 @@
           {{end}} {{end}}
           <!-- End Admin -->
           <!-- Student -->
+          {{if .Session }} {{if .Session.CheckPermission "editStudent"}}
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
               Aluno
@@ -50,6 +93,7 @@
               </a>
             </div>
           </div>
+          {{end}} {{end}}
           <!-- End Student -->
           <!-- Login -->
           {{if not .Session}}<a class="navbar-item" href="/auth/signin"> Entrar </a>{{end}}

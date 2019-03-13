@@ -1,14 +1,14 @@
 {{template "base" .}}
-
 {{define "title"}}Aluno{{end}}
-
-{{define "body"}}
+{{define "main"}}
+<div class="main">
   <section class="section">
-    <h1 class="title">Aluno</h2>
     <div class="container">
-      <h2 class="subtitle">{{.Name}}</h2>
-      <h2 class="subtitle">{{.Email}}</h2>
-      <h2 class="subtitle">{{.Mobile}}</h2>
+      <p class="title">Aluno</p>
+      <p class="subtitle">{{.Name}}</p>
+      <p class="subtitle">{{.Email}}</p>
+      <p class="subtitle">{{.Mobile}}</p>
     </div>
   </section>
+</div>
 {{end}}

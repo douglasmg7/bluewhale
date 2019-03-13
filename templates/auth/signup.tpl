@@ -1,8 +1,9 @@
 {{template "base" .}}
 {{define "title"}}Cadastro{{end}}
-{{define "body"}}
+{{define "main"}}
+<div class="main">
   <section class="section">
-    <form class="container has-text-centered" action="/auth/signup" method="post" style="max-width:300px;">
+    <form class="container has-text-centered box" action="/auth/signup" method="post" style="max-width:300px;">
       <!-- title -->
       <h1 class="subtitle is-3">Cadastro</h2>
       <!-- name -->
@@ -65,4 +66,5 @@
       {{end}}
     </form>
   </section>
+</div>
 {{end}}

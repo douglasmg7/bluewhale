@@ -14,8 +14,9 @@ import (
 	"time"
 )
 
-type form_data_signin_tpl struct {
+type signinTplData struct {
 	Session          *Session
+	HeadMessage      string
 	Email            valueMsg
 	Password         valueMsg
 	WarnMsgHead      string
@@ -23,8 +24,9 @@ type form_data_signin_tpl struct {
 	WarnMsgFooter    string
 	SuccessMsgFooter string
 }
-type form_data_signup_tpl struct {
+type signupTplData struct {
 	Session         *Session
+	HeadMessage     string
 	Name            valueMsg
 	Email           valueMsg
 	Password        valueMsg
@@ -39,65 +41,66 @@ type form_data_signup_tpl struct {
 
 // Signup page.
 func authSignupHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	data := signupTplData{}
 	if devMode == true {
 		tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
 		tmplAuthSignup = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signup.tpl"))
 	}
-	err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", nil)
+	err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
 	HandleError(w, err)
 }
 
 // Signup post.
 func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	var fd form_data_signup_tpl
-	fd.Name.Value, fd.Name.Msg = bluetang.Name(req.FormValue("name"))
-	fd.Email.Value, fd.Email.Msg = bluetang.Email(req.FormValue("email"))
-	fd.Password.Value, fd.Password.Msg = bluetang.Password(req.FormValue("password"))
-	if fd.Password.Msg == "" {
+	var data signupTplData
+	data.Name.Value, data.Name.Msg = bluetang.Name(req.FormValue("name"))
+	data.Email.Value, data.Email.Msg = bluetang.Email(req.FormValue("email"))
+	data.Password.Value, data.Password.Msg = bluetang.Password(req.FormValue("password"))
+	if data.Password.Msg == "" {
 		if req.FormValue("password") != req.FormValue("passwordConfirm") {
-			fd.PasswordConfirm.Msg = "Confirmação da senha e senha devem ser iguais"
+			data.PasswordConfirm.Msg = "Confirmação da senha e senha devem ser iguais"
 		}
 	}
 	// Return page with field erros.
-	if fd.Name.Msg != "" || fd.Email.Msg != "" || fd.Password.Msg != "" || fd.PasswordConfirm.Msg != "" {
-		err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", fd)
+	if data.Name.Msg != "" || data.Email.Msg != "" || data.Password.Msg != "" || data.PasswordConfirm.Msg != "" {
+		err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
 		HandleError(w, err)
 		return
 		// Save student.
 	} else {
 		// Verify if email alredy registered.
-		rows, err := db.Query("select email from user where email = ?", fd.Email.Value)
+		rows, err := db.Query("select email from user where email = ?", data.Email.Value)
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer rows.Close()
 
 		for rows.Next() {
-			fd.Email.Msg = "Email já cadastrado"
+			data.Email.Msg = "Email já cadastrado"
 		}
 		if err = rows.Err(); err != nil {
 			log.Fatal(err)
 		}
 		// Email alredy registered.
-		if fd.Email.Msg != "" {
-			err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", fd)
+		if data.Email.Msg != "" {
+			err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
 			HandleError(w, err)
 			return
 		}
 		// Certify if alredy have email certify waiting confirmation.
 		var count int
-		err = db.QueryRow("select count(*) from email_certify where email = ?", fd.Email.Value).Scan(&count)
+		err = db.QueryRow("select count(*) from email_certify where email = ?", data.Email.Value).Scan(&count)
 		if err != nil {
 			log.Fatal(err)
 		}
 		if count > 0 {
-			fd.WarnMsg = "O email " + fd.Email.Value + " já foi cadastrado anteriormente, falta confirmação do cadastro atravéz do link enviado para o respectivo email"
-			fd.Name.Value = ""
-			fd.Email.Value = ""
-			fd.Password.Value = ""
-			fd.PasswordConfirm.Value = ""
-			fd.SuccessMsg = ""
-			err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", fd)
+			data.WarnMsg = "O email " + data.Email.Value + " já foi cadastrado anteriormente, falta confirmação do cadastro atravéz do link enviado para o respectivo email"
+			data.Name.Value = ""
+			data.Email.Value = ""
+			data.Password.Value = ""
+			data.PasswordConfirm.Value = ""
+			data.SuccessMsg = ""
+			err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
 			HandleError(w, err)
 			return
 		}
@@ -107,7 +110,7 @@ func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 			log.Fatal(err)
 		}
 		// Encrypt password.
-		cryptedPassword, err := bcrypt.GenerateFromPassword([]byte(fd.Password.Value), bcrypt.DefaultCost)
+		cryptedPassword, err := bcrypt.GenerateFromPassword([]byte(data.Password.Value), bcrypt.DefaultCost)
 		if err != nil {
 			http.Error(w, "Erro interno do servidor", http.StatusInternalServerError)
 			return
@@ -118,7 +121,7 @@ func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 			log.Fatal(err)
 		}
 		defer stmt.Close()
-		_, err = stmt.Exec(uuid.String(), fd.Name.Value, fd.Email.Value, cryptedPassword, time.Now().String())
+		_, err = stmt.Exec(uuid.String(), data.Name.Value, data.Email.Value, cryptedPassword, time.Now().String())
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -127,13 +130,13 @@ func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 			log.Println(`http://localhost:8080/auth/signup/confirmation/` + uuid.String())
 		}
 		// Render success page.
-		fd.SuccessMsg = "Foi enviado um e-mail para " + fd.Email.Value + " com instruções para completar o cadastro."
-		fd.Name.Value = ""
-		fd.Email.Value = ""
-		fd.Password.Value = ""
-		fd.PasswordConfirm.Value = ""
-		fd.WarnMsg = ""
-		err = tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", fd)
+		data.SuccessMsg = "Foi enviado um e-mail para " + data.Email.Value + " com instruções para completar o cadastro."
+		data.Name.Value = ""
+		data.Email.Value = ""
+		data.Password.Value = ""
+		data.PasswordConfirm.Value = ""
+		data.WarnMsg = ""
+		err = tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
 		HandleError(w, err)
 		return
 	}
@@ -145,7 +148,7 @@ func authSignupConfirmationHandler(w http.ResponseWriter, req *http.Request, ps 
 	uuid := ps.ByName("uuid")
 	var name, email string
 	var password []byte
-	var fd form_data_signin_tpl
+	var data signinTplData
 	err = db.QueryRow("SELECT name, email, password FROM email_certify WHERE uuid = ?", uuid).Scan(&name, &email, &password)
 	if err != nil && err != sql.ErrNoRows {
 		log.Fatal(err)
@@ -172,20 +175,20 @@ func authSignupConfirmationHandler(w http.ResponseWriter, req *http.Request, ps 
 		if err != nil {
 			log.Fatal(err)
 		}
-		fd.SuccessMsgHead = "Seu cadastro foi confirmado, você já pode se autenticar"
-		fd.WarnMsgHead = ""
+		data.SuccessMsgHead = "Seu cadastro foi confirmado, você já pode se autenticar"
+		data.WarnMsgHead = ""
 	}
 	// No email certify exist.
 	if name == "" {
-		fd.SuccessMsgHead = ""
-		fd.WarnMsgHead = "Seu cadastro já foi confirmado ou link para a confirmação expirou."
+		data.SuccessMsgHead = ""
+		data.WarnMsgHead = "Seu cadastro já foi confirmado ou link para a confirmação expirou."
 	}
 	if devMode == true {
 		tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
 		tmplAuthSignin = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signin.tpl"))
 	}
 	// Render page.
-	err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", fd)
+	err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", data)
 	HandleError(w, err)
 }
 
@@ -195,32 +198,29 @@ func authSignupConfirmationHandler(w http.ResponseWriter, req *http.Request, ps 
 
 // Signin page.
 func authSigninHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	if devMode == true {
-		tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
-		tmplAuthSignin = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signin.tpl"))
-	}
-	err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", nil)
+	data := signinTplData{}
+	err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", data)
 	HandleError(w, err)
 }
 
 // Signin post.
 func authSigninHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	var fd form_data_signin_tpl
+	var data signinTplData
 	// Test email format.
-	fd.Email.Value, fd.Email.Msg = bluetang.Email(req.FormValue("email"))
-	if fd.Email.Msg != "" {
-		err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", fd)
+	data.Email.Value, data.Email.Msg = bluetang.Email(req.FormValue("email"))
+	if data.Email.Msg != "" {
+		err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", data)
 		HandleError(w, err)
 		return
 	}
 	// Get user by email.
 	var userId int
 	var cryptedPassword []byte
-	err = db.QueryRow("SELECT id, password FROM user WHERE email = ?", fd.Email.Value).Scan(&userId, &cryptedPassword)
+	err = db.QueryRow("SELECT id, password FROM user WHERE email = ?", data.Email.Value).Scan(&userId, &cryptedPassword)
 	// no registred user
 	if err == sql.ErrNoRows {
-		fd.Email.Msg = "Email não cadastrado"
-		err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", fd)
+		data.Email.Msg = "Email não cadastrado"
+		err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", data)
 		HandleError(w, err)
 		return
 	}
@@ -229,18 +229,18 @@ func authSigninHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 		log.Fatal(err)
 	}
 	// Test password format.
-	fd.Password.Value, fd.Password.Msg = bluetang.Password(req.FormValue("password"))
-	if fd.Password.Msg != "" {
-		err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", fd)
+	data.Password.Value, data.Password.Msg = bluetang.Password(req.FormValue("password"))
+	if data.Password.Msg != "" {
+		err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", data)
 		HandleError(w, err)
 		return
 	}
 	// Test password.
-	err = bcrypt.CompareHashAndPassword(cryptedPassword, []byte(fd.Password.Value))
+	err = bcrypt.CompareHashAndPassword(cryptedPassword, []byte(data.Password.Value))
 	// Incorrect password.
 	if err != nil {
-		fd.Password.Msg = "Senha incorreta"
-		err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", fd)
+		data.Password.Msg = "Senha incorreta"
+		err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", data)
 		HandleError(w, err)
 		return
 	}
