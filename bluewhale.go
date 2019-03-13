@@ -15,7 +15,7 @@ import (
 * Templates
 ************************************************************************************************/
 // Geral.
-var tmplMaster, tmplIndex, tmplDeniedAccess *template.Template
+var tmplMaster, tmplIndex, tmplIndex_b, tmplDeniedAccess *template.Template
 
 // Info.
 var tmplInstitutional *template.Template
@@ -60,6 +60,7 @@ func init() {
 	// Geral.
 	tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
 	tmplIndex = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
+	tmplIndex_b = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index_b.tpl"))
 	tmplDeniedAccess = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/deniedAccess.tpl"))
 	// Info.
 	tmplInstitutional = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/institutional.tpl"))
@@ -97,6 +98,7 @@ func main() {
 	router := httprouter.New()
 	router.GET("/favicon.ico", faviconHandler)
 	router.GET("/", getSession(indexHandler))
+	router.GET("/_b", getSession(indexHandler_b))
 
 	// Clean the session cache.
 	router.GET("/clean_sessions", checkPermission(cleanSessionsHandler, "admin"))
