@@ -1,7 +1,10 @@
 {{define "header_b"}}
-<header class="container my-2">
+<header class="container mt-3">
+    <!-- <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;"> -->
+    <!-- <nav class="navbar navbar-expand-lg navbar-light bg-white"> -->
+    <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light"> -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="/_b">
             <img src="/static/img/sail2.jpg" width="30" height="30" alt="">
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
