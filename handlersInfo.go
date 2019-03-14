@@ -28,7 +28,7 @@ func childrensSailingLessons(w http.ResponseWriter, req *http.Request, _ httprou
 		HeadMessage string
 	}{session, ""}
 	// fmt.Println("session: ", data.Session)
-	err = tmplChildrenSailingLessons.ExecuteTemplate(w, "childrensSailingLessons.tpl", data)
+	err = tmplChildrenSailingLessons.ExecuteTemplate(w, "childrensSailingLessons_p.tpl", data)
 	HandleError(w, err)
 }
 
