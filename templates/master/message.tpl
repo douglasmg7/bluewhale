@@ -1,14 +1,10 @@
 {{define "message"}}
 {{ if .HeadMessage }}
-<style type="text/css">
-  .is-justified-center {
-    justify-content: center;
-  }
-</style>
-<div class="message is-medium is-warning is-marginless">
-  <div class="message-header is-radiusless is-justified-center">
-    <p> {{.HeadMessage}} </p>
-  </div>
+<div class="alert alert-warning alert-dismissible fade show text-center mb-0" role="alert">
+  <h5>{{.HeadMessage}}</h5>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
 </div>
 {{end}}
 {{end}}

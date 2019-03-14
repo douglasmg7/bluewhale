@@ -1,5 +1,5 @@
 {{template "base" .}}
-{{define "title"}}Institutional{{end}}
+{{define "title"}}Porjetos e iniciativas{{end}}
 {{define "main"}}
 <style type="text/css">
 </style>

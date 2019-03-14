@@ -47,17 +47,6 @@ func indexHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params,
 	HandleError(w, err)
 }
 
-// Index handler.
-func indexHandler_b(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
-	data := struct {
-		Session     *Session
-		HeadMessage string
-	}{session, "Aviso de regatta na Lagoa dos Ingleses, dia 18/03/2019"}
-	// fmt.Println("session: ", data.Session)
-	err = tmplIndex_b.ExecuteTemplate(w, "index_b.tpl", data)
-	HandleError(w, err)
-}
-
 // Clean sessions cache, needed when some db update occurs.
 func cleanSessionsHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
 	sessions.CleanSessions()

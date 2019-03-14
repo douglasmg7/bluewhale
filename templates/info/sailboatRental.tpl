@@ -1,5 +1,5 @@
 {{template "base" .}}
-{{define "title"}}Institutional{{end}}
+{{define "title"}}Aluguel de veleiro{{end}}
 {{define "main"}}
 <style type="text/css">
 </style>
