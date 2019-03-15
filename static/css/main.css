@@ -1,0 +1,190 @@
+body {
+    font-family: sans-serif;
+}
+
+.text-black-10 {
+    color: #000;
+}
+.text-black-9 {
+    color: #222;
+}
+.text-black-8 {
+    color: #333;
+}
+.text-black-7 {
+    color: #555;
+}
+.text-black-6 {
+    color: #666;
+}
+.text-black-5 {
+    color: #777;
+}
+.text-black-4 {
+    color: #999;
+}
+.text-black-3 {
+    color: #bbb;
+}
+.text-black-2 {
+    color: #ccc;
+}
+.text-black-1 {
+    color: #eee;
+}
+.text-white {
+    color: #fff;
+}
+
+/*
+Add transition to containers so they can push in and out.
+*/
+#layout,
+#menu,
+.menu-link {
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    -ms-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+
+#layout {
+    position: relative;
+    left: 0;
+    padding-left: 0;
+}
+#layout.active #menu {
+    left: 150px;
+    /*width: 150px;*/
+}
+#layout.active .menu-link {
+    left: 150px;
+}
+
+.content {
+    margin: 0 auto;
+    padding: 0 2em;
+    max-width: 800px;
+    margin-bottom: 50px;
+    line-height: 1.6em;
+}
+
+.header {
+    margin: 0 0 3em 0;
+    padding-top: 2.5em;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+
+#menu {
+    margin-left: -150px;
+    width: 150px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+    background: #222;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+#menu ul, #menu li {
+    margin: 0;
+}
+#menu li {
+    list-style-type: none;;
+}
+#menu a {
+    color: #ccc;
+    display: inline-block;
+    width: 100%;
+    padding: .5em 0 .5em 1em;
+}
+#menu li.menu-item a:hover {
+    background-color: #333;
+}
+#menu a.brand {
+    background-color: #1F8DD6;
+    font-size: 1.2em;
+}
+
+
+.menu-link {
+    position: fixed;
+    display: block; /* show this only on small screens */
+    top: 0;
+    left: 0; /* "#menu width" */
+    background: #000;
+    background: rgba(0,0,0,0.7);
+    font-size: 10px; /* change this value to increase/decrease button size */
+    z-index: 10;
+    width: 2em;
+    height: auto;
+    padding: 2.1em 1.6em;
+}
+.menu-link:hover,
+.menu-link:focus {
+    background: #000;
+}
+
+.menu-link span {
+    position: relative;
+    display: block;
+}
+
+.menu-link span,
+.menu-link span:before,
+.menu-link span:after {
+    background-color: #fff;
+    width: 100%;
+    height: 0.2em;
+}
+
+.menu-link span:before,
+.menu-link span:after {
+    position: absolute;
+    margin-top: -0.6em;
+    content: " ";
+}
+
+.menu-link span:after {
+    margin-top: 0.6em;
+}
+
+/*  Screen above 48em. */
+@media (min-width: 48em) {
+    .header,
+    .content {
+        padding-left: 2em;
+        padding-right: 2em;
+    }
+
+    #layout {
+        padding-left: 150px; /* left col width "#menu" */
+        left: 0;
+    }
+    #menu {
+        left: 150px;
+    }
+
+    .menu-link {
+        position: fixed;
+        left: 150px;
+        display: none;
+    }
+
+    #layout.active .menu-link {
+        left: 150px;
+    }
+}
+
+/* Screen under 48em. */
+@media (max-width: 48em) {
+    #layout.active {
+        position: relative;
+        left: 150px;
+    }
+}

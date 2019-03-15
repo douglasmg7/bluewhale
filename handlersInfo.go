@@ -28,7 +28,7 @@ func childrensSailingLessons(w http.ResponseWriter, req *http.Request, _ httprou
 		HeadMessage string
 	}{session, ""}
 	// fmt.Println("session: ", data.Session)
-	err = tmplChildrenSailingLessons.ExecuteTemplate(w, "childrensSailingLessons_p.tpl", data)
+	err = tmplChildrenSailingLessons.ExecuteTemplate(w, "childrensSailingLessons_c.tpl", data)
 	HandleError(w, err)
 }
 
@@ -39,7 +39,8 @@ func adultsSailingLessons(w http.ResponseWriter, req *http.Request, _ httprouter
 		HeadMessage string
 	}{session, ""}
 	// fmt.Println("session: ", data.Session)
-	err = tmplAdultsSailingLessons.ExecuteTemplate(w, "adultsSailingLessons.tpl", data)
+	// err = tmplAdultsSailingLessons.ExecuteTemplate(w, "adultsSailingLessons.tpl", data)
+	err = tmplAdultsSailingLessons.ExecuteTemplate(w, "childrensSailingLessons_m.tpl", data)
 	HandleError(w, err)
 }
 

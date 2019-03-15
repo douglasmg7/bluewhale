@@ -69,8 +69,9 @@ func init() {
 	tmplDeniedAccess = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/deniedAccess.tpl"))
 	// Info.
 	tmplInstitutional = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/institutional.tpl"))
-	tmplChildrenSailingLessons = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/childrensSailingLessons_p.tpl"))
-	tmplAdultsSailingLessons = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/adultsSailingLessons.tpl"))
+	tmplChildrenSailingLessons = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/childrensSailingLessons_c.tpl"))
+	// tmplAdultsSailingLessons = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/adultsSailingLessons.tpl"))
+	tmplAdultsSailingLessons = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/childrensSailingLessons_m.tpl"))
 	tmplRowingLessons = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/rowingLessons.tpl"))
 	tmplSailboatRental = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/sailboatRental.tpl"))
 	tmplKayaksAndAquaticBikesRental = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/kayaksAndAquaticBikesRental.tpl"))
