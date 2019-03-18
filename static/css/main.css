@@ -1,39 +1,19 @@
-body {
-    font-family: sans-serif;
+:root {
+    --white: #fff;
+    --black-1: #eee;
+    --black-2: #ccc;
+    --black-3: #bbb;
+    --black-4: #999;
+    --black-5: #777;
+    --black-6: #666;
+    --black-7: #555;
+    --black-8: #333;
+    --black-9: #222;
+    --black-10: #000;
 }
 
-.text-black-10 {
-    color: #000;
-}
-.text-black-9 {
-    color: #222;
-}
-.text-black-8 {
-    color: #333;
-}
-.text-black-7 {
-    color: #555;
-}
-.text-black-6 {
-    color: #666;
-}
-.text-black-5 {
-    color: #777;
-}
-.text-black-4 {
-    color: #999;
-}
-.text-black-3 {
-    color: #bbb;
-}
-.text-black-2 {
-    color: #ccc;
-}
-.text-black-1 {
-    color: #eee;
-}
-.text-white {
-    color: #fff;
+body {
+    font-family: sans-serif;
 }
 
 /*
@@ -42,10 +22,6 @@ Add transition to containers so they can push in and out.
 #layout,
 #menu,
 .menu-link {
-    -webkit-transition: all 0.2s ease-out;
-    -moz-transition: all 0.2s ease-out;
-    -ms-transition: all 0.2s ease-out;
-    -o-transition: all 0.2s ease-out;
     transition: all 0.2s ease-out;
 }
 
@@ -76,7 +52,13 @@ Add transition to containers so they can push in and out.
     text-align: center;
     border-bottom: 1px solid #eee;
 }
-
+.header > h1 {
+    color: var(--black-7);
+    margin: 0;
+}
+.header > h4 {
+    color: var(--black-4);
+}
 
 #menu {
     margin-left: -150px;
@@ -107,8 +89,9 @@ Add transition to containers so they can push in and out.
     background-color: #333;
 }
 #menu a.brand {
-    background-color: #1F8DD6;
-    font-size: 1.2em;
+    /*background-color: #1F8DD6;*/
+    font-size: 1.4em;
+    padding-bottom: 2em;
 }
 
 
