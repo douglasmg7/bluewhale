@@ -1,10 +1,19 @@
 (function (window, document) {
 
+    // Hamburg.
     var layout   = document.getElementById('layout'),
         menu     = document.getElementById('menu'),
         menuLink = document.getElementById('menuLink'),
         content  = document.getElementById('main');
 
+    // Toggle menjus.
+    let toggleMenus = document.getElementsByClassName("toggle-menu");
+    // for (let i = 0; i < toggleMenus.length; i++) {
+    //     // toggleMenus[i].get
+    // }
+    console.log(toggleMenus);
+
+    // Toggle class.
     function toggleClass(element, className) {
         var classes = element.className.split(/\s+/),
             length = classes.length,
@@ -24,6 +33,7 @@
         element.className = classes.join(' ');
     }
 
+    // Toggle all.
     function toggleAll(e) {
         var active = 'active';
 
@@ -32,11 +42,11 @@
         toggleClass(menu, active);
         toggleClass(menuLink, active);
     }
-
+    // Show / hide menu.
     menuLink.onclick = function (e) {
         toggleAll(e);
     };
-
+    // Hide menu.
     content.onclick = function(e) {
         if (menu.className.indexOf('active') !== -1) {
             toggleAll(e);
