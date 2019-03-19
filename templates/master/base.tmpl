@@ -1,4 +1,4 @@
-{{define "base_n"}}
+{{define "base"}}
 <!doctype html>
 <html lang='en'>
     <head>
@@ -8,9 +8,13 @@
         <meta name="description" content="Esola de vela.">
         <title>{{template "title" .}}</title>
         <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
-        <link rel='stylesheet' href='/static/css/pure-min.css'>
-        <link rel='stylesheet' href='/static/css/main.css'>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Denk+One|Kalam|Margarine|Pangolin|Voltaire" rel="stylesheet"> 
+        <link rel='stylesheet' href='/static/css/normalize.css'>
+        <link rel='stylesheet' href='/static/css/milligram.min.css'>
+        <link rel='stylesheet' href='/static/css/layout.css'>
         <link rel='stylesheet' href='/static/fontawesome/css/all.min.css'>
+        {{template "embedded-css"}}
         <!-- <link rel='shortcut icon' href='/static/img/favicon.ico' type='image/x-icon'> -->
         <!-- <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700'> -->
     </head>
@@ -21,20 +25,10 @@
                 <!-- Hamburger icon -->
                 <span></span>
             </a>
-            <!-- Menu -->
-            <div id="menu">
-                {{template "menu" .}}
-            </div>
-            <!-- Main -->
+            <div id="menu"> {{template "menu" .}} </div>
             <div id="main">
-                <!-- Header -->
-                <div class="header">
-                    {{template "header" .}}
-                </div>
-                <!-- Content -->
-                <div class="content">
-                    {{template "content" .}}
-                </div>
+                {{template "header"}}
+                {{template "content" .}}
             </div>
         </div>
         <script src="/static/js/main.js"></script>

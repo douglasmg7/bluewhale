@@ -66,13 +66,11 @@ func init() {
 	// Geral.
 	tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
 	tmplIndex = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
-	tmplIndex_m = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index_m.tpl"))
 	tmplDeniedAccess = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/deniedAccess.tpl"))
 	// Info.
 	tmplInstitutional = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/institutional.tpl"))
-	tmplChildrenSailingLessons = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/childrensSailingLessons_c.tpl"))
-	// tmplAdultsSailingLessons = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/adultsSailingLessons.tpl"))
-	tmplAdultsSailingLessons = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/childrensSailingLessons_m.tpl"))
+	tmplChildrenSailingLessons = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/childrensSailingLessons.tpl"))
+	tmplAdultsSailingLessons = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/adultsSailingLessons.tpl"))
 	tmplRowingLessons = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/rowingLessons.tpl"))
 	tmplSailboatRental = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/sailboatRental.tpl"))
 	tmplKayaksAndAquaticBikesRental = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/kayaksAndAquaticBikesRental.tpl"))
@@ -116,7 +114,6 @@ func main() {
 	router := httprouter.New()
 	router.GET("/favicon.ico", faviconHandler)
 	router.GET("/", getSession(indexHandler))
-	router.GET("/_m", getSession(indexHandler_m))
 
 	// Clean the session cache.
 	router.GET("/clean-sessions", checkPermission(cleanSessionsHandler, "admin"))

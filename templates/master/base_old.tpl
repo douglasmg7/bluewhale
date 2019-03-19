@@ -1,4 +1,4 @@
-{{define "base"}}
+{{define "base_old"}}
 <!doctype html>
 <html lang='en'>
     <head>
