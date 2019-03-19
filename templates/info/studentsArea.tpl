@@ -1,17 +1,17 @@
 {{template "base" .}}
-{{define "title"}}Área do aluno{{end}}
-{{define "main"}}
-<style type="text/css">
-</style>
-<div class="main container">
-    <div class="row">
-        <div class="col-sm-2"></div>
-        <div class="col-sm-8">
+{{ define "embedded-css"}} {{end}}
+{{define "title"}} Área do aluno {{end}}
 
-            <h2 class="mt-5 mb-4">Ainda não tem nada :(</h2>
+{{define "header"}}
+<div class="header">
+    <h1>Área do aluno</h1>
+    <h4>abcd</h4>
+</div>
+{{end}}
 
-        </div>
-        <div class="col-sm-2"></div>
-    </div>
+{{define "content"}}
+<div class="content">
+    <h3></h3>
+    <p></p>
 </div>
 {{end}}

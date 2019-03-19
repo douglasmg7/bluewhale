@@ -1,46 +1,30 @@
 {{template "base" .}}
-{{define "title"}}Adicionar aluno{{end}}
-{{define "main"}}
-<div class="main">
-  <section class="section">
-    <form class="container" action="/student/new" method="post">
+{{ define "embedded-css"}} {{end}}
+{{define "title"}} Adicionar aluno {{end}}
 
-      <h1 class="title">Adicionar aluno</h2>
-
-      <div class="field">
-        <label for="name" class="label">Nome completo</label>
-        <div class="control">
-          <input class="input" type="text" placeholder="" id="name" name="name" value={{.Name.Value}}>
-        </div>
-        <p class="help is-danger">{{.Name.Msg}}</p>
-      </div>
-
-      <div class="field">
-        <label for="email" class="label">E-mail</label>
-        <div class="control">
-          <input class="input" type="text" placeholder="" id="email" name="email" value={{.Email.Value}}>
-        </div>
-        <p class="help is-danger">{{.Email.Msg}}</p>
-      </div>
-
-      <div class="field">
-        <label for="mobile" class="label">Celular</label>
-        <div class="control">
-          <input class="input" type="text" placeholder="" id="mobile" name="mobile" value={{.Mobile.Value}}>
-        </div>
-        <p class="help is-danger">{{.Mobile.Msg}}</p>
-      </div>
-
-      <div class="field is-grouped">
-        <div class="control">
-          <button class="button is-link">Adicionar</button>
-        </div>
-        <div class="control">
-          <button class="button is-text">Cancelar</button>
-        </div>
-      </div>
-
-    </form>
-  </section>
+{{define "header"}}
+<div class="header">
+    <h1>Adicionar aluno</h1>
+    <h4></h4>
 </div>
+{{end}}
+
+{{define "content"}}
+<form class="content" action="/student/new" method="post">
+    <label for="name">Nome completo</label>
+    <input class="input" type="text" placeholder="" id="name" name="name" value={{.Name.Value}}>
+    <p>{{.Name.Msg}}</p>
+
+    <label for="email">E-mail</label>
+    <input class="input" type="text" placeholder="" id="email" name="email" value={{.Email.Value}}>
+    <p>{{.Email.Msg}}</p>
+
+    <label for="mobile">Celular</label>
+    <input class="input" type="text" placeholder="" id="mobile" name="mobile" value={{.Mobile.Value}}>
+    <p>{{.Mobile.Msg}}</p>
+
+    <button>Adicionar</button>
+    <button>Cancelar</button>
+
+</form>
 {{end}}

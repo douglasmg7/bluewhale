@@ -1,18 +1,20 @@
 {{template "base" .}}
+{{ define "embedded-css"}} {{end}}
+{{define "title"}} Alunos {{end}}
 
-{{define "title"}}Adicionar aluno{{end}}
+{{define "header"}}
+<div class="header">
+    <h1>Alunos</h1>
+    <h4>Relação de todos os alunos</h4>
+</div>
+{{end}}
 
-{{define "main"}}
-<div class="main">
-  <section class="section">
-    <div class="container">
-      <h1 class="title">Alunos</h2>
-      {{range .Students}}
-        <h2 class="subtitle">
-          <a href="/student/id/{{.Id}}">{{.Name}}</a>
-        </h2>
-      {{end}}
-    </div>
-  </section>
+{{define "content"}}
+<div class="content">
+  {{range .Students}}
+    <h3 class="subtitle">
+      <a href="/student/id/{{.Id}}">{{.Name}}</a>
+    </h3>
+  {{end}}
 </div>
 {{end}}

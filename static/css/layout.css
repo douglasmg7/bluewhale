@@ -95,12 +95,14 @@ Add transition to containers so they can push in and out.
     /*font-family: 'Voltaire', sans-serif;*/
     font-size: 1.2em;
     font-weight: bold;
+    line-height: 1em;
+    padding: .4em 1em;
 }
 #menu li.menu-item a:hover {
     background-color: #333;
 }
 #menu a.brand {
-    padding-top: .5em;
+    padding-top: .8em;
     padding-bottom: .5em;
 }
 

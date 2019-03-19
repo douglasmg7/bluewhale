@@ -1,7 +1,5 @@
 {{template "base" .}}
-
 {{ define "embedded-css"}} {{end}}
-
 {{define "title"}} Aulas de vela para crianças {{end}}
 
 {{define "header"}}
