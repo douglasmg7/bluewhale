@@ -6,11 +6,21 @@
         menuLink = document.getElementById('menuLink'),
         content  = document.getElementById('main');
 
-    // Toggle menjus.
+    // Hide show sub-menus.
     let toggleMenus = document.getElementsByClassName("toggle-menu");
-    // for (let i = 0; i < toggleMenus.length; i++) {
-    //     // toggleMenus[i].get
-    // }
+    for (let i = 0; i < toggleMenus.length; i++) {
+        let submenu = toggleMenus[i].nextElementSibling;
+        toggleMenus[i].onclick =  function(e){
+            // console.log(submenu);
+            // console.log(`display: ${submenu.style.display}`);
+            if (submenu.style.display === "none") {
+                submenu.style.display = "block"
+            } else {
+                submenu.style.display = "none"
+            }
+            // submenu.style.display = "none"
+        }
+    }
     console.log(toggleMenus);
 
     // Toggle class.

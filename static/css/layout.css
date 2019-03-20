@@ -100,7 +100,8 @@ Add transition to containers so they can push in and out.
 }
 /* Sub-menu. */
 #menu ul ul {
-    display: none;
+    /*display: none;*/
+    transition: all 1s ease-out;
 }
 #menu ul ul a {
     font-size: 1em;
