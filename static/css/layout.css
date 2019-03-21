@@ -93,13 +93,19 @@ Add transition to containers so they can push in and out.
 #menu .item:hover {
     background-color: var(--black-7);
 }
-#menu .items .item {
-    /*transition: all 2s ease-out;*/
+#menu .items, #menu .items.selected {
+    transition: all .4s ease-out;
+    font-size: .8em;
     overflow-y: hidden;
-    font-size: .9em;
 }
+#menu .items {
+    height: 0;
+}
+/*#menu .items.selected {
+    height: auto;
+}*/
 #menu .items .item:last-child{
-    margin-bottom: 1.6em;
+    margin-bottom: 1em;
     /*color: red;*/
 }
 #menu .item.brand {
