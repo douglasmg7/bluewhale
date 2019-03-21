@@ -7,21 +7,21 @@
         content  = document.getElementById('main');
 
     // Hide show sub-menus.
-    let toggleMenus = document.getElementsByClassName("toggle-menu");
-    for (let i = 0; i < toggleMenus.length; i++) {
-        let submenu = toggleMenus[i].nextElementSibling;
-        toggleMenus[i].onclick =  function(e){
-            // console.log(submenu);
-            // console.log(`display: ${submenu.style.display}`);
-            if (submenu.style.display === "none") {
-                submenu.style.display = "block"
+    let toggleItems = document.getElementsByClassName("toggle-items");
+    for (let i = 0; i < toggleItems.length; i++) {
+        let items = toggleItems[i].nextElementSibling;
+        toggleItems[i].onclick =  function(e){
+            // console.log(items);
+            // console.log(`display: ${items.style.display}`);
+            if (items.style.display === "none") {
+                items.style.display = "block"
             } else {
-                submenu.style.display = "none"
+                items.style.display = "none"
             }
-            // submenu.style.display = "none"
+            // items.style.display = "none"
         }
     }
-    console.log(toggleMenus);
+    console.log(toggleItems);
 
     // Toggle class.
     function toggleClass(element, className) {

@@ -74,20 +74,12 @@ Add transition to containers so they can push in and out.
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
-
-#menu ul, #menu li {
-    margin: 0;
-}
-#menu li {
-    list-style-type: none;;
-}
-#menu a {
-    color: #ccc;
+#menu .item {
+    color: var(--black-1);
     display: inline-block;
     width: 100%;
     text-align: center;
     text-transform: uppercase;
-    color: var(--black-1);
     /*font-family: 'Denk One', sans-serif;*/
     /*font-family: 'Kalam', cursive;*/
     /*font-family: 'Margarine', cursive;*/
@@ -98,24 +90,19 @@ Add transition to containers so they can push in and out.
     line-height: 1em;
     padding: .4em 1em;
 }
-/* Sub-menu. */
-#menu ul ul {
-    /*display: none;*/
-    transition: all 1s ease-out;
+#menu .item:hover {
+    background-color: var(--black-7);
 }
-#menu ul ul a {
-    font-size: 1em;
-    /*color: red;*/
+#menu .items .item {
+    /*transition: all 2s ease-out;*/
+    overflow-y: hidden;
+    font-size: .9em;
 }
-/* Last sub-menu item*/
-#menu ul ul li:last-child a {
+#menu .items .item:last-child{
     margin-bottom: 1.6em;
     /*color: red;*/
 }
-#menu li a:hover {
-    background-color: #333;
-}
-#menu a.brand {
+#menu .item.brand {
     padding-top: .8em;
     padding-bottom: .5em;
 }
