@@ -93,20 +93,26 @@ Add transition to containers so they can push in and out.
 #menu .item:hover {
     background-color: var(--black-7);
 }
-#menu .items, #menu .items.selected {
+#menu > .item {
+    border-top: 2px solid yellow;
+    border-bottom: 1px solid yellow;
+}
+#menu .items {
     transition: all .4s ease-out;
     font-size: .8em;
     overflow-y: hidden;
-}
-#menu .items {
     height: 0;
 }
-/*#menu .items.selected {
-    height: auto;
-}*/
-#menu .items .item:last-child{
-    margin-bottom: 1em;
-    /*color: red;*/
+/* Sub-menu items. */
+#menu .items .item {
+    margin-top: .8em;
+    margin-bottom: : .8em;
+}
+#menu .items .item:first-child {
+    margin-top: 1.5em;
+}
+#menu .items .item:last-child {
+    margin-bottom: 3em;
 }
 #menu .item.brand {
     padding-top: .8em;
