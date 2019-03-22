@@ -21,8 +21,7 @@
 
 #layout{
     position: relative;
-    background: var(--black-7);
-    height: 900px;
+    background: var(--white);
 }
 #menu-toggle {
     display: block;
@@ -39,12 +38,13 @@
     text-align: center;
     z-index: 999;
 }
-#menu > .centralize {
-    display: inline-block;
-    /*border: 1px solid red;*/
-}
+
 #main {
-    background: var(--black-5);
+    /*background: var(--black-5);*/
+    height: 100%;
+}
+#main h1 {
+    margin-bottom: 0;
 }
 
 #menu.active, #menu-toggle.active {
@@ -82,7 +82,7 @@
 #menu .item {
     color: var(--black-1);
     display: inline-block;
-    text-align: center;
+    /*text-align: center;*/
     text-transform: uppercase;
     /*font-family: 'Denk One', sans-serif;*/
     /*font-family: 'Kalam', cursive;*/
@@ -98,7 +98,23 @@
     background-color: var(--black-7);
 }
 
-
+#footer {
+    width: 100%;
+    height: 100%;
+    background-color: var(--black-7);
+    text-align: center;
+}
+#footer .item {
+    color: var(--black-1);
+    display: inline-block;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Pangolin', cursive;
+    font-size: 1.2em;
+    font-weight: bold;
+    line-height: 1em;
+    padding: .4em 1em;
+}
 
 
 
@@ -117,11 +133,13 @@
         width: calc(var(--menu-width) * 1px);
         text-align: left;
     }
-    #menu > .centralize a {
-        text-align: left;
-    }
+
     #menu .item {
         display: block;
         padding: .4em;
+    }
+
+    #footer .item {
+        display: block;
     }
 }

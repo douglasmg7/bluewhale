@@ -1,7 +1,6 @@
 {{define "footer"}}
-<footer class="footer">
-  <div class="content has-text-centered">
-    <p> Nothing yet. </p>
-  </div>
-</footer>
+<a class="item" href="#">Contato</a>
+<a class="item" href="#">Instituição</a>
+<a class="item" href="#">Links</a>
+<a class="item" href="#">Horário</a>
 {{end}}
