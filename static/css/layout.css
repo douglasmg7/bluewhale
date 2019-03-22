@@ -12,7 +12,11 @@
     --black-9: #222;
     --black-10: #000;
     /* Menu */
-    --menu-width: 200;
+    --menu-width: 150;
+}
+#menu-toggle,
+#menu {
+    transition: all 0.3s ease-out;
 }
 
 #layout{
@@ -20,9 +24,20 @@
     background: var(--black-7);
     height: 900px;
 }
+#menu-toggle {
+    display: block;
+    background-color: yellow;
+    color: var(--black-10);
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    z-index: 1000;
+    left: calc(var(--menu-width) * 1px);
+}
 #menu {
     background: var(--black-9);
     text-align: center;
+    z-index: 999;
 }
 #menu > .centralize {
     display: inline-block;
@@ -32,6 +47,10 @@
     background: var(--black-5);
 }
 
+#menu.active, #menu-toggle.active {
+    margin-left: calc(var(--menu-width) * -1px);
+    /*background-color: green;*/
+}
 
 
 
@@ -85,7 +104,9 @@
 
 /*  Screen above 48em. */
 @media (min-width: 48em) {
-
+    #menu-toggle {
+        display: none;
+    }
 }
 
 /* Screen under 48em. */
@@ -93,7 +114,7 @@
     #menu {
         position: absolute;
         height: 100%;
-        width: 150px;
+        width: calc(var(--menu-width) * 1px);
         text-align: left;
     }
     #menu > .centralize a {
@@ -101,5 +122,6 @@
     }
     #menu .item {
         display: block;
+        padding: .4em;
     }
 }

@@ -1,28 +1,10 @@
 (function (window, document) {
 
     // Hamburg.
-    var menu     = document.getElementById('menu');
-    var menuToggle = document.getElementById('menu-toggle');
-
-    // Toggle all.
-    function toggleMenu(e) {
-        e.preventDefault();
-        toggleClass(menu, "active");
-        toggleClass(menuToggle, "active");
-    }
-    // Show / hide menu.
-    menuToggle.onclick = function (e) {
-        toggleMenu(e);
-    };
-    // // Hide menu.
-    // content.onclick = function(e) {
-    //     if (menu.className.indexOf('active') !== -1) {
-    //         toggleAll(e);
-    //     }
-    // };
-
-
-
+    var layout   = document.getElementById('layout'),
+        menu     = document.getElementById('menu'),
+        menuLink = document.getElementById('menuLink'),
+        content  = document.getElementById('main');
 
     // Collapse/expand sub-items.
     let toggleItems = document.getElementsByClassName("toggle-items");
@@ -92,5 +74,25 @@
 
         element.className = classes.join(' ');
     }
+
+    // Toggle all.
+    function toggleAll(e) {
+        var active = 'active';
+
+        e.preventDefault();
+        toggleClass(layout, active);
+        toggleClass(menu, active);
+        toggleClass(menuLink, active);
+    }
+    // Show / hide menu.
+    menuLink.onclick = function (e) {
+        toggleAll(e);
+    };
+    // Hide menu.
+    content.onclick = function(e) {
+        if (menu.className.indexOf('active') !== -1) {
+            toggleAll(e);
+        }
+    };
 
 }(this, this.document));
