@@ -1,4 +1,4 @@
-{{define "base"}}
+{{define "base_old"}}
 <!doctype html>
 <html lang='en'>
     <head>
@@ -20,22 +20,10 @@
     </head>
     <body>
         <div id="layout">
-            <div id="menu"> 
-                <div class="centralize">
-                    {{template "menu" .}} 
-                </div>
-            </div>
+            <div id="menu"> {{template "menu" .}} </div>
             <div id="main">
-                <h1>ola</h1>
-                <h1>ola</h1>
-                <h1>ola</h1>
-                <h1>ola</h1>
-                <h1>ola</h1>
-                <h1>ola</h1>
-                <h1>ola</h1>
-                <h1>ola</h1>
-                <h1>ola</h1>
-                <h1>ola</h1>
+                {{template "header" .}}
+                {{template "content" .}}
             </div>
         </div>
         <script src="/static/js/layout.js"></script>
