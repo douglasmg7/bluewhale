@@ -15,7 +15,7 @@
     --menu-width: 150;
 }
 
-body{
+body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -108,9 +108,14 @@ body{
     #menu-toggle {
         display: none;
     }
-
+    /* Sub-menus. */
     #menu .items {
-        display: none;
+        position: absolute;
+        background-color: var(--black-9);
+        width: calc(var(--menu-width) * 1px);
+    }
+    #menu .items .item {
+        display: block;
     }
 }
 

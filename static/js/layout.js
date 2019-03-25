@@ -4,6 +4,36 @@
     var menu     = document.getElementById('menu');
     var menuToggle = document.getElementById('menu-toggle');
 
+
+    // // media query event handler
+    // if (matchMedia) {
+    //     const mq = window.matchMedia("(min-width: 48em)");
+    //     // const mq = window.matchMedia("(min-width: 500px)");
+    //     mq.addListener(widthChange);
+    //     widthChange(mq);
+    // }
+
+    // // media query change
+    // function widthChange(mq) {
+    //     // More then 48em.
+    //     if (mq.matches) {
+    //         console.log('1')
+    //         let toggleItems = document.getElementsByClassName("toggle-items");
+    //         for (let i = 0; i < toggleItems.length; i++) {
+    //             let subMenu = toggleItems[i].nextElementSibling;
+    //             console.log(toggleItems[i]);
+    //             console.log(toggleItems[i].offsetLeft);
+    //             console.log(subMenu);
+
+    //             subMenu.style.left = toggleItems[i].offsetLeft  + "px";
+    //         }
+    //     // Less than 48em.
+    //     } else {
+    //         console.log('2')
+    //     }
+    // }
+
+
     // Toggle all.
     function toggleMenu(e) {
         e.preventDefault();
@@ -23,6 +53,8 @@
         // Show sub-menu.
         toggleItems[i].onclick =  function(e){
             toggleClass(subMenu, "active");
+            // subMenu.style.top = "200px";
+            // subMenu.style.left = "200px";
         }
         // Hide sub-menu.
         let backElements = subMenu.getElementsByClassName("back");
@@ -31,41 +63,7 @@
         }
     }
 
-    // Collapse element.
-    function collapseElement(element){
-        // Get the height of the element's inner content, regardless of its actual size.
-        let elementHeight = element.scrollHeight; 
-        // Temporarily disable all css transitions.
-        let elementTransition = element.style.transition; 
-        element.style.transition = ""
-        // On the next frame (as soon as the previous style change has taken effect),
-        // explicitly set the element's height to its current pixel height, so we aren't transitioning out of 'auto'.
-        requestAnimationFrame(function(){
-            element.style.height = elementHeight + "px";
-            element.style.transition = elementTransition;
-            // On the next frame (as soon as the previous style change has taken effect),
-            // have the element transition to height: 0.
-            requestAnimationFrame(function(){
-                element.style.height = "0" + "px";
-                element.setAttribute('data-expanded', "false");
-            });
-        });
-    }
-    // Expand element.
-    function ExpandElement(element){
-        // Get the height of the element's inner content, regardless of its actual size.
-        let elementHeight = element.scrollHeight; 
-        // Have the element transition to the height of its inner content.
-        element.style.height = elementHeight + "px";
-        // When the next css transition finishes (which should be the one we just triggered).
-        element.addEventListener('transitionend', function(e){
-            // Remove this event listener so it only gets triggered once.
-            element.removeEventListener('transitionend', arguments.callee);
-            // Remove "height" from the element's inline styles, so it can return to its initial value.
-            // element.style.height = null;
-        });
-        element.setAttribute('data-expanded', "true");
-    }
+
     // Toggle class.
     function toggleClass(element, className) {
         var classes = element.className.split(/\s+/),
