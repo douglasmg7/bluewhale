@@ -21,24 +21,13 @@ body{
     flex-direction: column;
     justify-content: space-between;
 }
-#menu-toggle,
-#menu {
-    transition: all 0.3s ease-out;
+#menu-toggle, #menu, #menu .items {
+    transition: all .6s ease-out;
 }
-#menu-toggle {
-    display: block;
-    background-color: yellow;
-    color: var(--black-10);
-    position: absolute;
-    height: 40px;
-    width: 40px;
-    z-index: 1000;
-    left: calc(var(--menu-width) * 1px);
-}
+
 #menu {
     background: var(--black-9);
-    text-align: center;
-    z-index: 999;
+    z-index: 1000;
 }
 
 #main{
@@ -46,11 +35,6 @@ body{
 }
 #main h1 {
     margin-bottom: 0;
-}
-
-#menu.active, #menu-toggle.active {
-    margin-left: calc(var(--menu-width) * -1px);
-    /*background-color: green;*/
 }
 
 .content {
@@ -89,10 +73,13 @@ body{
     font-weight: bold;
     line-height: 1em;
     padding: .4em 1em;
+    z-index: 1000;
 }
 #menu .item:hover {
     background-color: var(--black-7);
 }
+
+
 
 #footer {
     width: 100%;
@@ -115,25 +102,61 @@ body{
 
 /*  Screen above 48em. */
 @media (min-width: 48em) {
+    #menu {
+        text-align: center;
+    }
     #menu-toggle {
+        display: none;
+    }
+
+    #menu .items {
         display: none;
     }
 }
 
 /* Screen under 48em. */
 @media (max-width: 48em) {
+    /* Toggle menu. */
+    #menu-toggle {
+        display: block;
+        background-color: yellow;
+        color: var(--black-10);
+        position: absolute;
+        height: 40px;
+        width: 40px;
+        z-index: 1100;
+        left: 0;
+    }
+    /* Menu. */
     #menu {
         position: absolute;
         height: 100%;
         width: calc(var(--menu-width) * 1px);
+        left: calc(var(--menu-width) * -1px);
         text-align: left;
     }
-
+    #menu.active, #menu-toggle.active {
+        margin-left: calc(var(--menu-width) * 1px);
+    }
+    /* Menu item. */
     #menu .item {
         display: block;
         padding: .4em;
     }
-
+    /* Sub-menu. */
+    #menu .items {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        z-index: 1010;
+        background-color: var(--black-9);
+        width: calc(var(--menu-width) * 1px);
+        left: calc(var(--menu-width) * -1px);
+    }
+    #menu .items.active {
+        left: 0;
+    }
+    /* Fotter. */
     #footer .item {
         display: block;
     }

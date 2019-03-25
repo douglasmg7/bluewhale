@@ -10,31 +10,24 @@
         toggleClass(menu, "active");
         toggleClass(menuToggle, "active");
     }
-    // Show / hide menu.
+
+    // Show and hide menu.
     menuToggle.onclick = function (e) {
         toggleMenu(e);
     };
-    // // Hide menu.
-    // content.onclick = function(e) {
-    //     if (menu.className.indexOf('active') !== -1) {
-    //         toggleAll(e);
-    //     }
-    // };
 
-
-
-
-    // Collapse/expand sub-items.
+    // Show and hide sub-menus. 
     let toggleItems = document.getElementsByClassName("toggle-items");
     for (let i = 0; i < toggleItems.length; i++) {
-        let element = toggleItems[i].nextElementSibling;
+        let subMenu = toggleItems[i].nextElementSibling;
+        // Show sub-menu.
         toggleItems[i].onclick =  function(e){
-            if (element.getAttribute('data-expanded') === "true") 
-            {
-                collapseElement(element);
-            } else {
-                ExpandElement(element);
-            }
+            toggleClass(subMenu, "active");
+        }
+        // Hide sub-menu.
+        let backElements = subMenu.getElementsByClassName("back");
+        backElements[0].onclick = function(e){
+            toggleClass(subMenu, "active");
         }
     }
 
@@ -92,5 +85,6 @@
 
         element.className = classes.join(' ');
     }
+
 
 }(this, this.document));
