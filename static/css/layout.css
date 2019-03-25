@@ -108,11 +108,26 @@ body {
     #menu-toggle {
         display: none;
     }
+    /* Sub-menu. */
+    #menu .sub-menu {
+        display: inline-block;
+        /*background-color: red;*/
+        z-index: 1000;
+        /*position: relative;*/
+    }
+    #menu .item.toggle-items {
+        background-color: green;
+    }
     /* Sub-menus. */
     #menu .items {
         position: absolute;
+        top: 15px;
         background-color: var(--black-9);
         width: calc(var(--menu-width) * 1px);
+        z-index: 900;
+    }
+    #menu .items.active {
+        top: 100px;
     }
     #menu .items .item {
         display: block;
@@ -148,7 +163,7 @@ body {
         display: block;
         padding: .4em;
     }
-    /* Sub-menu. */
+    /* Sub-menu items. */
     #menu .items {
         position: absolute;
         top: 0;
