@@ -34,7 +34,7 @@ body {
 
 #main{
     flex-grow: 1;
-    padding: 1em;
+    padding: 0 1em;
 }
 #main h1 {
     margin-bottom: 0;
@@ -103,29 +103,66 @@ body {
 /* Screen under 48em. */
 @media (max-width: 48em) {
     /* Animation. */
-    #menu-toggle, #menu, #menu .items {
+    .burger, #menu, #menu .items {
         transition: all .3s ease-out;
     }
-    /* Toggle menu. */
-    #menu-toggle {
+    /* Burger */
+    .burger {
+        padding: 15px;
         cursor: pointer;
+        /*position: absolute;*/
+        display: inline-block;
+        /*display: block;*/
+        /*width: 70px;*/
+        /*background-color: var(--black-1);*/
+    }
+    .burger:hover {
+        opacity: .7;
+    }
+    .burger-box {
+        width: 40px;
+        height: 24px;
+        display: inline-block;
+        position: relative;
+        /*background-color: var(--black-1);*/
+    }
+    .burger-inner {
         display: block;
-        background-color: var(--black-1);
-        color: var(--black-10);
+        top: 50%;
+        margin-top: -2px;
+    }
+    .burger-inner, .burger-inner::before, .burger-inner::after {
+        width: 30px;
+        height: 2px;
+        background-color: var(--black-10);
+        border-radius: 4px;
         position: absolute;
-        height: 3em;
-        width: 3em;
-        z-index: 1100;
-        left: 0;
     }
-    #menu-toggle span {
-      display: block;
-      width: 20px;
-      height: 1px;
-      margin: 5px auto;
-      background: var(--black-10);
-      transition: transform 0.1s ease-out;
+    .burger-inner::before, .burger-inner::after {
+        content: "";
+        display: block;
     }
+    .burger-inner::before {
+        top: -10px;
+    }
+    .burger-inner::after {
+        bottom: -10px;
+    }
+    .burger.active {
+        margin-left: calc(var(--menu-width) * 1px);
+    }
+    .burger.active .burger-inner {
+        transform: rotate(45deg);
+    }
+    .burger.active .burger-inner::before {
+        top: 0;
+        opacity: 0;
+    }
+    .burger.active .burger-inner::after {
+        bottom: 0;
+        transform: rotate(-90deg);
+    }
+
     /* Menu. */
     #menu {
         position: absolute;
@@ -134,9 +171,10 @@ body {
         left: calc(var(--menu-width) * -1px);
         text-align: left;
     }
-    #menu.active, #menu-toggle.active {
-        margin-left: calc(var(--menu-width) * 1px);
+    #menu.active {
+        left: 0;
     }
+
     /* Menu item. */
     #menu .item {
         display: block;
@@ -171,10 +209,13 @@ body {
 
 /*  Screen above 48em. */
 @media (min-width: 48em) {
+    #main {
+        margin-top: 2em;
+    }
     #menu {
         text-align: center;
     }
-    #menu-toggle,
+    .burger,
     #menu .sub-menu .items, 
     #menu .items .item.back {
         display: none;

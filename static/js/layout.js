@@ -1,8 +1,8 @@
 (function (window, document) {
 
     // Hamburg.
-    var menu     = document.getElementById('menu');
-    var menuToggle = document.getElementById('menu-toggle');
+    var menu   = document.getElementById('menu');
+    var burger = document.getElementsByClassName('burger')[0];
 
 
     // // media query event handler
@@ -38,11 +38,11 @@
     function toggleMenu(e) {
         e.preventDefault();
         toggleClass(menu, "active");
-        toggleClass(menuToggle, "active");
+        toggleClass(burger, "active");
     }
 
     // Show and hide menu.
-    menuToggle.onclick = function (e) {
+    burger.onclick = function (e) {
         toggleMenu(e);
     };
 

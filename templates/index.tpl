@@ -1,7 +1,7 @@
 {{ define "embedded-css"}}
 <style type="text/css">
     .content {
-        margin-top: 2em;
+        /*margin-top: 2em;*/
     }
 </style>
 {{end}}
