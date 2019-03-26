@@ -21,13 +21,15 @@ body {
     flex-direction: column;
     justify-content: space-between;
 }
-#menu-toggle, #menu, #menu .items {
-    transition: all .6s ease-out;
-}
 
 #menu {
     background: var(--black-9);
     z-index: 1000;
+    /* Must be height than sub-menu top position. */
+    min-height: 2.2em;
+}
+#menu a:hover {
+    background-color: var(--black-7);
 }
 
 #main{
@@ -62,7 +64,6 @@ body {
 #menu .item {
     color: var(--black-1);
     display: inline-block;
-    /*text-align: center;*/
     text-transform: uppercase;
     /*font-family: 'Denk One', sans-serif;*/
     /*font-family: 'Kalam', cursive;*/
@@ -75,10 +76,10 @@ body {
     padding: .4em 1em;
     z-index: 1000;
 }
-#menu .item:hover {
-    background-color: var(--black-7);
+/* Sub-menu items. */
+#menu .sub-menu .items {
+    background-color: var(--black-9);
 }
-
 
 
 #footer {
@@ -98,44 +99,12 @@ body {
     padding: .4em 1em;
 }
 
-
-
-/*  Screen above 48em. */
-@media (min-width: 48em) {
-    #menu {
-        text-align: center;
-    }
-    #menu-toggle {
-        display: none;
-    }
-    /* Sub-menu. */
-    #menu .sub-menu {
-        display: inline-block;
-        /*background-color: red;*/
-        z-index: 1000;
-        /*position: relative;*/
-    }
-    #menu .item.toggle-items {
-        background-color: green;
-    }
-    /* Sub-menus. */
-    #menu .items {
-        position: absolute;
-        top: 15px;
-        background-color: var(--black-9);
-        width: calc(var(--menu-width) * 1px);
-        z-index: 900;
-    }
-    #menu .items.active {
-        top: 100px;
-    }
-    #menu .items .item {
-        display: block;
-    }
-}
-
 /* Screen under 48em. */
 @media (max-width: 48em) {
+    /* Animation. */
+    #menu-toggle, #menu, #menu .items {
+        transition: all .6s ease-out;
+    }
     /* Toggle menu. */
     #menu-toggle {
         display: block;
@@ -176,8 +145,45 @@ body {
     #menu .items.active {
         left: 0;
     }
+    /* Sub-menu back menu. */
+    #menu .sub-menu .items a.item.back {
+        background-color: blue;
+        /*background-color: var(--black-8);*/
+    }
+    #menu .sub-menu .items a.item.back:hover {
+        background-color: var(--black-7);
+    }
     /* Fotter. */
     #footer .item {
         display: block;
+    }
+}
+
+/*  Screen above 48em. */
+@media (min-width: 48em) {
+    #menu {
+        text-align: center;
+    }
+    #menu-toggle,
+    #menu .sub-menu .items, 
+    #menu .items .item.back {
+        display: none;
+    }
+    /* Sub-menu. */
+    #menu .sub-menu {
+        display: inline-block;
+    }
+    /* Sub-menus items. */
+    #menu .items {
+        position: absolute;
+        top: 2.1em;
+        width: calc(var(--menu-width) * 1px);
+    }
+    /* Show sub-menu items. */
+    #menu .sub-menu:hover .items {
+        display: block;
+    }
+    #menu .sub-menu .items a.item {
+        width: 100%;
     }
 }
