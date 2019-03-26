@@ -8,7 +8,7 @@
 
 {{template "base" .}}
 
-{{define "title"}}Página inicial{{end}}
+{{define "title"}}Esola de vela Ventos Gerais{{end}}
 
 {{define "header"}} {{end}}
 
@@ -17,8 +17,8 @@
     <!-- Presentation. -->
     <div class="row">
         <div class="column">
-            <h1>Escola de Vela Velejar!</h1>
-            <h2>Aqui você dará o seu primeiro grande passo no mundo da vela, seja ele para navegar outros oceanos ou como esporte.</h2>
+            <h1>Escola de Vela Ventos Gerais</h1>
+            <h3>Seu primeiro grande passo no mundo da vela, seja ele para navegar outros oceanos ou como esporte.</h3>
         </div>
         <div class="column">
             <img src="/static/img/main1.jpg">

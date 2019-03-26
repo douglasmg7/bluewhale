@@ -1,7 +1,7 @@
 {{define "menu"}}
 <a class="item brand" href="/">Home</a>
 
-
+<!-- Classes -->
 <div class="sub-menu">
   <a class="item toggle-items" href="#">Aulas</a>
   <div class="items">
@@ -12,6 +12,7 @@
   </div>
 </div>
 
+<!-- Rents -->
 <div class="sub-menu">
   <a class="item toggle-items" href="#">Alugueis</a> 
   <div class="items">
@@ -21,13 +22,11 @@
   </div>
 </div>
 
+<!-- Rides -->
 <a class="item" href="/info/sailboat-ride">Passeio</a>
-<!-- <a class="item" href="/info/projects-and-initiatives">Projetos e inciativas</a> -->
-<!-- <a class="item" href="/info/students-area">Area do aluno</a> -->
-<!-- <a class="item" href="/blog/">Blog</a>
-<a class="item" href="/info/contact">Contato</a>
-<a class="item" href="/info/institutional">Institucional</a> -->
 
+<!-- Admin -->
+{{if .Session }} {{if .Session.CheckPermission "admin"}}
 <div class="sub-menu">
   <a class="item toggle-items" href="#">Admin</a>
   <div class="items">
@@ -35,7 +34,10 @@
       <a class="item" href="/clean-sessions">Limpar seções</a>
   </div>
 </div>
+{{end}}{{end}}
     
+<!-- Student -->
+{{if .Session }} {{if .Session.CheckPermission "editStudent"}}
 <div class="sub-menu">
   <a class="item toggle-items" href="#">Aluno</a></li>
   <div class="items">
@@ -44,8 +46,24 @@
       <a class="item" href="/student/new">Novo aluno</a>
   </div>
 </div>
+{{end}}{{end}}
 
-<!-- <a class="item" href="#">Douglas Gomes</a> -->
+<!-- Signin -->
+{{if not .Session}}
 <a class="item" href="/auth/signin">Entrar</a>
-<!-- <a class="item" href="/auth/signout">Sair</a> -->
+{{end}}
+
+<!-- Account -->
+{{if .Session}}
+<div class="sub-menu">
+  <a class="item toggle-items" href="#">Conta</a></li>
+  <div class="items">
+      <a class="item back" href="#">< Menu</a>
+      <a class="item" href="#">{{.Session.UserName}}</a>
+      <a class="item" href="/auth/signout">Sair</a>
+  </div>
+</div>
+{{end}}
+
+
 {{end}}

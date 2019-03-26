@@ -5,7 +5,7 @@
 {{define "header"}}
 <div class="header">
     <h1>Aluguel de caiaques e bicicletas aquáticas</h1>
-    <h4>Contato com a água</h4>
+    <h4>Curtindo a lagoa</h4>
 </div>
 {{end}}
 

@@ -5,7 +5,7 @@
 {{define "header"}}
 <div class="header">
     <h1>Passeio de veleiro</h1>
-    <h4>abcd</h4>
+    <h4>Para quem ainda não sabe velejar</h4>
 </div>
 {{end}}
 

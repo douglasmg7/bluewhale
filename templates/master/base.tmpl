@@ -19,23 +19,11 @@
         <!-- <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700'> -->
     </head>
     <body>
-        <div id="menu-toggle"></div>
+        <div id="menu-toggle"> <span></span> <span></span> <span></span> </div>
         <div id="menu"> {{template "menu" .}} </div>
         <div id="main">
-            <h1>ola</h1>
-            <h1>ola</h1>
-            <h1>ola</h1>
-            <h1>ola</h1>
-            <h1>ola</h1>
-            <h1>ola</h1>
-            <h1>ola</h1>
-            <h1>ola</h1>
-            <h1>ola</h1>
-            <h1>ola</h1>
-            <h1>ola</h1>
-            <h1>ola</h1>
-            <h1>ola</h1>
-            <h1>olas</h1>
+            {{template "header" .}}
+            {{template "content" .}}
         </div>
         <div id="footer"> {{template "footer" .}} </div>
         <script src="/static/js/layout.js"></script>

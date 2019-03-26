@@ -5,7 +5,7 @@
 {{define "header"}}
 <div class="header">
     <h1>Aulas de Remo Olímpico</h1>
-    <h4>abcd</h4>
+    <h4></h4>
 </div>
 {{end}}
 
