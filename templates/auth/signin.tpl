@@ -2,6 +2,9 @@
 
 {{ define "embedded-css"}}
 <style type="text/css">
+    .content {
+        max-width: var(--width-small);
+    }
     a.reset-pass {
         display: block;
         margin: .2em 0 1em 0;
@@ -9,25 +12,23 @@
     p {
         margin-bottom: 0;
     }
+    form .title {
+        margin-top: 0;
+    }
 </style>
 {{end}}
 
 {{define "title"}}Autenticação{{end}}
 
-{{define "header"}}
-<div class="header">
-    <h1>Entrar</h1>
-    <h4></h4>
-</div>
-{{end}}
+{{define "header"}}{{end}}
 
 {{define "content"}}
 <form class="content" action="/auth/signin" method="post">
-    <!-- <h1>Autenticação</h2> -->
+    <h2 class="title">Entrar</h2>
 
     <!-- Head messages. -->
-    {{if .SuccessMsgHead}} <div> {{.SuccessMsgHead}} </div> {{end}}
-    {{if .WarnMsgHead}} <div> {{.WarnMsgHead}} </div> {{end}}
+    {{if .SuccessMsgHead}} <div class="success-msg"> {{.SuccessMsgHead}} </div> {{end}}
+    {{if .WarnMsgHead}} <div class="warn-msg"> {{.WarnMsgHead}} </div> {{end}}
 
     <!-- email -->
     <label for="email">E-mail</label>
@@ -50,7 +51,7 @@
     <a class="signup" href="/auth/signup">Criar cadastro</a>
 
     <!-- Foot messages. -->
-    {{if .SuccessMsgFooter}} <div> {{.SuccessMsgFooter}} </div> {{end}}
-    {{if .WarnMsgFooter}} <div> {{.WarnMsgFooter}} </div> {{end}}
+    {{if .SuccessMsgFooter}} <div class="success-msg"> {{.SuccessMsgFooter}} </div> {{end}}
+    {{if .WarnMsgFooter}} <div class="warn-msg"> {{.WarnMsgFooter}} </div> {{end}}
 </form>
 {{end}}

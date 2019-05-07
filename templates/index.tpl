@@ -1,5 +1,9 @@
 {{ define "embedded-css"}}
 <style type="text/css">
+    .title {
+        margin-top: 0;
+        color: #3878BB;
+    }
     .img-title {
         margin-bottom: .1em;
         color: #3878BB;
@@ -22,7 +26,7 @@
 {{define "content"}}
 <div class="content">
     <div>
-        <h1 class="img-title">Escola de Vela Ventos Gerais</h1>
+        <h1 class="title">Escola de Vela Ventos Gerais</h1>
         <h3>Seu primeiro grande passo no mundo da vela, seja ele para navegar outros oceanos ou como esporte.</h3>
     </div>
     <!-- Sub presentation. -->

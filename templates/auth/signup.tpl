@@ -2,6 +2,9 @@
 
 {{ define "embedded-css"}}
 <style type="text/css">
+    .content {
+        max-width: var(--width-small);
+    }
     a.reset-pass {
         display: block;
         margin: .2em 0 1em 0;
@@ -9,20 +12,19 @@
     p {
         margin-bottom: 0;
     }
+    form .title {
+        margin-top: 0;
+    }
 </style>
 {{end}}
 
 {{define "title"}}Cadastro{{end}}
 
-{{define "header"}}
-<div class="header">
-    <h1>Cadastro</h1>
-    <h4></h4>
-</div>
-{{end}}
+{{define "header"}}{{end}}
 
 {{define "content"}}
     <form class="content" action="/auth/signup" method="post">
+        <h2 class="title">Criar cadastro</h2>
         <!-- name -->
         <label for="name">Nome</label>
         <input type="text" id="name" name="name" value={{.Name.Value}}>

@@ -2,12 +2,7 @@
 {{ define "embedded-css"}} {{end}}
 {{define "title"}} Passeio de veleiro {{end}}
 
-{{define "header"}}
-<div class="header">
-    <h1>Passeio de veleiro</h1>
-    <h4>Para quem ainda não sabe velejar</h4>
-</div>
-{{end}}
+{{define "header"}} {{end}}
 
 {{define "content"}}
 <div class="content">

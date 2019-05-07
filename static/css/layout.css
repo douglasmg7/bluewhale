@@ -31,37 +31,49 @@ ul {
     padding-left: 1em;
 }
 
+.header h1 {
+    text-align: left;
+}
+
 p.error {
     color: var(--red-lighter);
 }
-
+.warn-msg,
+.success-msg {
+    padding: 0.4em 1em;
+    margin: 1em 0 0 0;
+    border-radius: 4px;
+}
 .warn-msg {
-  /* font-style: italic; */
-  /* color: var(--white-lighter); */
+  color: #cd0930;
   background-color: #F8D7DA;
-  padding: 0.4em 1em;
-  margin: 1em 0 0 0;
-  border-radius: 4px;
+}
+.success-msg {
+  color: #0e301a;
+  background-color: #D4EDDA;
 }
 
+
 #menu {
-    background: var(--white-lighter);
+    /* background: var(--white-lighter); */
+    background: var(--black-darker-x);
     z-index: 1000;
     /* Must be height than sub-menu top position. */
     min-height: 2.2em;
 }
 #menu .item {
-    color: var(--black-8);
+    color: var(--white);
     display: inline-block;
     text-transform: uppercase;
     font-size: 1.2em;
     font-weight: bold;
-    line-height: 1em;
-    padding: .4em 1em;
+    /* line-height: 1em; */
+    /* padding: .4em 1em; */
+    padding: 1em 1em;
     z-index: 1000;
 }
 #menu a:hover {
-    color: var(--black);
+    opacity: .7;
 }
 
 #main{
@@ -107,7 +119,8 @@ p.error {
     padding: 1em 1em;
 }
 #footer a:hover {
-    color: var(--black-light);
+    opacity: .7;
+    /* color: var(--black-light); */
 }
 
 .box {
@@ -192,7 +205,10 @@ p.error {
     /* Menu item. */
     #menu .item {
         display: block;
-        padding: .4em;
+        padding: .8em;
+    }
+    #menu .item.brand {
+        padding-top: 1.6em;
     }
     /* Sub-menu items. */
     #menu .items {
@@ -200,7 +216,7 @@ p.error {
         top: 0;
         height: 100%;
         z-index: 1010;
-        background-color: var(--black-darker);
+        background-color: var(--black-darker-x);
         width: calc(var(--menu-width) * 1px);
         left: calc(var(--menu-width) * -1px);
     }
@@ -209,25 +225,30 @@ p.error {
     }
     /* Sub-menu back menu. */
     #menu .sub-menu .items a.item.back {
-        background-color: blue;
-        /*background-color: var(--black-8);*/
+        padding-top: 1.6em;
     }
     #menu .sub-menu .items a.item.back:hover {
-        background-color: var(--black-dark);
+        /* background-color: var(--black-dark); */
     }
     /* Fotter. */
     #footer .item {
         display: block;
+    }
+    #footer .item:first-child {
+        padding-top: 2em;
+    }
+    #footer .item:last-child {
+        padding-bottom: 2em;
     }
 }
 
 /*  Screen above 48em. */
 @media (min-width: 48em) {
     #main {
-        margin-top: 2em;
+        margin-top: 1.6em;
     }
     #menu {
-        margin-top: 1.2em;
+        /* margin-top: 1.2em; */
         text-align: center;
     }
     .burger,
@@ -242,11 +263,12 @@ p.error {
     /* Sub-menus items. */
     #menu .items {
         position: absolute;
-        top: 3.3em;
+        top: 4em;
         padding-top: .6em;
         padding-bottom: .4em;
         /*width: calc(var(--menu-width) * 1px);*/
-        background-color: #fff;
+        color: var(--black);
+        background-color: var(--white-lighter);
         font-size: .9em;
         text-align: left;
         box-shadow: 4px 6px 22px -8px rgba(0,0,0,0.81);
@@ -259,5 +281,6 @@ p.error {
         padding-top: .5em;
         padding-bottom: .5em;
         display: block;
+        color: var(--black-dark);
     }
 }
