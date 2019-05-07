@@ -1,5 +1,17 @@
 {{template "base" .}}
-{{ define "embedded-css"}} {{end}}
+
+{{ define "embedded-css"}}
+<style type="text/css">
+    a.reset-pass {
+        display: block;
+        margin: .2em 0 1em 0;
+    }
+    p {
+        margin-bottom: 0;
+    }
+</style>
+{{end}}
+
 {{define "title"}}Cadastro{{end}}
 
 {{define "header"}}
@@ -11,33 +23,31 @@
 
 {{define "content"}}
     <form class="content" action="/auth/signup" method="post">
-        <!-- <h1 class="subtitle is-3">Cadastro</h2> -->
-
         <!-- name -->
-        <input class="{{if .Name.Msg}}is-danger{{end}}" type="text" id="name" name="name" placeholder="Nome" value={{.Name.Value}}>
-        <span> <i class="fas fa-user"></i> </span>
-        <p>{{.Name.Msg}}</p>
+        <label for="name">Nome</label>
+        <input type="text" id="name" name="name" value={{.Name.Value}}>
+        <p class="error">{{.Name.Msg}}</p>
 
         <!-- email -->
-        <input class="{{if .Email.Msg}}is-danger{{end}}" type="text" id="email" name="email" placeholder="E-mail" value={{.Email.Value}}>
-        <span> <i class="fas fa-envelope"></i> </span>
-        <p>{{.Email.Msg}}</p>
+        <label for="email">E-mail</label>
+        <input type="text" id="email" name="email" value={{.Email.Value}}>
+        <p class="error">{{.Email.Msg}}</p>
 
         <!-- password -->
-        <input class="{{if .Password.Msg}}is-danger{{end}}" type="password" id="password" name="password" placeholder="Senha" value={{.Password.Value}}>
-        <span> <i class="fas fa-key"></i> </span>
-        <p class="has-text-danger has-text-left">{{.Password.Msg}}</p>
+        <label for="password">Senha</label>
+        <input type="password" id="password" name="password" value={{.Password.Value}}>
+        <p class="error">{{.Password.Msg}}</p>
 
         <!-- confirm password -->
-        <input class="{{if .PasswordConfirm.Msg}}is-danger{{end}}" type="password" id="passwordConfirm" name="passwordConfirm" placeholder="Confirme a senha" value={{.PasswordConfirm.Value}}>
-        <span> <i class="fas fa-check"></i> </span>
-        <p>{{.PasswordConfirm.Msg}}</p>
+        <label for="passwordConfirm">Confirme a senha</label>
+        <input type="password" id="passwordConfirm" name="passwordConfirm" value={{.PasswordConfirm.Value}}>
+        <p class="error">{{.PasswordConfirm.Msg}}</p>
 
         <!-- submit -->
         <button type="submit">Cadastrar</button>
 
         <!-- Foot message. -->
-        {{if .SuccessMsg}} <div> {{.SuccessMsg}} </div> {{end}}
-        {{if .WarnMsg}} <div> {{.WarnMsg}} </div> {{end}}
+        {{if .SuccessMsg}} <div class="success-msg"> {{.SuccessMsg}} </div> {{end}}
+        {{if .WarnMsg}} <div class="warn-msg"> {{.WarnMsg}} </div> {{end}}
     </form>
 {{end}}

@@ -1,18 +1,16 @@
 :root {
     /* Colors */
-    --white: #fff;
+    /* --white: #fff; */
     --black-1: #eee;
     --black-2: #ccc;
     --black-3: #bbb;
     --black-4: #999;
     --black-5: #777;
     --black-6: #666;
-    --black-7: #555;
+    /* --black-7: #555; */
     --black-8: #333;
     --black-9: #222;
     --black-10: #000;
-    /* Menu */
-    --menu-width: 150;
 }
 
 body {
@@ -20,7 +18,8 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    color: var(--black-7);
+    color: var(--black-dark);
+    /* font-family: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif; */
     font-family: 'Kalam', cursive;
     /*font-family: 'Margarine', cursive;*/
     /*font-family: 'Pangolin', cursive;*/
@@ -32,8 +31,21 @@ ul {
     padding-left: 1em;
 }
 
+p.error {
+    color: var(--red-lighter);
+}
+
+.warn-msg {
+  /* font-style: italic; */
+  /* color: var(--white-lighter); */
+  background-color: #F8D7DA;
+  padding: 0.4em 1em;
+  margin: 1em 0 0 0;
+  border-radius: 4px;
+}
+
 #menu {
-    background: var(--white);
+    background: var(--white-lighter);
     z-index: 1000;
     /* Must be height than sub-menu top position. */
     min-height: 2.2em;
@@ -49,8 +61,7 @@ ul {
     z-index: 1000;
 }
 #menu a:hover {
-    color: #192ac4;
-    opacity: .8;
+    color: var(--black);
 }
 
 #main{
@@ -73,27 +84,30 @@ ul {
     /*border-bottom: 1px solid #eee;*/
 }
 .header > h1 {
-    color: var(--black-7);
+    color: var(--black-dark);
     margin: 0;
 }
 .header > h4 {
-    color: var(--black-4);
+    color: var(--black-light);
 }
 
 #footer {
     width: 100%;
-    background-color: var(--black-9);
+    background-color: var(--black-darker-x);
     text-align: center;
 }
 #footer .item {
-    color: var(--black-1);
+    color: var(--white);
     display: inline-block;
     text-align: center;
     text-transform: uppercase;
     font-size: 1.2em;
     font-weight: bold;
     line-height: 1em;
-    padding: .4em 1em;
+    padding: 1em 1em;
+}
+#footer a:hover {
+    color: var(--black-light);
 }
 
 .box {
@@ -134,7 +148,7 @@ ul {
     .burger-inner, .burger-inner::before, .burger-inner::after {
         width: 30px;
         height: 2px;
-        background-color: var(--black-10);
+        background-color: var(--black-darker);
         border-radius: 4px;
         position: absolute;
     }
@@ -186,7 +200,7 @@ ul {
         top: 0;
         height: 100%;
         z-index: 1010;
-        background-color: var(--black-9);
+        background-color: var(--black-darker);
         width: calc(var(--menu-width) * 1px);
         left: calc(var(--menu-width) * -1px);
     }
@@ -199,7 +213,7 @@ ul {
         /*background-color: var(--black-8);*/
     }
     #menu .sub-menu .items a.item.back:hover {
-        background-color: var(--black-7);
+        background-color: var(--black-dark);
     }
     /* Fotter. */
     #footer .item {

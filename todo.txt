@@ -1,4 +1,9 @@
 
+senha
+1Aasdfasdf
+
+http://localhost:8080/auth/signup/confirmation/593001a8-f0ad-49d8-8724-1504affd1a09
+
 https://en.wikipedia.org/wiki/The_7_Habits_of_Highly_Effective_People
 
 https://play.golang.org/p/mlTh2OUM_Tk

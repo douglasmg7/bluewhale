@@ -1,10 +1,22 @@
 {{template "base" .}}
-{{ define "embedded-css"}} {{end}}
+
+{{ define "embedded-css"}}
+<style type="text/css">
+    a.reset-pass {
+        display: block;
+        margin: .2em 0 1em 0;
+    }
+    p {
+        margin-bottom: 0;
+    }
+</style>
+{{end}}
+
 {{define "title"}}Autenticação{{end}}
 
 {{define "header"}}
 <div class="header">
-    <h1>Autenticação</h1>
+    <h1>Entrar</h1>
     <h4></h4>
 </div>
 {{end}}
@@ -18,23 +30,24 @@
     {{if .WarnMsgHead}} <div> {{.WarnMsgHead}} </div> {{end}}
 
     <!-- email -->
-    <input class="{{if .Email.Msg}}is-danger{{end}}" type="text" placeholder="E-mail" id="email" name="email"  value={{.Email.Value}}>
-    <span> <i class="fas fa-envelope"></i> </span>
-    <p>{{.Email.Msg}}</p>
+    <label for="email">E-mail</label>
+    <input type="text" id="email" name="email"  value={{.Email.Value}}>
+    <p class="error"> {{.Email.Msg}} </p>
 
     <!-- password -->
-    <input class="{{if .Password.Msg}}is-danger{{end}}" type="password" placeholder="Senha" id="password" name="password" value={{.Password.Value}}>
-    <span> <i class="fas fa-key"></i> </span>
-    <p>{{.Password.Msg}}</p>
+    <label for="password">Senha</label>
+    <input type="password" id="password" name="password" value={{.Password.Value}}>
+    <p class="error">{{.Password.Msg}}</p>
 
     <!-- submit -->
-    <button type="submit">Entrar</button>
+    <input type="submit" value="Entrar">
 
     <!-- reset password -->
-    <a href="/auth/reset_password">Esqueceu a senha?</a>
+    <a class="reset-pass" href="/auth/reset_password">Esqueceu a senha?</a>
 
     <!-- signup -->
-    <p>Não tem cadastro?<a href="/auth/signup"> Criar cadastro</a></p>
+    <p>Não tem cadastro? </p>
+    <a class="signup" href="/auth/signup">Criar cadastro</a>
 
     <!-- Foot messages. -->
     {{if .SuccessMsgFooter}} <div> {{.SuccessMsgFooter}} </div> {{end}}
