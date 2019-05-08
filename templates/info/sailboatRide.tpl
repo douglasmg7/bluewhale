@@ -1,12 +1,12 @@
 {{template "base" .}}
-{{ define "embedded-css"}} {{end}}
-{{define "title"}} Passeio de veleiro {{end}}
 
-{{define "header"}} {{end}}
+{{ define "embedded-css"}} {{end}}
+
+{{define "title"}} Passeio de veleiro {{end}}
 
 {{define "content"}}
 <div class="content">
-    <h3>Passeio de veleiro</h3>
+    <h2>Passeio de veleiro</h2>
     <p>
         É possível desfrutar da vela sem exatamente saber velejar. Nossa escola oferece passeios em
         veleiros na Lagoa dos Ingleses para até 4 pessoas, em barco cabinado. Os passeios duram um

@@ -1,17 +1,13 @@
 {{template "base" .}}
-{{ define "embedded-css"}} {{end}}
-{{define "title"}} Aulas de vela para crianças {{end}}
 
-{{define "header"}} {{end}}
+{{ define "embedded-css"}} {{end}}
+
+{{define "title"}} Aulas de vela para crianças {{end}}
 
 {{define "content"}}
 <div class="content">
-    <h1>Escolinha de Optimist</h1>
-    
-    <h3>O barco</h3>
-
+    <h2>Escolinha de Optimist</h2>
     <p> Criança também veleja, e os pequenos tem uma classe de vela só para eles: a Optimist! </p>
-
     <p>
         Ensinamos a arte de velejar de forma lúdica, trabalhando o respeito ao meio ambiente,
         a competição saudável e o companheirismo.
@@ -19,7 +15,7 @@
         e a definir estratégias para velejar.
     </p>
 
-    <h3>Benefícios da prática de vela</h3>
+    <h2>Benefícios da prática de vela</h2>
     <ul>
         <li>Melhora a autoconfiança</li>
         <li>Trabalha a disciplina e concentração</li>

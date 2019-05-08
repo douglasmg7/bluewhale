@@ -1,17 +1,12 @@
 {{template "base" .}}
-{{ define "embedded-css"}} {{end}}
-{{define "title"}} Blog {{end}}
 
-{{define "header"}}
-<div class="header">
-    <h1>Blog</h1>
-    <h4></h4>
-</div>
-{{end}}
+{{ define "embedded-css"}} {{end}}
+
+{{define "title"}} Blog {{end}}
 
 {{define "content"}}
 <div class="content">
-    <h3></h3>
+    <h2>Blog</h2>
     <p></p>
 </div>
 {{end}}

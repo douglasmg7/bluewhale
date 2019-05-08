@@ -1,17 +1,12 @@
 {{template "base" .}}
-{{ define "embedded-css"}} {{end}}
-{{define "title"}} Projetos e iniciativas {{end}}
 
-{{define "header"}}
-<div class="header">
-    <h1>Projetos e iniciativas</h1>
-    <h4></h4>
-</div>
-{{end}}
+{{ define "embedded-css"}} {{end}}
+
+{{define "title"}} Projetos e iniciativas {{end}}
 
 {{define "content"}}
 <div class="content">
-    <h3>Projetos e iniciativas</h3>
+    <h2>Projetos e iniciativas</h2>
     <p>
         Neste momento estamos trabalhando em projetos que pretendem viabilizar a prática de vela a
         pessoas com deficiência e a pessoas em situação de vulnerabilidade social da região de Belo

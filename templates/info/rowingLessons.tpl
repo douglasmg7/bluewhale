@@ -1,17 +1,12 @@
 {{template "base" .}}
-{{ define "embedded-css"}} {{end}}
-{{define "title"}} Aulas de remo {{end}}
 
-{{define "header"}}
-<div class="header">
-    <h1>Aulas de Remo Olímpico</h1>
-    <h4></h4>
-</div>
-{{end}}
+{{ define "embedded-css"}} {{end}}
+
+{{define "title"}} Aulas de remo {{end}}
 
 {{define "content"}}
 <div class="content">
-    <h3 class="mt-5 mb-4">Aulas de Remo Olímpico</h2>
+    <h2>Aulas de Remo Olímpico</h2>
     <p>
         O remo é uma atividade física que mobiliza grandes grupos musculares, como braços, pernas,
         quadril, glúteos, costas e core abdominal. Sua prática alivia o estresse, melhora a postura,
@@ -25,7 +20,7 @@
     </p>
     <p>As aulas são individuais e tem duração de x horas.</p>
 
-    <h3>Dias e horários</h4>
+    <h2>Dias e horários</h2>
     <ul>
         <li>Quartas-feiras: A partir de 07h00</li>
         <li>Sextsa-feiras:</li>

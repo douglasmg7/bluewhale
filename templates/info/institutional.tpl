@@ -1,16 +1,13 @@
 {{template "base" .}}
-{{ define "embedded-css"}} {{end}}
-{{define "title"}} Institutional {{end}}
 
-{{define "header"}}
-<div class="header">
-    <h1>Institucional</h1>
-    <h4>Nossa filosofia</h4>
-</div>
-{{end}}
+{{ define "embedded-css"}} {{end}}
+
+{{define "title"}} Institutional {{end}}
 
 {{define "content"}}
 <div class="content">
+    <h2>Institucional</h2>
+
     <h3>Quem somos</h3>
     <p>Somos uma escola especializada em duas encantadoras atividades náuticas: o remo olímpico e a vela. Somos apaixonados pela natureza, pela atividade física e pela liberdade e isso nos fez referência no meio náutico há mais 20 anos.</p>
     <p>A partir do legado do professor Afonso Ligório, professor de remo e preparador físico que fez história nos clubes de regata da Lagoa da Pampulha, em Belo Horizonte desde os anos 60, construímos nossa trajetória estimulando e disseminando a cultura náutica por Minas Gerais.</p>
@@ -27,31 +24,31 @@
 
     <h3>Valores</h3>
 
-    <h5>Qualidade de vida</h5>
+    <h4>Qualidade de vida</h4>
     <p>Acreditamos e estimulamos a prática da atividade física, do esporte, o lazer e a convivência com a natureza para manutenção de uma qualidade de vida cada vez mais escassa na vida de quem mora nos grandes centros urbanos.</p>
 
-    <h5>Saúde e bem-estar</h5>
+    <h4>Saúde e bem-estar</h4>
     <p>Se é saudável e se promove o bem-estar de todos, nós valorizamos!</p>
 
-    <h5>Sustentabilidade</h5>
+    <h4>Sustentabilidade</h4>
     <p>Apostamos que seja possível desfrutar da natureza minimizando nesta os impactos da atividade humana. Trabalhamos com respeito e pela preservação do meio ambiente, da fauna e da flora local.</p>
 
-    <h5>Dedicação ao aluno</h5>
+    <h4>Dedicação ao aluno</h4>
     <p>Nosso foco é o aprendizado dos nossos alunos. Não estamos satisfeitos se o aluno também não estiver.</p>
 
-    <h5>Conforto, segurança e comodidade</h5>
+    <h4>Conforto, segurança e comodidade</h4>
     <p>Conforto e comodidade são indispensáveis em nossa escola. Mas em hipótese nenhuma abrimos mão da segurança. Nossa atividade só vale a pena sustentada por pilares!</p>
 
-    <h5>Autonomia</h5>
+    <h4>Autonomia</h4>
     <p>Estamos sempre ansiosos em ver nossos alunos embarcando em seus projetos de vida com a vela e com o remo. Nós somos seu apoio, seu porto seguro, mas o que mais desejamos é dar a todos a capacidade de construir e viabilizar seus sonhos.</p>
 
-    <h5>Aprender sempre</h5>
+    <h4>Aprender sempre</h4>
     <p>Reconhecemos que o ensino de esportes náuticos exige uma formação permanente. Por isso, nunca deixamos de investir em conhecimento, em capacitações e aperfeiçoamento de nossa equipe.</p>
 
-    <h5>Acessibilidade</h5>
+    <h4>Acessibilidade</h4>
     <p>Entendemos que a prática dos esportes náuticos nem sempre é acessível e possível a todos. Nos comprometemos em trabalhar em iniciativas e projetos que permitam e viabilizem a prática dessas modalidades por mais pessoas.</p>
 
-    <h5>Espírito Esportivo</h5>
+    <h4>Espírito Esportivo</h4>
     <p>Estimulamos o esporte praticado com honestidade e ética e tudo que fazemos é pensado em respeito às normas técnicas, aos regulamentos, aos códigos de ética profissionais e às regras das diferentes classes de vela e remo.</p>
 </div>
 {{end}}

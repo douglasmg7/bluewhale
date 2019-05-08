@@ -12,9 +12,6 @@
     p {
         margin-bottom: 0;
     }
-    form .title {
-        margin-top: 0;
-    }
 </style>
 {{end}}
 

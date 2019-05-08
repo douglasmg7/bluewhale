@@ -12,15 +12,10 @@
     p {
         margin-bottom: 0;
     }
-    form .title {
-        margin-top: 0;
-    }
 </style>
 {{end}}
 
 {{define "title"}}Autenticação{{end}}
-
-{{define "header"}}{{end}}
 
 {{define "content"}}
 <form class="content" action="/auth/signin" method="post">

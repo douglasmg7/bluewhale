@@ -86,7 +86,7 @@ p.error {
 
 .content {
     margin: 0 auto;
-    max-width: 800px;
+    max-width: var(--width-large);
     margin-bottom: 50px;
     line-height: 1.6em;
 }
@@ -135,7 +135,7 @@ p.error {
     }
     /* Burger */
     .burger {
-        padding: 15px;
+        padding: 15px 15px 0 15px;
         cursor: pointer;
         /*position: absolute;*/
         display: inline-block;
@@ -245,7 +245,7 @@ p.error {
 /*  Screen above 48em. */
 @media (min-width: 48em) {
     #main {
-        margin-top: 1.6em;
+        /* margin-top: 1.6em; */
     }
     #menu {
         /* margin-top: 1.2em; */

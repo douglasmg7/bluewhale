@@ -1,13 +1,13 @@
 {{template "base" .}}
-{{ define "embedded-css"}} {{end}}
-{{define "title"}} Aulas de vela para crianças {{end}}
 
-{{define "header"}} {{end}}
+{{ define "embedded-css"}} {{end}}
+
+{{define "title"}} Aulas de vela para crianças {{end}}
 
 {{define "content"}}
 <div class="content">
-    <h1>Aulas de vela para adultos</h1>
-    <h3>Aulas de vela para adultos</h2>
+
+    <h2>Aulas de vela para adultos</h2>
     <p>
         As aulas acontecem em módulos e são realizadas sempre aos sábados e
         domingos e tem duração de 2 horas.
@@ -18,5 +18,6 @@
         inesquecível quando realizado em família ou com amigos.
     </p>
     <p>Agende uma aula experimental!</p>
+
 </div>
 {{end}}
