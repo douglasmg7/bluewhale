@@ -39,7 +39,7 @@
     <input type="submit" value="Entrar">
 
     <!-- reset password -->
-    <a class="reset-pass" href="/auth/password-recovery">Esqueceu a senha?</a>
+    <a class="reset-pass" href="/auth/password/recovery">Esqueceu a senha?</a>
 
     <!-- signup -->
     <p>Não tem cadastro? </p>

@@ -146,9 +146,9 @@ func main() {
 	router.GET("/auth/signout", authSignoutHandler)
 
 	// Auth - password.
-	router.GET("/auth/password-recovery", confirmNoLogged(passwordRecoveryHandler))
-	router.POST("/auth/password-recovery", confirmNoLogged(passwordRecoveryHandlerPost))
-	router.GET("/auth/password-reset", confirmNoLogged(passwordResetHandler))
+	router.GET("/auth/password/recovery", confirmNoLogged(passwordRecoveryHandler))
+	router.POST("/auth/password/recovery", confirmNoLogged(passwordRecoveryHandlerPost))
+	router.GET("/auth/password/reset", confirmNoLogged(passwordResetHandler))
 
 	// Entrance.
 	router.GET("/user_add", userAddHandler)

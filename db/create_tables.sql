@@ -3,6 +3,7 @@
 -- not working, reset to off when back to db
 pragma foreign_keys = on;
 
+-- Entrance.
 create table entrance (
   id integer primary key autoincrement,
   user_id integer not null,
@@ -11,14 +12,15 @@ create table entrance (
   foreign key(user_id) references user(id)
 );
 
+-- User.
 create table user (
   id integer primary key autoincrement,
   email varchar(64) not null unique,
   name varchar(64) not null,
   password blob not null,
-  -- carteira de identidade
+  -- Id card.
   rg varchar(64) null,
-  -- mobile number
+  -- Mobile number.
   mobile varchar(64) null,
   created date not null,
   updated date not null,
@@ -27,7 +29,7 @@ create table user (
 );
 create index idx_user_name on user(name);
 
--- email certify
+-- Email certify.
 create table email_certify (
   uuid varchar(64) primary key,
   name varchar(64) not null,
@@ -37,6 +39,15 @@ create table email_certify (
 );
 create index idx_email_certify_created on email_certify(name);
 
+-- Password reset.
+create table password_reset (
+  uuid varchar(64) primary key,
+  user_email varchar(64) not null,
+  created date not null,
+  foreign key(user_email) references user(email)
+);
+
+-- Session uuid.
 create table sessionUUID (
   uuid varchar(64) primary key,
   user_id varchar(64) not null,
@@ -44,6 +55,7 @@ create table sessionUUID (
   foreign key(user_id) references user(id)
 );
 
+-- Student.
 create table student (
   id integer primary key autoincrement,
   name varchar(64) not null,

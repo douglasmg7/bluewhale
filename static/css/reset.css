@@ -94,7 +94,7 @@ input[type='submit'] {
     text-decoration: none;
     text-transform: uppercase;
     white-space: nowrap;
-    margin-top: 2em;
+    margin-top: 2rem;
 }
 
 .button:focus, .button:hover,
@@ -395,5 +395,5 @@ label {
   display: block;
   font-size: 1.6rem;
   font-weight: 700;
-  margin-top: 1em;
+  margin-top: 1rem;
 }

@@ -308,9 +308,28 @@ func passwordRecoveryHandlerPost(w http.ResponseWriter, req *http.Request, _ htt
 	if err != nil && err != sql.ErrNoRows {
 		log.Fatal(err)
 	}
-	// Toke created.
+	// Create a token to change password.
+	uuid, err := uuid.NewV4()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Save token.
+	stmt, err := db.Prepare(`INSERT INTO password_reset(uuid, email) VALUES(?, ?, ?)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(uuid.String(), data.Email.Value, time.Now().String())
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Log email confirmation on dev mode.
+	if devMode {
+		log.Printf("http://localhost:8080/auth/password/reset/$s", uuid.String())
+	}
+	// Token created.
 	data.SuccessMsgFooter = fmt.Sprintf("Foi enviado um e-mail para %s com as instruções para a recuperação da senha.", data.Email.Value)
-	err := tmplPasswordRecovery.ExecuteTemplate(w, "passwordRecovery.tpl", data)
+	err = tmplPasswordRecovery.ExecuteTemplate(w, "passwordRecovery.tpl", data)
 	HandleError(w, err)
 	return
 }
