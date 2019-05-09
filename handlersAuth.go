@@ -1,7 +1,7 @@
 package main
 
 import (
-	// "fmt"
+	"fmt"
 	"github.com/douglasmg7/bluetang"
 	"github.com/julienschmidt/httprouter"
 	// _ "github.com/mattn/go-sqlite3"
@@ -33,6 +33,21 @@ type signupTplData struct {
 	PasswordConfirm valueMsg
 	WarnMsg         string
 	SuccessMsg      string
+}
+type passwordRecoveryTplData struct {
+	Session *Session
+	HeadMessage string
+	Email valueMsg
+	WarnMsgFooter    string
+	SuccessMsgFooter string
+}
+type passwordResetTplData struct {
+	Session *Session
+	HeadMessage string
+	Email valueMsg
+	EmailConfirm valueMsg
+	WarnMsgFooter    string
+	SuccessMsgFooter string
 }
 
 /**************************************************************************************************
@@ -257,6 +272,54 @@ func authSigninHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 // Signout.
 func authSignoutHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	sessions.RemoveSession(w, req)
+}
+
+/**************************************************************************************************
+* Reset password
+**************************************************************************************************/
+// Password recovery page.
+func passwordRecoveryHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	data := passwordRecoveryTplData{}
+	err := tmplPasswordRecovery.ExecuteTemplate(w, "passwordRecovery.tpl", data)
+	HandleError(w, err)
+}
+
+// Password recovery post.
+func passwordRecoveryHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	var data passwordRecoveryTplData
+	// Test email format.
+	data.Email.Value, data.Email.Msg = bluetang.Email(req.FormValue("email"))
+	if data.Email.Msg != "" {
+		err := tmplPasswordRecovery.ExecuteTemplate(w, "passwordRecovery.tpl", data)
+		HandleError(w, err)
+		return
+	}
+	// Get user by email.
+	var userId int
+	err = db.QueryRow("SELECT id FROM user WHERE email = ?", data.Email.Value).Scan(&userId)
+	// No user.
+	if err == sql.ErrNoRows {
+		data.WarnMsgFooter = "Email não cadastrado."
+		err := tmplPasswordRecovery.ExecuteTemplate(w, "passwordRecovery.tpl", data)
+		HandleError(w, err)
+		return
+	}
+	// Internal error.
+	if err != nil && err != sql.ErrNoRows {
+		log.Fatal(err)
+	}
+	// Toke created.
+	data.SuccessMsgFooter = fmt.Sprintf("Foi enviado um e-mail para %s com as instruções para a recuperação da senha.", data.Email.Value)
+	err := tmplPasswordRecovery.ExecuteTemplate(w, "passwordRecovery.tpl", data)
+	HandleError(w, err)
+	return
+}
+
+// Password reset page.
+func passwordResetHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	data := passwordResetTplData{}
+	err := tmplPasswordReset.ExecuteTemplate(w, "passwordReset.tpl", data)
+	HandleError(w, err)
 }
 
 // let emailOptions = {

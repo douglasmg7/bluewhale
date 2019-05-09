@@ -19,27 +19,18 @@
 
 {{define "content"}}
 <form class="content" action="/auth/signin" method="post">
-    <h2 class="title">Entrar</h2>
-
-    <!-- Head messages. -->
-    {{if .SuccessMsgHead}} <div class="success-msg"> {{.SuccessMsgHead}} </div> {{end}}
-    {{if .WarnMsgHead}} <div class="warn-msg"> {{.WarnMsgHead}} </div> {{end}}
+    <h2 class="title">Redefinir senha</h2>
 
     <!-- email -->
     <label for="email">E-mail</label>
     <input type="text" id="email" name="email"  value={{.Email.Value}}>
     <p class="error"> {{.Email.Msg}} </p>
 
-    <!-- password -->
-    <label for="password">Senha</label>
-    <input type="password" id="password" name="password" value={{.Password.Value}}>
-    <p class="error">{{.Password.Msg}}</p>
-
     <!-- submit -->
-    <input type="submit" value="Entrar">
+    <input type="submit" value="Redefinir">
 
     <!-- reset password -->
-    <a class="reset-pass" href="/auth/password-recovery">Esqueceu a senha?</a>
+    <a class="reset-pass" href="/auth/reset_password">Esqueceu a senha?</a>
 
     <!-- signup -->
     <p>Não tem cadastro? </p>

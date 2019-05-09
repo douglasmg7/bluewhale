@@ -27,7 +27,7 @@ var tmplProjectsAndInitiatives, tmplContact, tmplStudentsArea *template.Template
 var tmplBlogIndex *template.Template
 
 // Auth.
-var tmplAuthSignup, tmplAuthSignin *template.Template
+var tmplAuthSignup, tmplAuthSignin, tmplPasswordRecovery, tmplPasswordReset  *template.Template
 
 // Student.
 var tmplStudent, tmplAllStudent, tmplNewStudent *template.Template
@@ -83,6 +83,8 @@ func init() {
 	// Auth.
 	tmplAuthSignup = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signup.tpl"))
 	tmplAuthSignin = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signin.tpl"))
+	tmplPasswordRecovery = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/passwordRecovery.tpl"))
+	tmplPasswordReset = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/passwordReset.tpl"))
 	// Student.
 	tmplStudent = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student.tpl"))
 	tmplAllStudent = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/allStudent.tpl"))
@@ -142,6 +144,11 @@ func main() {
 	router.GET("/auth/signin", confirmNoLogged(authSigninHandler))
 	router.POST("/auth/signin", confirmNoLogged(authSigninHandlerPost))
 	router.GET("/auth/signout", authSignoutHandler)
+
+	// Auth - password.
+	router.GET("/auth/password-recovery", confirmNoLogged(passwordRecoveryHandler))
+	router.POST("/auth/password-recovery", confirmNoLogged(passwordRecoveryHandlerPost))
+	router.GET("/auth/password-reset", confirmNoLogged(passwordResetHandler))
 
 	// Entrance.
 	router.GET("/user_add", userAddHandler)
