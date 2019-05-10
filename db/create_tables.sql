@@ -27,22 +27,21 @@ create table user (
   permission integer default 0,
   saved boolean default true
 );
-create index idx_user_name on user(name);
+create index idx_user_email on user(email);
 
--- Email certify.
-create table email_certify (
-  uuid varchar(64) primary key,
+-- Email confirmation.
+create table email_confirmation (
+  email varchar(64) primary key,
+  uuid varchar(64) not null,
   name varchar(64) not null,
-  email varchar(64) not null unique,
   password blob not null,
   created date not null
 );
-create index idx_email_certify_created on email_certify(name);
 
 -- Password reset.
 create table password_reset (
-  uuid varchar(64) primary key,
-  user_email varchar(64) not null,
+  user_email varchar(64) primary key,
+  uuid varchar(64) not null,
   created date not null,
   foreign key(user_email) references user(email)
 );

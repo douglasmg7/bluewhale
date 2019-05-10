@@ -1,4 +1,4 @@
-Remove email certify after some time.
+Change created db field to createdAt
 
 When add a password reset from a e-mail, delete the previous.
 

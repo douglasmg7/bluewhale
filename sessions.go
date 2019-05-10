@@ -3,10 +3,12 @@ package main
 import (
 	// _ "github.com/mattn/go-sqlite3"
 	// "github.com/satori/go.uuid"
-	"github.com/satori/go.uuid"
+
 	"log"
 	"net/http"
 	"time"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 // Measure execution time to retrive the session.
@@ -91,7 +93,7 @@ func (s *Sessions) CreateSession(w http.ResponseWriter, userId int) error {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(sUUIDString, userId, time.Now().String())
+	_, err = stmt.Exec(sUUIDString, userId, time.Now())
 	if err != nil {
 		return err
 	}

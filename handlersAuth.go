@@ -75,6 +75,7 @@ func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 	data.Name.Value, data.Name.Msg = bluetang.Name(req.FormValue("name"))
 	data.Email.Value, data.Email.Msg = bluetang.Email(req.FormValue("email"))
 	data.Password.Value, data.Password.Msg = bluetang.Password(req.FormValue("password"))
+	// Check confirm email equality.
 	if data.Password.Msg == "" {
 		if req.FormValue("password") != req.FormValue("passwordConfirm") {
 			data.PasswordConfirm.Msg = "Confirmação da senha e senha devem ser iguais"
@@ -105,31 +106,34 @@ func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 		HandleError(w, err)
 		return
 	}
-	// Certify if alredy have email certify waiting confirmation.
-	var count int
-	err = db.QueryRow("select count(*) from email_certify where email = ?", data.Email.Value).Scan(&count)
-	if err != nil {
+	// Lookup for a recent email confirmation.
+	var createdAt time.Time
+	err = db.QueryRow("SELECT created FROM email_confirmation WHERE email = ?", data.Email.Value).Scan(&createdAt)
+	if err != nil && err != sql.ErrNoRows {
 		log.Fatal(err)
 	}
-	if count > 0 {
-		dataMsg.TitleMsg = "Solicitação já realizada anteriormente"
-		dataMsg.WarnMsg = "A solicitação de cadastramento para o email " + data.Email.Value + " já foi realizada anteriormente, falta a confirmação do cadastro atravéz do link enviado para o respectivo email."
-		err = tmplMessage.ExecuteTemplate(w, "message.tpl", dataMsg)
-		HandleError(w, err)
-		return
-
-		// todo - delete.
-		// data.WarnMsg = "A solicitação de cadastramento para o email " + data.Email.Value + " já foi realizada anteriormente, falta a confirmação do cadastro atravéz do link enviado para o respectivo email."
-		// data.Name.Value = ""
-		// data.Email.Value = ""
-		// data.Password.Value = ""
-		// data.PasswordConfirm.Value = ""
-		// data.SuccessMsg = ""
-		// err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
-		// HandleError(w, err)
-		// return
+	// Alredy have email confirmation on db.
+	if createdAt.IsZero() == false {
+		// Not accept new signup in less than 5 min.
+		if time.Since(createdAt).Minutes() < float64(5) {
+			dataMsg.TitleMsg = "Solicitação já realizada anteriormente"
+			dataMsg.WarnMsg = "A solicitação de cadastramento para o email " + data.Email.Value + " já foi realizada anteriormente, falta a confirmação do cadastro atravéz do link enviado para o respectivo email."
+			err = tmplMessage.ExecuteTemplate(w, "message.tpl", dataMsg)
+			HandleError(w, err)
+			return
+		}
+		// Delete old email confirmation.
+		stmt, err := db.Prepare(`DELETE from email_confirmation WHERE email == ?`)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer stmt.Close()
+		_, err = stmt.Exec(data.Email.Value)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
-	// Create a email certify.
+	// Create uuid.
 	uuid, err := uuid.NewV4()
 	if err != nil {
 		log.Fatal(err)
@@ -140,13 +144,13 @@ func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 		http.Error(w, "Erro interno do servidor", http.StatusInternalServerError)
 		return
 	}
-	// Save email certify.
-	stmt, err := db.Prepare(`INSERT INTO email_certify(uuid, name, email, password, created) VALUES(?, ?, ?, ?, ?)`)
+	// Save email confirmation.
+	stmt, err := db.Prepare(`INSERT INTO email_confirmation(uuid, name, email, password, created) VALUES(?, ?, ?, ?, ?)`)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(uuid.String(), data.Name.Value, data.Email.Value, cryptedPassword, time.Now().String())
+	_, err = stmt.Exec(uuid.String(), data.Name.Value, data.Email.Value, cryptedPassword, time.Now())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -156,19 +160,9 @@ func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 	}
 	// Render page with next step to complete signup.
 	dataMsg.TitleMsg = "Pŕoximo passo"
-	dataMsg.SuccessMsg = "Foi enviado um e-mail para " + data.Email.Value + " com instruções para completar o cadastro."
+	dataMsg.SuccessMsg = "Dentro de instantes será enviado um e-mail para " + data.Email.Value + " com instruções para completar o cadastro."
 	err = tmplMessage.ExecuteTemplate(w, "message.tpl", dataMsg)
 	HandleError(w, err)
-
-	// todo - delete.
-	// data.SuccessMsg = "Foi enviado um e-mail para " + data.Email.Value + " com instruções para completar o cadastro."
-	// data.Name.Value = ""
-	// data.Email.Value = ""
-	// data.Password.Value = ""
-	// data.PasswordConfirm.Value = ""
-	// data.WarnMsg = ""
-	// err = tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
-	// HandleError(w, err)
 }
 
 // Signup confirmation.
@@ -178,7 +172,7 @@ func authSignupConfirmationHandler(w http.ResponseWriter, req *http.Request, ps 
 	var name, email string
 	var password []byte
 	var data signinTplData
-	err = db.QueryRow("SELECT name, email, password FROM email_certify WHERE uuid = ?", uuid).Scan(&name, &email, &password)
+	err = db.QueryRow("SELECT name, email, password FROM email_confirmation WHERE uuid = ?", uuid).Scan(&name, &email, &password)
 	if err != nil && err != sql.ErrNoRows {
 		log.Fatal(err)
 	}
@@ -189,13 +183,13 @@ func authSignupConfirmationHandler(w http.ResponseWriter, req *http.Request, ps 
 			log.Fatal(err)
 		}
 		defer stmt.Close()
-		now := time.Now().String()
+		now := time.Now()
 		_, err = stmt.Exec(name, email, password, now, now)
 		if err != nil {
 			log.Fatal(err)
 		}
 		// Delete email certify.
-		stmt, err = db.Prepare(`DELETE from email_certify WHERE uuid == ?`)
+		stmt, err = db.Prepare(`DELETE from email_confirmation WHERE uuid == ?`)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -301,7 +295,7 @@ func passwordRecoveryHandler(w http.ResponseWriter, req *http.Request, _ httprou
 // Password recovery post.
 func passwordRecoveryHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	var data passwordRecoveryTplData
-	// Test email format.
+	// Verify email format.
 	data.Email.Value, data.Email.Msg = bluetang.Email(req.FormValue("email"))
 	if data.Email.Msg != "" {
 		err := tmplPasswordRecovery.ExecuteTemplate(w, "passwordRecovery.tpl", data)
@@ -333,7 +327,7 @@ func passwordRecoveryHandlerPost(w http.ResponseWriter, req *http.Request, _ htt
 		log.Fatal(err)
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(uuid.String(), data.Email.Value, time.Now().String())
+	_, err = stmt.Exec(uuid.String(), data.Email.Value, time.Now())
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/douglasmg7/bluetang"
 	"github.com/julienschmidt/httprouter"
+
 	// _ "github.com/mattn/go-sqlite3"
 	"database/sql"
 	"log"
@@ -124,7 +125,7 @@ func newStudentHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 				log.Fatal(err)
 			}
 			defer stmt.Close()
-			_, err = stmt.Exec(data.Name.Value, data.Email.Value, data.Mobile.Value, time.Now().String())
+			_, err = stmt.Exec(data.Name.Value, data.Email.Value, data.Mobile.Value, time.Now())
 			if err != nil {
 				log.Fatal(err)
 			}
