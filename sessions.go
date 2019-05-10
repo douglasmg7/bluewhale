@@ -88,7 +88,7 @@ func (s *Sessions) CreateSession(w http.ResponseWriter, userId int) error {
 		// HttpOnly: true, // Can't be used into js client
 	})
 	// Save session UUID on db.
-	stmt, err := db.Prepare(`INSERT INTO sessionUUID(uuid, user_id, created) VALUES( ?, ?, ?)`)
+	stmt, err := db.Prepare(`INSERT INTO sessionUUID(uuid, user_id, createdAt) VALUES( ?, ?, ?)`)
 	if err != nil {
 		return err
 	}

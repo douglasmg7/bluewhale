@@ -120,7 +120,7 @@ func newStudentHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 			HandleError(w, err)
 			// insert student into db
 		} else {
-			stmt, err := db.Prepare(`INSERT INTO student(name, email, mobile, created) VALUES(?, ?, ?, ?)`)
+			stmt, err := db.Prepare(`INSERT INTO student(name, email, mobile, createdAt) VALUES(?, ?, ?, ?)`)
 			if err != nil {
 				log.Fatal(err)
 			}

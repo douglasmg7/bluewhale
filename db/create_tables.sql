@@ -8,7 +8,7 @@ create table entrance (
   id integer primary key autoincrement,
   user_id integer not null,
   school varchar(64) not null,
-  created date not null,
+  createdAt date not null,
   foreign key(user_id) references user(id)
 );
 
@@ -22,8 +22,8 @@ create table user (
   rg varchar(64) null,
   -- Mobile number.
   mobile varchar(64) null,
-  created date not null,
-  updated date not null,
+  createdAt date not null,
+  updatedAt date not null,
   permission integer default 0,
   saved boolean default true
 );
@@ -35,14 +35,14 @@ create table email_confirmation (
   uuid varchar(64) not null,
   name varchar(64) not null,
   password blob not null,
-  created date not null
+  createdAt date not null
 );
 
 -- Password reset.
 create table password_reset (
   user_email varchar(64) primary key,
   uuid varchar(64) not null,
-  created date not null,
+  createdAt date not null,
   foreign key(user_email) references user(email)
 );
 
@@ -50,7 +50,7 @@ create table password_reset (
 create table sessionUUID (
   uuid varchar(64) primary key,
   user_id varchar(64) not null,
-  created date not null,
+  createdAt date not null,
   foreign key(user_id) references user(id)
 );
 
@@ -61,7 +61,7 @@ create table student (
   -- mobile number
   mobile varchar(64) null,
   email varchar(64) not null unique,
-  created date not null
+  createdAt date not null
 );
 create index idx_student_name on student(name);
 

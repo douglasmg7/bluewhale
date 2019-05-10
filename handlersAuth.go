@@ -108,7 +108,7 @@ func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 	}
 	// Lookup for a recent email confirmation.
 	var createdAt time.Time
-	err = db.QueryRow("SELECT created FROM email_confirmation WHERE email = ?", data.Email.Value).Scan(&createdAt)
+	err = db.QueryRow("SELECT createdAt FROM email_confirmation WHERE email = ?", data.Email.Value).Scan(&createdAt)
 	if err != nil && err != sql.ErrNoRows {
 		log.Fatal(err)
 	}
@@ -145,7 +145,7 @@ func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 		return
 	}
 	// Save email confirmation.
-	stmt, err := db.Prepare(`INSERT INTO email_confirmation(uuid, name, email, password, created) VALUES(?, ?, ?, ?, ?)`)
+	stmt, err := db.Prepare(`INSERT INTO email_confirmation(uuid, name, email, password, createdAt) VALUES(?, ?, ?, ?, ?)`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -178,7 +178,7 @@ func authSignupConfirmationHandler(w http.ResponseWriter, req *http.Request, ps 
 	}
 	// Create a user from email certify.
 	if name != "" {
-		stmt, err := db.Prepare(`INSERT INTO user(name, email, password, created, updated) VALUES(?, ?, ?, ?, ?)`)
+		stmt, err := db.Prepare(`INSERT INTO user(name, email, password, createdAt, updatedAt) VALUES(?, ?, ?, ?, ?)`)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -322,7 +322,7 @@ func passwordRecoveryHandlerPost(w http.ResponseWriter, req *http.Request, _ htt
 		log.Fatal(err)
 	}
 	// Save token.
-	stmt, err := db.Prepare(`INSERT INTO password_reset(uuid, user_email, created) VALUES(?, ?, ?)`)
+	stmt, err := db.Prepare(`INSERT INTO password_reset(uuid, user_email, createdAt) VALUES(?, ?, ?)`)
 	if err != nil {
 		log.Fatal(err)
 	}

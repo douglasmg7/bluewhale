@@ -1,11 +1,8 @@
-Change created db field to createdAt
-
-When add a password reset from a e-mail, delete the previous.
+authSignupConfirmationHandler
+    Rename to authEmailConfirmationHandler
+    Remove email confirmation if token not from email, and send message inválid token.
 
 If token not match e-mail from password reset, delete the token. So user need create a new token o password reset form.
-
-Create a page for message, with title and message.
-    After signup redirect to a message page.
 
 Redirect to login page when logout.
 
