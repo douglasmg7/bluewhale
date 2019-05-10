@@ -1,2 +1,6 @@
 bluewhale
 db/bluewhale.db
+
+# Include directories but not the files.
+log/*
+!log/.gitkeep 

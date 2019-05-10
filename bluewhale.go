@@ -2,20 +2,22 @@ package main
 
 import (
 	"database/sql"
-	"github.com/julienschmidt/httprouter"
-	_ "github.com/mattn/go-sqlite3"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/julienschmidt/httprouter"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 /************************************************************************************************
 * Templates
 ************************************************************************************************/
 // Geral.
-var tmplMaster, tmplIndex, tmplIndex_m, tmplDeniedAccess *template.Template
+var tmplMaster, tmplIndex, tmplDeniedAccess *template.Template
 
 // Info.
 var tmplInstitutional *template.Template
@@ -27,7 +29,7 @@ var tmplProjectsAndInitiatives, tmplContact, tmplStudentsArea *template.Template
 var tmplBlogIndex *template.Template
 
 // Auth.
-var tmplAuthSignup, tmplAuthSignin, tmplPasswordRecovery, tmplPasswordReset  *template.Template
+var tmplAuthSignup, tmplAuthSignin, tmplPasswordRecovery, tmplPasswordReset *template.Template
 
 // Student.
 var tmplStudent, tmplAllStudent, tmplNewStudent *template.Template
@@ -41,7 +43,7 @@ var tmplUserAdd *template.Template
 var tmplEntreanceAdd *template.Template
 
 // Development mode.
-var devMode bool = false
+var devMode bool
 
 const port = "8080"
 
@@ -52,7 +54,14 @@ var sessions = Sessions{
 }
 
 func init() {
-	// set log
+	// Log file.
+	logFile, err := os.OpenFile("./log/main.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
+	if err != nil {
+		panic(err)
+	}
+	// Log cnfiguration.
+	mw := io.MultiWriter(os.Stdout, logFile)
+	log.SetOutput(mw)
 	log.SetFlags(log.Ldate | log.Lmicroseconds | log.Lshortfile)
 	// log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
 	// log.SetFlags(log.LstdFlags | log.Ldate | log.Lshortfile)

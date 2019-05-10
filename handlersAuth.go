@@ -2,16 +2,19 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/douglasmg7/bluetang"
 	"github.com/julienschmidt/httprouter"
+
 	// _ "github.com/mattn/go-sqlite3"
 	"database/sql"
-	"github.com/satori/go.uuid"
-	"golang.org/x/crypto/bcrypt"
 	"html/template"
 	"log"
 	"net/http"
 	"time"
+
+	uuid "github.com/satori/go.uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type signinTplData struct {
@@ -35,17 +38,17 @@ type signupTplData struct {
 	SuccessMsg      string
 }
 type passwordRecoveryTplData struct {
-	Session *Session
-	HeadMessage string
-	Email valueMsg
+	Session          *Session
+	HeadMessage      string
+	Email            valueMsg
 	WarnMsgFooter    string
 	SuccessMsgFooter string
 }
 type passwordResetTplData struct {
-	Session *Session
-	HeadMessage string
-	Email valueMsg
-	EmailConfirm valueMsg
+	Session          *Session
+	HeadMessage      string
+	Email            valueMsg
+	EmailConfirm     valueMsg
 	WarnMsgFooter    string
 	SuccessMsgFooter string
 }
@@ -295,8 +298,8 @@ func passwordRecoveryHandlerPost(w http.ResponseWriter, req *http.Request, _ htt
 		return
 	}
 	// Get user by email.
-	var userId int
-	err = db.QueryRow("SELECT id FROM user WHERE email = ?", data.Email.Value).Scan(&userId)
+	var userID int
+	err = db.QueryRow("SELECT id FROM user WHERE email = ?", data.Email.Value).Scan(&userID)
 	// No user.
 	if err == sql.ErrNoRows {
 		data.WarnMsgFooter = "Email não cadastrado."
