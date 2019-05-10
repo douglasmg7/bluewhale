@@ -5,6 +5,7 @@ import (
 	// "github.com/douglasmg7/bluetang"
 	"github.com/julienschmidt/httprouter"
 	_ "github.com/mattn/go-sqlite3"
+
 	// "github.com/satori/go.uuid"
 	"html/template"
 	"log"
@@ -15,6 +16,14 @@ import (
 type valueMsg struct {
 	Value string
 	Msg   string
+}
+
+// Template message data.
+type messageTplData struct {
+	Session    *Session
+	TitleMsg   string
+	WarnMsg    string
+	SuccessMsg string
 }
 
 // Handler error.

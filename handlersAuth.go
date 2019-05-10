@@ -84,80 +84,77 @@ func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 		err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
 		HandleError(w, err)
 		return
-		// Save student.
-	} else {
-		// Verify if email alredy registered.
-		rows, err := db.Query("select email from user where email = ?", data.Email.Value)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer rows.Close()
+	}
+	// Verify if email alredy registered.
+	rows, err := db.Query("select email from user where email = ?", data.Email.Value)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
 
-		for rows.Next() {
-			data.Email.Msg = "Email já cadastrado"
-		}
-		if err = rows.Err(); err != nil {
-			log.Fatal(err)
-		}
-		// Email alredy registered.
-		if data.Email.Msg != "" {
-			err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
-			HandleError(w, err)
-			return
-		}
-		// Certify if alredy have email certify waiting confirmation.
-		var count int
-		err = db.QueryRow("select count(*) from email_certify where email = ?", data.Email.Value).Scan(&count)
-		if err != nil {
-			log.Fatal(err)
-		}
-		if count > 0 {
-			data.WarnMsg = "O email " + data.Email.Value + " já foi cadastrado anteriormente, falta confirmação do cadastro atravéz do link enviado para o respectivo email"
-			data.Name.Value = ""
-			data.Email.Value = ""
-			data.Password.Value = ""
-			data.PasswordConfirm.Value = ""
-			data.SuccessMsg = ""
-			err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
-			HandleError(w, err)
-			return
-		}
-		// Create a email certify.
-		uuid, err := uuid.NewV4()
-		if err != nil {
-			log.Fatal(err)
-		}
-		// Encrypt password.
-		cryptedPassword, err := bcrypt.GenerateFromPassword([]byte(data.Password.Value), bcrypt.DefaultCost)
-		if err != nil {
-			http.Error(w, "Erro interno do servidor", http.StatusInternalServerError)
-			return
-		}
-		// Save email certify.
-		stmt, err := db.Prepare(`INSERT INTO email_certify(uuid, name, email, password, created) VALUES(?, ?, ?, ?, ?)`)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer stmt.Close()
-		_, err = stmt.Exec(uuid.String(), data.Name.Value, data.Email.Value, cryptedPassword, time.Now().String())
-		if err != nil {
-			log.Fatal(err)
-		}
-		// Log email confirmation on dev mode.
-		if devMode {
-			log.Println(`http://localhost:8080/auth/signup/confirmation/` + uuid.String())
-		}
-		// Render success page.
-		data.SuccessMsg = "Foi enviado um e-mail para " + data.Email.Value + " com instruções para completar o cadastro."
+	for rows.Next() {
+		data.Email.Msg = "Email já cadastrado"
+	}
+	if err = rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+	// Email alredy registered.
+	if data.Email.Msg != "" {
+		err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
+		HandleError(w, err)
+		return
+	}
+	// Certify if alredy have email certify waiting confirmation.
+	var count int
+	err = db.QueryRow("select count(*) from email_certify where email = ?", data.Email.Value).Scan(&count)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if count > 0 {
+		data.WarnMsg = "O email " + data.Email.Value + " já foi cadastrado anteriormente, falta confirmação do cadastro atravéz do link enviado para o respectivo email"
 		data.Name.Value = ""
 		data.Email.Value = ""
 		data.Password.Value = ""
 		data.PasswordConfirm.Value = ""
-		data.WarnMsg = ""
-		err = tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
+		data.SuccessMsg = ""
+		err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
 		HandleError(w, err)
 		return
 	}
+	// Create a email certify.
+	uuid, err := uuid.NewV4()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Encrypt password.
+	cryptedPassword, err := bcrypt.GenerateFromPassword([]byte(data.Password.Value), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, "Erro interno do servidor", http.StatusInternalServerError)
+		return
+	}
+	// Save email certify.
+	stmt, err := db.Prepare(`INSERT INTO email_certify(uuid, name, email, password, created) VALUES(?, ?, ?, ?, ?)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(uuid.String(), data.Name.Value, data.Email.Value, cryptedPassword, time.Now().String())
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Log email confirmation on dev mode.
+	if devMode {
+		log.Println(`http://localhost:8080/auth/signup/confirmation/` + uuid.String())
+	}
+	// Render success page.
+	data.SuccessMsg = "Foi enviado um e-mail para " + data.Email.Value + " com instruções para completar o cadastro."
+	data.Name.Value = ""
+	data.Email.Value = ""
+	data.Password.Value = ""
+	data.PasswordConfirm.Value = ""
+	data.WarnMsg = ""
+	err = tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
+	HandleError(w, err)
 }
 
 // Signup confirmation.
@@ -193,13 +190,13 @@ func authSignupConfirmationHandler(w http.ResponseWriter, req *http.Request, ps 
 		if err != nil {
 			log.Fatal(err)
 		}
-		data.SuccessMsgHead = "Seu cadastro foi confirmado, você já pode se autenticar"
+		data.SuccessMsgHead = "Seu cadastro foi confirmado, você já pode entrar."
 		data.WarnMsgHead = ""
 	}
 	// No email certify exist.
 	if name == "" {
 		data.SuccessMsgHead = ""
-		data.WarnMsgHead = "Seu cadastro já foi confirmado ou link para a confirmação expirou."
+		data.WarnMsgHead = "Seu cadastro já foi confirmado ou o link para a confirmação expirou."
 	}
 	if devMode == true {
 		tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
@@ -232,9 +229,9 @@ func authSigninHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 		return
 	}
 	// Get user by email.
-	var userId int
+	var userID int
 	var cryptedPassword []byte
-	err = db.QueryRow("SELECT id, password FROM user WHERE email = ?", data.Email.Value).Scan(&userId, &cryptedPassword)
+	err = db.QueryRow("SELECT id, password FROM user WHERE email = ?", data.Email.Value).Scan(&userID, &cryptedPassword)
 	// no registred user
 	if err == sql.ErrNoRows {
 		data.Email.Msg = "Email não cadastrado"
@@ -263,7 +260,7 @@ func authSigninHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 		return
 	}
 	// Create session.
-	err = sessions.CreateSession(w, userId)
+	err = sessions.CreateSession(w, userID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -317,7 +314,7 @@ func passwordRecoveryHandlerPost(w http.ResponseWriter, req *http.Request, _ htt
 		log.Fatal(err)
 	}
 	// Save token.
-	stmt, err := db.Prepare(`INSERT INTO password_reset(uuid, email) VALUES(?, ?, ?)`)
+	stmt, err := db.Prepare(`INSERT INTO password_reset(uuid, user_email, created) VALUES(?, ?, ?)`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -328,13 +325,15 @@ func passwordRecoveryHandlerPost(w http.ResponseWriter, req *http.Request, _ htt
 	}
 	// Log email confirmation on dev mode.
 	if devMode {
-		log.Printf("http://localhost:8080/auth/password/reset/$s", uuid.String())
+		log.Println(`http://localhost:8080/auth/password/reset/` + uuid.String())
 	}
 	// Token created.
-	data.SuccessMsgFooter = fmt.Sprintf("Foi enviado um e-mail para %s com as instruções para a recuperação da senha.", data.Email.Value)
-	err = tmplPasswordRecovery.ExecuteTemplate(w, "passwordRecovery.tpl", data)
+	// err = tmplPasswordRecovery.ExecuteTemplate(w, "passwordRecovery.tpl", data)
+	var dataMsg messageTplData
+	dataMsg.TitleMsg = "Pŕoximo passo"
+	dataMsg.SuccessMsg = fmt.Sprintf("Foi enviado um e-mail para %s com as instruções para a recuperação da senha.", data.Email.Value)
+	err = tmplMessage.ExecuteTemplate(w, "message.tpl", dataMsg)
 	HandleError(w, err)
-	return
 }
 
 // Password reset page.

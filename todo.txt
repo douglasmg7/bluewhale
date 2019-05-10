@@ -1,3 +1,11 @@
+When add a password reset from a e-mail, delete the previous.
+
+If token not match e-mail from password reset, delete the token. So user need create a new token o password reset form.
+
+Create a page for message, with title and message.
+    After signup redirect to a message page.
+
+Redirect to login page when logout.
 
 senha
 1Aasdfasdf

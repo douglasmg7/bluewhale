@@ -19,6 +19,9 @@ import (
 // Geral.
 var tmplMaster, tmplIndex, tmplDeniedAccess *template.Template
 
+// Misc.
+var tmplMessage *template.Template
+
 // Info.
 var tmplInstitutional *template.Template
 var tmplChildrenSailingLessons, tmplAdultsSailingLessons, tmplRowingLessons *template.Template
@@ -76,6 +79,8 @@ func init() {
 	tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
 	tmplIndex = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
 	tmplDeniedAccess = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/deniedAccess.tpl"))
+	// Misc.
+	tmplMessage = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/misc/message.tpl"))
 	// Info.
 	tmplInstitutional = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/institutional.tpl"))
 	tmplChildrenSailingLessons = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/childrensSailingLessons.tpl"))
@@ -240,12 +245,12 @@ func confirmNoLogged(h httprouter.Handle) httprouter.Handle {
 		if session == nil {
 			h(w, req, p)
 			return
-		} else {
-			// fmt.Fprintln(w, "Not allowed")
-			data := struct{ Session *Session }{session}
-			err = tmplDeniedAccess.ExecuteTemplate(w, "denied_access.tpl", data)
-			HandleError(w, err)
 		}
+		// fmt.Fprintln(w, "Not allowed")
+		data := struct{ Session *Session }{session}
+		err = tmplDeniedAccess.ExecuteTemplate(w, "denied_access.tpl", data)
+		HandleError(w, err)
+
 	}
 }
 
