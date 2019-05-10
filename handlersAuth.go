@@ -70,6 +70,7 @@ func authSignupHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Pa
 
 // Signup post.
 func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	var dataMsg messageTplData
 	var data signupTplData
 	data.Name.Value, data.Name.Msg = bluetang.Name(req.FormValue("name"))
 	data.Email.Value, data.Email.Msg = bluetang.Email(req.FormValue("email"))
@@ -111,15 +112,22 @@ func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 		log.Fatal(err)
 	}
 	if count > 0 {
-		data.WarnMsg = "O email " + data.Email.Value + " já foi cadastrado anteriormente, falta confirmação do cadastro atravéz do link enviado para o respectivo email"
-		data.Name.Value = ""
-		data.Email.Value = ""
-		data.Password.Value = ""
-		data.PasswordConfirm.Value = ""
-		data.SuccessMsg = ""
-		err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
+		dataMsg.TitleMsg = "Solicitação já realizada anteriormente"
+		dataMsg.WarnMsg = "A solicitação de cadastramento para o email " + data.Email.Value + " já foi realizada anteriormente, falta a confirmação do cadastro atravéz do link enviado para o respectivo email."
+		err = tmplMessage.ExecuteTemplate(w, "message.tpl", dataMsg)
 		HandleError(w, err)
 		return
+
+		// todo - delete.
+		// data.WarnMsg = "A solicitação de cadastramento para o email " + data.Email.Value + " já foi realizada anteriormente, falta a confirmação do cadastro atravéz do link enviado para o respectivo email."
+		// data.Name.Value = ""
+		// data.Email.Value = ""
+		// data.Password.Value = ""
+		// data.PasswordConfirm.Value = ""
+		// data.SuccessMsg = ""
+		// err := tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
+		// HandleError(w, err)
+		// return
 	}
 	// Create a email certify.
 	uuid, err := uuid.NewV4()
@@ -146,15 +154,21 @@ func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 	if devMode {
 		log.Println(`http://localhost:8080/auth/signup/confirmation/` + uuid.String())
 	}
-	// Render success page.
-	data.SuccessMsg = "Foi enviado um e-mail para " + data.Email.Value + " com instruções para completar o cadastro."
-	data.Name.Value = ""
-	data.Email.Value = ""
-	data.Password.Value = ""
-	data.PasswordConfirm.Value = ""
-	data.WarnMsg = ""
-	err = tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
+	// Render page with next step to complete signup.
+	dataMsg.TitleMsg = "Pŕoximo passo"
+	dataMsg.SuccessMsg = "Foi enviado um e-mail para " + data.Email.Value + " com instruções para completar o cadastro."
+	err = tmplMessage.ExecuteTemplate(w, "message.tpl", dataMsg)
 	HandleError(w, err)
+
+	// todo - delete.
+	// data.SuccessMsg = "Foi enviado um e-mail para " + data.Email.Value + " com instruções para completar o cadastro."
+	// data.Name.Value = ""
+	// data.Email.Value = ""
+	// data.Password.Value = ""
+	// data.PasswordConfirm.Value = ""
+	// data.WarnMsg = ""
+	// err = tmplAuthSignup.ExecuteTemplate(w, "signup.tpl", data)
+	// HandleError(w, err)
 }
 
 // Signup confirmation.
@@ -327,8 +341,7 @@ func passwordRecoveryHandlerPost(w http.ResponseWriter, req *http.Request, _ htt
 	if devMode {
 		log.Println(`http://localhost:8080/auth/password/reset/` + uuid.String())
 	}
-	// Token created.
-	// err = tmplPasswordRecovery.ExecuteTemplate(w, "passwordRecovery.tpl", data)
+	// Render page with next step to reset password.
 	var dataMsg messageTplData
 	dataMsg.TitleMsg = "Pŕoximo passo"
 	dataMsg.SuccessMsg = fmt.Sprintf("Foi enviado um e-mail para %s com as instruções para a recuperação da senha.", data.Email.Value)
