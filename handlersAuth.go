@@ -176,42 +176,39 @@ func authSignupConfirmationHandler(w http.ResponseWriter, req *http.Request, ps 
 	if err != nil && err != sql.ErrNoRows {
 		log.Fatal(err)
 	}
-	// Create a user from email certify.
-	if name != "" {
-		stmt, err := db.Prepare(`INSERT INTO user(name, email, password, createdAt, updatedAt) VALUES(?, ?, ?, ?, ?)`)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer stmt.Close()
-		now := time.Now()
-		_, err = stmt.Exec(name, email, password, now, now)
-		if err != nil {
-			log.Fatal(err)
-		}
-		// Delete email certify.
-		stmt, err = db.Prepare(`DELETE from email_confirmation WHERE uuid == ?`)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer stmt.Close()
-		_, err = stmt.Exec(uuid)
-		if err != nil {
-			log.Fatal(err)
-		}
-		data.SuccessMsgHead = "Seu cadastro foi confirmado, você já pode entrar."
-		data.WarnMsgHead = ""
-	}
-	// No email certify exist.
+	// No email confirmation.
 	if name == "" {
-		data.SuccessMsgHead = ""
-		data.WarnMsgHead = "Seu cadastro já foi confirmado ou o link para a confirmação expirou."
+		var msgData messageTplData
+		msgData.TitleMsg = "Link inválido"
+		msgData.WarnMsg = "O cadastro já foi confirmado anteriormente, ou a tentativa de gerar o cadastro novamente invalidou este link."
+		err := tmplMessage.ExecuteTemplate(w, "message.tpl", msgData)
+		HandleError(w, err)
+		return
 	}
-	if devMode == true {
-		tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
-		tmplAuthSignin = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signin.tpl"))
+	// Create a user from email certify.
+	stmt, err := db.Prepare(`INSERT INTO user(name, email, password, createdAt, updatedAt) VALUES(?, ?, ?, ?, ?)`)
+	if err != nil {
+		log.Fatal(err)
 	}
-	// Render page.
-	err := tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", data)
+	defer stmt.Close()
+	now := time.Now()
+	_, err = stmt.Exec(name, email, password, now, now)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Delete email certify.
+	stmt, err = db.Prepare(`DELETE from email_confirmation WHERE uuid == ?`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(uuid)
+	if err != nil {
+		log.Fatal(err)
+	}
+	data.SuccessMsgHead = "Cadastro concluído, você já pode entrar."
+	data.WarnMsgHead = ""
+	err = tmplAuthSignin.ExecuteTemplate(w, "signin.tpl", data)
 	HandleError(w, err)
 }
 
