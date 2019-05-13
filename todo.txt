@@ -1,3 +1,5 @@
+One column product problem.
+
 authSignupConfirmationHandler
     Rename to authEmailConfirmationHandler
     Remove email confirmation if token not from email, and send message inválid token.
