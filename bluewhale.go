@@ -42,6 +42,13 @@ var err error
 // User.
 var tmplUserAdd *template.Template
 var tmplUserAccount *template.Template
+var tmplUserChangeName *template.Template
+var tmplUserChangeEmail *template.Template
+var tmplUserChangeMobile *template.Template
+var tmplUserChangePassword *template.Template
+var tmplUserChangeRG *template.Template
+var tmplUserChangeCPF *template.Template
+var tmplUserDeleteAccount *template.Template
 
 // Entrance.
 var tmplEntreanceAdd *template.Template
@@ -105,8 +112,10 @@ func init() {
 	tmplAllStudent = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/allStudent.tpl"))
 	tmplNewStudent = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/newStudent.tpl"))
 	// User.
-	tmplUserAccount = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/user/userAccount.tpl"))
 	tmplUserAdd = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/userAdd.tpl"))
+	tmplUserAccount = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/user/userAccount.tpl"))
+	tmplUserChangeName = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/user/userChangeName.tpl"))
+	tmplUserChangeEmail = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/user/userChangeEmail.tpl"))
 	// Entrance.
 	tmplEntreanceAdd = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/entranceAdd.tpl"))
 
@@ -168,6 +177,10 @@ func main() {
 
 	// User.
 	router.GET("/user/account", checkPermission(userAccountHandler, ""))
+	router.GET("/user/change/name", checkPermission(userChangeName, ""))
+	router.POST("/user/change/name", checkPermission(userChangeNamePost, ""))
+	router.GET("/user/change/email", checkPermission(userChangeEmail, ""))
+	router.POST("/user/change/email", checkPermission(userChangeEmailPost, ""))
 
 	// Entrance.
 	router.GET("/user_add", userAddHandler)

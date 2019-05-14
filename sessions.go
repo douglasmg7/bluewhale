@@ -119,7 +119,7 @@ func (s *Sessions) RemoveSession(w http.ResponseWriter, req *http.Request) {
 		c.Path = "/"
 		// log.Println("changed cookie:", c)
 		http.SetCookie(w, c)
-		http.Redirect(w, req, "/", http.StatusSeeOther)
+		http.Redirect(w, req, "/auth/signin", http.StatusSeeOther)
 		// Delete userId session.
 		delete(s.userIds, c.Value)
 	}

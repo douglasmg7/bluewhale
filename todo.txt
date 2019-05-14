@@ -1,17 +1,4 @@
-One column product problem.
 
-authSignupConfirmationHandler
-    Rename to authEmailConfirmationHandler
-    Remove email confirmation if token not from email, and send message inválid token.
-
-If token not match e-mail from password reset, delete the token. So user need create a new token o password reset form.
-
-Redirect to login page when logout.
-
-senha
-1Aasdfasdf
-
-http://localhost:8080/auth/signup/confirmation/593001a8-f0ad-49d8-8724-1504affd1a09
 
 https://en.wikipedia.org/wiki/The_7_Habits_of_Highly_Effective_People
 
@@ -21,3 +8,6 @@ Put into all field message erros
 class="has-text-danger"
 
 Clean up session on cache and db from time to time.
+
+senha
+1Aasdfasdf
