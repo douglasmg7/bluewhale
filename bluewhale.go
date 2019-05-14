@@ -41,6 +41,7 @@ var err error
 
 // User.
 var tmplUserAdd *template.Template
+var tmplUserAccount *template.Template
 
 // Entrance.
 var tmplEntreanceAdd *template.Template
@@ -104,6 +105,7 @@ func init() {
 	tmplAllStudent = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/allStudent.tpl"))
 	tmplNewStudent = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/newStudent.tpl"))
 	// User.
+	tmplUserAccount = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/user/userAccount.tpl"))
 	tmplUserAdd = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/userAdd.tpl"))
 	// Entrance.
 	tmplEntreanceAdd = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/entranceAdd.tpl"))
@@ -164,6 +166,9 @@ func main() {
 	router.POST("/auth/password/recovery", confirmNoLogged(passwordRecoveryHandlerPost))
 	router.GET("/auth/password/reset", confirmNoLogged(passwordResetHandler))
 
+	// User.
+	router.GET("/user/account", checkPermission(userAccountHandler, ""))
+
 	// Entrance.
 	router.GET("/user_add", userAddHandler)
 	router.GET("/entrance-add", entranceAddHandler)
@@ -174,8 +179,8 @@ func main() {
 	router.POST("/student/new", checkPermission(newStudentHandlerPost, "editStudent"))
 	router.GET("/student/id/:id", checkPermission(studentByIdHandler, "editStudent"))
 
-	// Example.
-	router.GET("/user/:name", userHandler)
+	// // Example.
+	// router.GET("/user/:name", userHandler)
 
 	// start server
 	router.ServeFiles("/static/*filepath", http.Dir("./static/"))
@@ -220,16 +225,16 @@ func checkPermission(h handleS, permission string) httprouter.Handle {
 		// Have the permission.
 		if permission == "" || session.CheckPermission(permission) {
 			h(w, req, p, session)
-			// No Permission.
-		} else {
-			// fmt.Fprintln(w, "Not allowed")
-			data := struct {
-				Session     *Session
-				HeadMessage string
-			}{Session: session}
-			err = tmplDeniedAccess.ExecuteTemplate(w, "deniedAccess.tpl", data)
-			HandleError(w, err)
+			return
 		}
+		// No Permission.
+		// fmt.Fprintln(w, "Not allowed")
+		data := struct {
+			Session     *Session
+			HeadMessage string
+		}{Session: session}
+		err = tmplDeniedAccess.ExecuteTemplate(w, "deniedAccess.tpl", data)
+		HandleError(w, err)
 	}
 }
 

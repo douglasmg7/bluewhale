@@ -18,10 +18,11 @@ create table user (
   email varchar(64) not null unique,
   name varchar(64) not null,
   password blob not null,
-  -- Id card.
-  rg varchar(64) null,
+  -- ID card.
+  rg varchar (64) default "",
+  cpf varchar(64) default "",
   -- Mobile number.
-  mobile varchar(64) null,
+  mobile varchar(64) default "",
   createdAt date not null,
   updatedAt date not null,
   permission integer default 0,
