@@ -4,6 +4,7 @@ import (
 	// _ "github.com/mattn/go-sqlite3"
 	// "github.com/satori/go.uuid"
 
+	"database/sql"
 	"log"
 	"net/http"
 	"time"
@@ -170,6 +171,9 @@ func (s *Sessions) getUserIdfromSessionUUID(req *http.Request) (int, error) {
 		} else {
 			// Get from db.
 			err = db.QueryRow("select user_id from sessionUUID where uuid = ?", sessionUUID).Scan(&userId)
+			if err == sql.ErrNoRows {
+				return 0, nil
+			}
 			if err != nil {
 				// No user id for the sessionUUID.
 				return 0, err
