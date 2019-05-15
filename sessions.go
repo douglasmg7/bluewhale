@@ -21,7 +21,7 @@ type Session struct {
 	UserId     int
 	UserName   string
 	Permission uint64
-	Saved      bool // If false, session must be saved on db.
+	Outdated   bool // If true, session must be retrived from db.
 }
 
 // Check for a specific permission.
@@ -127,6 +127,14 @@ func (s *Sessions) CreateSession(w http.ResponseWriter, userId int) error {
 	return nil
 }
 
+// Force session to be retrived from db again.
+// Must be called when change db data used by session.
+func (s *Sessions) SessionOutdated(userID int) {
+	ses := s.sessions[userID]
+	ses.Outdated = true
+	log.Println("CleanCache", s, *s)
+}
+
 // Remove the session.
 func (s *Sessions) RemoveSession(w http.ResponseWriter, req *http.Request) {
 	c, err := req.Cookie("sessionUUID")
@@ -220,11 +228,10 @@ func (s *Sessions) getSessionFromUserId(userId int) (*Session, error) {
 	sessionTemp := s.sessions[userId]
 	session := &sessionTemp
 	if session.UserName != "" {
-		// log.Println("Get from cache:", session.UserName)
+		log.Println("From cache:", &session, *session)
 		return session, nil
-	} else {
-		return s.cacheSession(userId)
 	}
+	return s.cacheSession(userId)
 }
 
 // Cache session data and return it.

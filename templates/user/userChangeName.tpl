@@ -14,9 +14,15 @@
 <form class="content" action="/user/change/name" method="post">
     <h2 class="title">Alteração do nome</h2>
 
-    <label for="name">Novo nome</label>
-    <input type="text" id="name" name="name"  value={{.Name.Value}}>
-    <p class="error"> {{.Name.Msg}} </p>
+    <!-- Novo nome -->
+    <label for="new-name">Novo nome</label>
+    <input type="text" id="new-name" name="new-name"  value={{.NewName.Value}}>
+    <p class="error"> {{.NewName.Msg}} </p>
+
+    <!-- Password -->
+    <label for="password">Senha</label>
+    <input type="password" id="password" name="password">
+    <p class="error"> {{.Password.Msg}} </p>
 
     <!-- submit -->
     <input type="submit" value="Alterar">

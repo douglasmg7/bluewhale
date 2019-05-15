@@ -14,6 +14,14 @@ import (
 	"net/http"
 )
 
+// Change name template data.
+type changeNameTplData struct {
+	Session     *Session
+	HeadMessage string
+	NewName     valueMsg
+	Password    valueMsg
+}
+
 // Change email template data.
 type changeEmailTplData struct {
 	Session     *Session
@@ -50,51 +58,47 @@ func userAccountHandler(w http.ResponseWriter, req *http.Request, _ httprouter.P
 
 // Change name page.
 func userChangeName(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
-	data := struct {
-		Session     *Session
-		HeadMessage string
-		Name        valueMsg
-	}{Session: session}
-
-	// Get user data.
-	err := db.QueryRow("select name from user where id = ?", session.UserId).Scan(&data.Name.Value)
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Render page.
+	var data changeNameTplData
+	data.Session = session
 	err = tmplUserChangeName.ExecuteTemplate(w, "userChangeName.tpl", data)
 	HandleError(w, err)
 }
 
 // Change name post.
 func userChangeNamePost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
-	data := struct {
-		Session     *Session
-		HeadMessage string
-		Name        valueMsg
-	}{Session: session}
-
+	var data changeNameTplData
+	data.Session = session
 	// Check fields.
-	data.Name.Value, data.Name.Msg = bluetang.Name(req.FormValue("name"))
+	data.NewName.Value, data.NewName.Msg = bluetang.Name(req.FormValue("new-name"))
 	// Return page with field erros.
-	if data.Name.Msg != "" {
+	if data.NewName.Msg != "" {
 		err := tmplUserChangeName.ExecuteTemplate(w, "userChangeName.tpl", data)
 		HandleError(w, err)
 		return
 	}
-
-	// Update user name.
-	// stmt, err := db.Prepare(`UPDATE user SET name = ? WHERE id = ?`, data.Name.Value, session.UserId)
+	// Wrong password.
+	if !session.PasswordIsCorrect(req.FormValue("password")) {
+		data.Password.Value = ""
+		data.Password.Msg = "Senha incorreta"
+		err := tmplUserChangeName.ExecuteTemplate(w, "userChangeName.tpl", data)
+		HandleError(w, err)
+		return
+	}
+	// Update name.
 	stmt, err := db.Prepare(`UPDATE user SET name = ? WHERE id = ?`)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
-	// rows, err := stmt.Exec()
-	_, err = stmt.Exec(data.Name.Value, session.UserId)
+	_, err = stmt.Exec(data.NewName.Value, session.UserId)
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Force session to be refreshed from db.
+	// session.Outdated()
+	sessions.SessionOutdated(session.UserId)
+	log.Println("userChangeNamePost", *session)
+	// Redirect to account page.
 	http.Redirect(w, req, "/user/account", http.StatusSeeOther)
 	return
 }
