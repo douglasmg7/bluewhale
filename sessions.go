@@ -10,6 +10,7 @@ import (
 	"time"
 
 	uuid "github.com/satori/go.uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Measure execution time to retrive the session.
@@ -62,6 +63,29 @@ func (s *Session) UnsetPermission(p string) {
 	case "editPrice":
 		s.Permission = s.Permission ^ 4
 	}
+}
+
+// Check if password is correct.
+func (s *Session) PasswordIsCorrect(password string) bool {
+	// Get user by email.
+	var cryptedPassword []byte
+	err = db.QueryRow("SELECT password FROM user WHERE id = ?", s.UserId).Scan(&cryptedPassword)
+	// No registred user.
+	if err == sql.ErrNoRows {
+		return false
+	}
+	// Internal error.
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Compare password.
+	err = bcrypt.CompareHashAndPassword(cryptedPassword, []byte(password))
+	// Incorrect password.
+	if err != nil {
+		return false
+	}
+	// Correct password.
+	return true
 }
 
 // Cached data.

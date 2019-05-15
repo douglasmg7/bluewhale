@@ -86,7 +86,7 @@ func init() {
 	// Geral.
 	tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
 	tmplIndex = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
-	tmplDeniedAccess = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/deniedAccess.tpl"))
+	tmplDeniedAccess = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/misc/deniedAccess.tpl"))
 	// Misc.
 	tmplMessage = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/misc/message.tpl"))
 	// Info.
@@ -181,6 +181,7 @@ func main() {
 	router.POST("/user/change/name", checkPermission(userChangeNamePost, ""))
 	router.GET("/user/change/email", checkPermission(userChangeEmail, ""))
 	router.POST("/user/change/email", checkPermission(userChangeEmailPost, ""))
+	router.GET("/user/change/email-confirmation/:uuid", checkPermission(userChangeEmailConfirmation, ""))
 
 	// Entrance.
 	router.GET("/user_add", userAddHandler)
@@ -266,7 +267,7 @@ func confirmNoLogged(h httprouter.Handle) httprouter.Handle {
 		}
 		// fmt.Fprintln(w, "Not allowed")
 		data := struct{ Session *Session }{session}
-		err = tmplDeniedAccess.ExecuteTemplate(w, "denied_access.tpl", data)
+		err = tmplDeniedAccess.ExecuteTemplate(w, "deniedAccess.tpl", data)
 		HandleError(w, err)
 
 	}

@@ -34,7 +34,8 @@ create index idx_user_email on user(email);
 create table email_confirmation (
   email varchar(64) primary key,
   uuid varchar(64) not null,
-  name varchar(64) not null,
+  -- Name must be empty when used for change email, instead to create a new user.
+  name varchar(64) not null, 
   password blob not null,
   createdAt date not null
 );

@@ -167,17 +167,13 @@ func authSignupHandlerPost(w http.ResponseWriter, req *http.Request, _ httproute
 
 // Signup confirmation.
 func authSignupConfirmationHandler(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
-	// Find email certify.
+	// Find email confirmation.
 	uuid := ps.ByName("uuid")
 	var name, email string
 	var password []byte
 	var data signinTplData
 	err = db.QueryRow("SELECT name, email, password FROM email_confirmation WHERE uuid = ?", uuid).Scan(&name, &email, &password)
-	if err != nil && err != sql.ErrNoRows {
-		log.Fatal(err)
-	}
-	// No email confirmation.
-	if name == "" {
+	if err == sql.ErrNoRows {
 		var msgData messageTplData
 		msgData.TitleMsg = "Link inválido"
 		msgData.WarnMsg = "O cadastro já foi confirmado anteriormente, ou a tentativa de gerar o cadastro novamente invalidou este link."
@@ -185,7 +181,29 @@ func authSignupConfirmationHandler(w http.ResponseWriter, req *http.Request, ps 
 		HandleError(w, err)
 		return
 	}
-	// Create a user from email certify.
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Someone trying to change email to this same email.
+	if name == "" {
+		// Delete email confirmation from change email, so user can try to signup with this email again.
+		stmt, err := db.Prepare(`DELETE from email_confirmation WHERE uuid == ?`)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer stmt.Close()
+		_, err = stmt.Exec(uuid)
+		if err != nil {
+			log.Fatal(err)
+		}
+		var msgData messageTplData
+		msgData.TitleMsg = "Link inválido"
+		msgData.WarnMsg = "Já existe uma tentativa de alteração de email para este mesmo email."
+		err = tmplMessage.ExecuteTemplate(w, "message.tpl", msgData)
+		HandleError(w, err)
+		return
+	}
+	// Create a user from email confirmation.
 	stmt, err := db.Prepare(`INSERT INTO user(name, email, password, createdAt, updatedAt) VALUES(?, ?, ?, ?, ?)`)
 	if err != nil {
 		log.Fatal(err)
@@ -196,7 +214,7 @@ func authSignupConfirmationHandler(w http.ResponseWriter, req *http.Request, ps 
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Delete email certify.
+	// Delete email confirmation.
 	stmt, err = db.Prepare(`DELETE from email_confirmation WHERE uuid == ?`)
 	if err != nil {
 		log.Fatal(err)

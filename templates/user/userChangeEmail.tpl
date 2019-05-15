@@ -15,9 +15,9 @@
     <h2 class="title">Alteração do email</h2>
 
     <!-- Email -->
-    <label for="email">Novo email</label>
-    <input type="text" id="email" name="email"  value={{.Email.Value}}>
-    <p class="error"> {{.Email.Msg}} </p>
+    <label for="new-email">Novo email</label>
+    <input type="text" id="new-email" name="new-email"  value={{.NewEmail.Value}}>
+    <p class="error"> {{.NewEmail.Msg}} </p>
 
     <!-- Password -->
     <label for="password">Senha</label>
