@@ -87,8 +87,10 @@ func init() {
 	tmplMaster = template.Must(template.ParseGlob("templates/master/*"))
 	tmplIndex = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/index.tpl"))
 	tmplDeniedAccess = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/misc/deniedAccess.tpl"))
+
 	// Misc.
 	tmplMessage = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/misc/message.tpl"))
+
 	// Info.
 	tmplInstitutional = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/institutional.tpl"))
 	tmplChildrenSailingLessons = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/childrensSailingLessons.tpl"))
@@ -100,22 +102,27 @@ func init() {
 	tmplProjectsAndInitiatives = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/projectsAndInitiatives.tpl"))
 	tmplStudentsArea = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/studentsArea.tpl"))
 	tmplContact = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/info/contact.tpl"))
+
 	// Blog
 	tmplBlogIndex = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/blog/blogIndex.tpl"))
+
 	// Auth.
 	tmplAuthSignup = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signup.tpl"))
 	tmplAuthSignin = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/signin.tpl"))
 	tmplPasswordRecovery = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/passwordRecovery.tpl"))
 	tmplPasswordReset = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/auth/passwordReset.tpl"))
+
 	// Student.
 	tmplStudent = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/student.tpl"))
 	tmplAllStudent = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/allStudent.tpl"))
 	tmplNewStudent = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/newStudent.tpl"))
+
 	// User.
 	tmplUserAdd = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/userAdd.tpl"))
 	tmplUserAccount = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/user/userAccount.tpl"))
 	tmplUserChangeName = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/user/userChangeName.tpl"))
 	tmplUserChangeEmail = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/user/userChangeEmail.tpl"))
+	tmplUserChangeMobile = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/user/userChangeMobile.tpl"))
 	// Entrance.
 	tmplEntreanceAdd = template.Must(template.Must(tmplMaster.Clone()).ParseFiles("templates/entranceAdd.tpl"))
 
@@ -177,11 +184,13 @@ func main() {
 
 	// User.
 	router.GET("/user/account", checkPermission(userAccountHandler, ""))
-	router.GET("/user/change/name", checkPermission(userChangeName, ""))
-	router.POST("/user/change/name", checkPermission(userChangeNamePost, ""))
-	router.GET("/user/change/email", checkPermission(userChangeEmail, ""))
-	router.POST("/user/change/email", checkPermission(userChangeEmailPost, ""))
-	router.GET("/user/change/email-confirmation/:uuid", checkPermission(userChangeEmailConfirmation, ""))
+	router.GET("/user/change/name", checkPermission(userChangeNameHandler, ""))
+	router.POST("/user/change/name", checkPermission(userChangeNameHandlerPost, ""))
+	router.GET("/user/change/email", checkPermission(userChangeEmailHandler, ""))
+	router.POST("/user/change/email", checkPermission(userChangeEmailHandlerPost, ""))
+	router.GET("/user/change/email-confirmation/:uuid", checkPermission(userChangeEmailConfirmationHandler, ""))
+	router.GET("/user/change/mobile", checkPermission(userChangeMobileHandler, ""))
+	router.POST("/user/change/mobile", checkPermission(userChangeMobileHandlerPost, ""))
 
 	// Entrance.
 	router.GET("/user_add", userAddHandler)

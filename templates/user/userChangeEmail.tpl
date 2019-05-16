@@ -14,7 +14,7 @@
 <form class="content" action="/user/change/email" method="post">
     <h2 class="title">Alteração do email</h2>
 
-    <!-- Email -->
+    <!-- New email -->
     <label for="new-email">Novo email</label>
     <input type="text" id="new-email" name="new-email"  value={{.NewEmail.Value}}>
     <p class="error"> {{.NewEmail.Msg}} </p>

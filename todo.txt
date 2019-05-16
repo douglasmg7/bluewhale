@@ -11,3 +11,10 @@ Clean up session on cache and db from time to time.
 
 senha
 1Aasdfasdf
+
+go points 42.1
+go points 43 (14%)
+Total ranking 99465
+Total ranking 99102 from 18733538
+Total Score 807.19714
+Total Score 809.8

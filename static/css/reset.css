@@ -78,9 +78,9 @@ textarea {
 button,
 input[type='button'],
 input[type='submit'] {
-    color: var(--white-lighter);
-    background-color: #138496;
-    border: 0.1rem solid #117787;
+    /* color: var(--white-lighter); */
+    /* background-color: #138496; */
+    /* border: 0.1rem solid #117787; */
     border-radius: .4rem;
     cursor: pointer;
     display: inline-block;
@@ -104,9 +104,9 @@ input[type='button']:focus,
 input[type='button']:hover,
 input[type='submit']:focus,
 input[type='submit']:hover {
-    color: var(--white-lighter);
-    background-color: #0f6a78;
-    border-color: #0e5f6c;
+    /* color: var(--white-lighter); */
+    /* background-color: #0f6a78; */
+    /* border-color: #0e5f6c; */
     outline: 0;
 }
 
@@ -118,77 +118,27 @@ input[type='submit'][disabled] {
   opacity: .5;
 }
 
-.button[disabled]:focus, .button[disabled]:hover,
-button[disabled]:focus,
-button[disabled]:hover,
-input[type='button'][disabled]:focus,
-input[type='button'][disabled]:hover,
-input[type='submit'][disabled]:focus,
-input[type='submit'][disabled]:hover {
-  background-color: #9b4dca;
-  border-color: #9b4dca;
+.btn-success {
+  color: var(--white-lighter);
+  background-color: #218838;
+  /* border-color: #1e7a32; */
+  border: .1rem solid #1e7a32;
 }
-
-.button.button-outline,
-button.button-outline,
-input[type='button'].button-outline,
-input[type='submit'].button-outline {
-  background-color: transparent;
-  color: #9b4dca;
+.btn-success:hover {
+  color: var(--white-lighter);
+  background-color: #1a6d2d;
+  border-color: #176229;
 }
-
-.button.button-outline:focus, .button.button-outline:hover,
-button.button-outline:focus,
-button.button-outline:hover,
-input[type='button'].button-outline:focus,
-input[type='button'].button-outline:hover,
-input[type='submit'].button-outline:focus,
-input[type='submit'].button-outline:hover {
-  background-color: transparent;
-  border-color: #606c76;
-  color: #606c76;
+.btn-danger {
+  color: var(--white-lighter);
+  background-color: #c82333;
+  /* border-color: #b4202e; */
+  border: solid .1rem #b4202e;
 }
-
-.button.button-outline[disabled]:focus, .button.button-outline[disabled]:hover,
-button.button-outline[disabled]:focus,
-button.button-outline[disabled]:hover,
-input[type='button'].button-outline[disabled]:focus,
-input[type='button'].button-outline[disabled]:hover,
-input[type='submit'].button-outline[disabled]:focus,
-input[type='submit'].button-outline[disabled]:hover {
-  border-color: inherit;
-  color: #9b4dca;
-}
-
-.button.button-clear,
-button.button-clear,
-input[type='button'].button-clear,
-input[type='submit'].button-clear {
-  background-color: transparent;
-  border-color: transparent;
-  color: #9b4dca;
-}
-
-.button.button-clear:focus, .button.button-clear:hover,
-button.button-clear:focus,
-button.button-clear:hover,
-input[type='button'].button-clear:focus,
-input[type='button'].button-clear:hover,
-input[type='submit'].button-clear:focus,
-input[type='submit'].button-clear:hover {
-  background-color: transparent;
-  border-color: transparent;
-  color: #606c76;
-}
-
-.button.button-clear[disabled]:focus, .button.button-clear[disabled]:hover,
-button.button-clear[disabled]:focus,
-button.button-clear[disabled]:hover,
-input[type='button'].button-clear[disabled]:focus,
-input[type='button'].button-clear[disabled]:hover,
-input[type='submit'].button-clear[disabled]:focus,
-input[type='submit'].button-clear[disabled]:hover {
-  color: #9b4dca;
+.btn-danger:hover {
+  color: var(--white-lighter);
+  background-color: #a01c29;
+  border: solid .1rem #901925;
 }
 
 code {

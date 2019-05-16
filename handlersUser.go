@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/douglasmg7/bluetang"
@@ -27,6 +28,14 @@ type changeEmailTplData struct {
 	Session     *SessionData
 	HeadMessage string
 	NewEmail    valueMsg
+	Password    valueMsg
+}
+
+// Change mobile number template data.
+type changeMobileTplData struct {
+	Session     *SessionData
+	HeadMessage string
+	NewMobile   valueMsg
 	Password    valueMsg
 }
 
@@ -57,15 +66,20 @@ func userAccountHandler(w http.ResponseWriter, req *http.Request, _ httprouter.P
 }
 
 // Change name page.
-func userChangeName(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
+func userChangeNameHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	var data changeNameTplData
 	data.Session = session
+	// Get current name.
+	var name string
+	err = db.QueryRow("SELECT name FROM user WHERE id = ?", session.UserID).Scan(&name)
+	data.NewName.Value = name
+	// Render page.
 	err = tmplUserChangeName.ExecuteTemplate(w, "userChangeName.tpl", data)
 	HandleError(w, err)
 }
 
 // Change name post.
-func userChangeNamePost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
+func userChangeNameHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	var data changeNameTplData
 	data.Session = session
 	// Check fields.
@@ -102,15 +116,20 @@ func userChangeNamePost(w http.ResponseWriter, req *http.Request, _ httprouter.P
 }
 
 // Change email page.
-func userChangeEmail(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
+func userChangeEmailHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	var data changeEmailTplData
 	data.Session = session
+	// Get current email.
+	var email string
+	err = db.QueryRow("SELECT email FROM user WHERE id = ?", session.UserID).Scan(&email)
+	data.NewEmail.Value = email
+	// Render page.
 	err = tmplUserChangeEmail.ExecuteTemplate(w, "userChangeEmail.tpl", data)
 	HandleError(w, err)
 }
 
 // Change Email post.
-func userChangeEmailPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
+func userChangeEmailHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	var data changeEmailTplData
 	data.Session = session
 	// Check fields.
@@ -181,7 +200,7 @@ func userChangeEmailPost(w http.ResponseWriter, req *http.Request, _ httprouter.
 }
 
 // Change Email confirmation.
-func userChangeEmailConfirmation(w http.ResponseWriter, req *http.Request, ps httprouter.Params, session *SessionData) {
+func userChangeEmailConfirmationHandler(w http.ResponseWriter, req *http.Request, ps httprouter.Params, session *SessionData) {
 	var msgData messageTplData
 	msgData.Session = session
 	// Find email certify.
@@ -240,5 +259,60 @@ func userChangeEmailConfirmation(w http.ResponseWriter, req *http.Request, ps ht
 	msgData.SuccessMsg = "Email alterado para " + newEmail + "."
 	err = tmplMessage.ExecuteTemplate(w, "message.tpl", msgData)
 	HandleError(w, err)
+	return
+}
+
+// Change mobile number page.
+func userChangeMobileHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
+	var data changeMobileTplData
+	data.Session = session
+	// Get current mobile number.
+	var mobile string
+	err = db.QueryRow("SELECT mobile FROM user WHERE id = ?", session.UserID).Scan(&mobile)
+	data.NewMobile.Value = mobile
+	// Render page.
+	err = tmplUserChangeMobile.ExecuteTemplate(w, "userChangeMobile.tpl", data)
+	HandleError(w, err)
+}
+
+// Change mobile number post.
+func userChangeMobileHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
+	var data changeMobileTplData
+	data.Session = session
+	// Remove spaces.
+	data.NewMobile.Value = strings.TrimSpace(req.FormValue("new-mobile"))
+	// If some number validate.
+	if data.NewMobile.Value != "" {
+		// Check fields.
+		data.NewMobile.Value, data.NewMobile.Msg = bluetang.Mobile(data.NewMobile.Value)
+		// Return page with field erros.
+		if data.NewMobile.Msg != "" {
+			err := tmplUserChangeMobile.ExecuteTemplate(w, "userChangeMobile.tpl", data)
+			HandleError(w, err)
+			return
+		}
+	}
+	// Wrong password.
+	if !session.PasswordIsCorrect(req.FormValue("password")) {
+		data.Password.Value = ""
+		data.Password.Msg = "Senha incorreta"
+		err := tmplUserChangeMobile.ExecuteTemplate(w, "userChangeMobile.tpl", data)
+		HandleError(w, err)
+		return
+	}
+	// Update mobile number.
+	stmt, err := db.Prepare(`UPDATE user SET mobile = ? WHERE id = ?`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(data.NewMobile.Value, session.UserID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Sinalize to session be refreshed from db.
+	session.Outdated = true
+	// Redirect to account page.
+	http.Redirect(w, req, "/user/account", http.StatusSeeOther)
 	return
 }

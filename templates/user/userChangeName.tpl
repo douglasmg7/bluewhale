@@ -14,7 +14,7 @@
 <form class="content" action="/user/change/name" method="post">
     <h2 class="title">Alteração do nome</h2>
 
-    <!-- Novo nome -->
+    <!-- New name -->
     <label for="new-name">Novo nome</label>
     <input type="text" id="new-name" name="new-name"  value={{.NewName.Value}}>
     <p class="error"> {{.NewName.Msg}} </p>
