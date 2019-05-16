@@ -11,9 +11,9 @@ import (
 )
 
 // Institutional.
-func institutionalHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func institutionalHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 	}{session, ""}
 	// fmt.Println("session: ", data.Session)
@@ -22,9 +22,9 @@ func institutionalHandler(w http.ResponseWriter, req *http.Request, _ httprouter
 }
 
 // Children sailing lessons.
-func childrensSailingLessons(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func childrensSailingLessons(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 	}{session, ""}
 	// fmt.Println("session: ", data.Session)
@@ -33,9 +33,9 @@ func childrensSailingLessons(w http.ResponseWriter, req *http.Request, _ httprou
 }
 
 // Adults sailing lessons.
-func adultsSailingLessons(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func adultsSailingLessons(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 	}{session, ""}
 	// fmt.Println("session: ", data.Session)
@@ -45,9 +45,9 @@ func adultsSailingLessons(w http.ResponseWriter, req *http.Request, _ httprouter
 }
 
 // Rowing lessons.
-func rowingLessons(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func rowingLessons(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 	}{session, ""}
 	// fmt.Println("session: ", data.Session)
@@ -56,9 +56,9 @@ func rowingLessons(w http.ResponseWriter, req *http.Request, _ httprouter.Params
 }
 
 // Sailboat rental.
-func sailboatRental(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func sailboatRental(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 	}{session, ""}
 	// fmt.Println("session: ", data.Session)
@@ -67,9 +67,9 @@ func sailboatRental(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 }
 
 // Kayaks and aquatic bikes rental.
-func kayaksAndAquaticBikesRental(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func kayaksAndAquaticBikesRental(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 	}{session, ""}
 	// fmt.Println("session: ", data.Session)
@@ -78,9 +78,9 @@ func kayaksAndAquaticBikesRental(w http.ResponseWriter, req *http.Request, _ htt
 }
 
 // Sailboat ride.
-func sailboatRide(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func sailboatRide(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 	}{session, ""}
 	// fmt.Println("session: ", data.Session)
@@ -89,9 +89,9 @@ func sailboatRide(w http.ResponseWriter, req *http.Request, _ httprouter.Params,
 }
 
 // Projects and initiatives.
-func projectsAndInitiatives(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func projectsAndInitiatives(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 	}{session, ""}
 	// fmt.Println("session: ", data.Session)
@@ -100,9 +100,9 @@ func projectsAndInitiatives(w http.ResponseWriter, req *http.Request, _ httprout
 }
 
 // Contato.
-func contact(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func contact(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 	}{session, ""}
 	// fmt.Println("session: ", data.Session)
@@ -111,9 +111,9 @@ func contact(w http.ResponseWriter, req *http.Request, _ httprouter.Params, sess
 }
 
 // Sutents area.
-func studentsArea(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func studentsArea(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 	}{session, ""}
 	// fmt.Println("session: ", data.Session)

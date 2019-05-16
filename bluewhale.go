@@ -60,8 +60,8 @@ const port = "8080"
 
 // Sessions from each user.
 var sessions = Sessions{
-	userIds:  map[string]int{},
-	sessions: map[int]Session{},
+	mapUserID:      map[string]int{},
+	mapSessionData: map[int]*SessionData{},
 }
 
 func init() {
@@ -209,7 +209,7 @@ func main() {
 **************************************************************************************************/
 
 // Handle with session.
-type handleS func(w http.ResponseWriter, req *http.Request, p httprouter.Params, session *Session)
+type handleS func(w http.ResponseWriter, req *http.Request, p httprouter.Params, session *SessionData)
 
 // Get session middleware.
 func getSession(h handleS) httprouter.Handle {
@@ -244,7 +244,7 @@ func checkPermission(h handleS, permission string) httprouter.Handle {
 		// No Permission.
 		// fmt.Fprintln(w, "Not allowed")
 		data := struct {
-			Session     *Session
+			Session     *SessionData
 			HeadMessage string
 		}{Session: session}
 		err = tmplDeniedAccess.ExecuteTemplate(w, "deniedAccess.tpl", data)
@@ -266,7 +266,7 @@ func confirmNoLogged(h httprouter.Handle) httprouter.Handle {
 			return
 		}
 		// fmt.Fprintln(w, "Not allowed")
-		data := struct{ Session *Session }{session}
+		data := struct{ Session *SessionData }{session}
 		err = tmplDeniedAccess.ExecuteTemplate(w, "deniedAccess.tpl", data)
 		HandleError(w, err)
 

@@ -16,16 +16,16 @@ import (
 // Measure execution time to retrive the session.
 // var timeToGetSession time.Time
 
-// Data need for each session.
-type Session struct {
-	UserId     int
+// SessionData cache data from each user.
+type SessionData struct {
+	UserID     int
 	UserName   string
 	Permission uint64
 	Outdated   bool // If true, session must be retrived from db.
 }
 
-// Check for a specific permission.
-func (s *Session) CheckPermission(p string) bool {
+// CheckPermission return if session has the permission.
+func (s *SessionData) CheckPermission(p string) bool {
 	// Admin.
 	if s.Permission&1 == 1 {
 		return true
@@ -41,8 +41,8 @@ func (s *Session) CheckPermission(p string) bool {
 	}
 }
 
-// Set permissions.
-func (s *Session) SetPermission(p string) {
+// SetPermission grand permission.
+func (s *SessionData) SetPermission(p string) {
 	switch p {
 	case "admin":
 		s.Permission = s.Permission | 1
@@ -53,8 +53,8 @@ func (s *Session) SetPermission(p string) {
 	}
 }
 
-// Unset permissions.
-func (s *Session) UnsetPermission(p string) {
+// UnsetPermission revoke permission.
+func (s *SessionData) UnsetPermission(p string) {
 	switch p {
 	case "king":
 		s.Permission = s.Permission ^ 1
@@ -65,11 +65,11 @@ func (s *Session) UnsetPermission(p string) {
 	}
 }
 
-// Check if password is correct.
-func (s *Session) PasswordIsCorrect(password string) bool {
+// PasswordIsCorrect return if password is correct.
+func (s *SessionData) PasswordIsCorrect(password string) bool {
 	// Get user by email.
 	var cryptedPassword []byte
-	err = db.QueryRow("SELECT password FROM user WHERE id = ?", s.UserId).Scan(&cryptedPassword)
+	err = db.QueryRow("SELECT password FROM user WHERE id = ?", s.UserID).Scan(&cryptedPassword)
 	// No registred user.
 	if err == sql.ErrNoRows {
 		return false
@@ -88,16 +88,16 @@ func (s *Session) PasswordIsCorrect(password string) bool {
 	return true
 }
 
-// Cached data.
+// Sessions contains sessions from each user and userId from each uuid sesscion.
 type Sessions struct {
 	// UserId from uuidSession.
-	userIds map[string]int
+	mapUserID map[string]int
 	// Session from userId.
-	sessions map[int]Session
+	mapSessionData map[int]*SessionData
 }
 
-// Create a session, writing a cookie on client and keep a reletion of cookie -> user id.
-func (s *Sessions) CreateSession(w http.ResponseWriter, userId int) error {
+// CreateSession create a session and writing a cookie on client and keep a reletion of cookie -> user id.
+func (s *Sessions) CreateSession(w http.ResponseWriter, userID int) error {
 	// create cookie
 	sUUID, err := uuid.NewV4()
 	if err != nil {
@@ -118,24 +118,16 @@ func (s *Sessions) CreateSession(w http.ResponseWriter, userId int) error {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(sUUIDString, userId, time.Now())
+	_, err = stmt.Exec(sUUIDString, userID, time.Now())
 	if err != nil {
 		return err
 	}
 	// Save on cache.
-	s.userIds[sUUIDString] = userId
+	s.mapUserID[sUUIDString] = userID
 	return nil
 }
 
-// Force session to be retrived from db again.
-// Must be called when change db data used by session.
-func (s *Sessions) SessionOutdated(userID int) {
-	ses := s.sessions[userID]
-	ses.Outdated = true
-	log.Println("CleanCache", s, *s)
-}
-
-// Remove the session.
+// RemoveSession remove session from client browser.
 func (s *Sessions) RemoveSession(w http.ResponseWriter, req *http.Request) {
 	c, err := req.Cookie("sessionUUID")
 	// No cookie.
@@ -153,33 +145,33 @@ func (s *Sessions) RemoveSession(w http.ResponseWriter, req *http.Request) {
 		http.SetCookie(w, c)
 		http.Redirect(w, req, "/auth/signin", http.StatusSeeOther)
 		// Delete userId session.
-		delete(s.userIds, c.Value)
+		delete(s.mapUserID, c.Value)
 	}
 }
 
-// Get session.
-func (s *Sessions) GetSession(req *http.Request) (*Session, error) {
+// GetSession return session data from UUID.
+func (s *Sessions) GetSession(req *http.Request) (*SessionData, error) {
 	// timeToGetSession = time.Now()
-	userId, err := s.getUserIdfromSessionUUID(req)
+	userID, err := s.getUserIdfromSessionUUID(req)
 	// Some error.
 	if err != nil {
 		return nil, err
 		// No user id.
-	} else if userId == 0 {
+	} else if userID == 0 {
 		return nil, nil
 		// Found user.
 	} else {
-		session, err := s.getSessionFromUserId(userId)
+		session, err := s.getSessionFromUserID(userID)
 		if err != nil {
 			log.Fatal(err)
 		}
 		// log.Println("Time to get session:", time.Since(timeToGetSession))
 		return session, err
-		// return sessionDataFromUserId(userId)
+		// return sessionDataFromUserId(userID)
 	}
 }
 
-// Get user id from session uuid.
+// Return user id from session uuid.
 // Try the cache first.
 func (s *Sessions) getUserIdfromSessionUUID(req *http.Request) (int, error) {
 	cookie, err := req.Cookie("sessionUUID")
@@ -195,27 +187,26 @@ func (s *Sessions) getUserIdfromSessionUUID(req *http.Request) (int, error) {
 	// Have a cookie.
 	if cookie != nil {
 		sessionUUID := cookie.Value
-		userId := s.userIds[sessionUUID]
+		userID := s.mapUserID[sessionUUID]
 		// Found on cache.
-		if userId != 0 {
+		if userID != 0 {
 			// log.Println("userId from cache", userId)
-			return userId, nil
-		} else {
-			// Get from db.
-			err = db.QueryRow("select user_id from sessionUUID where uuid = ?", sessionUUID).Scan(&userId)
-			if err == sql.ErrNoRows {
-				return 0, nil
-			}
-			if err != nil {
-				// No user id for the sessionUUID.
-				return 0, err
-			}
-			// Found the user id.
-			if userId != 0 {
-				// log.Println("userId from db", userId)
-				s.userIds[sessionUUID] = userId
-				return userId, nil
-			}
+			return userID, nil
+		}
+		// Get from db.
+		err = db.QueryRow("select user_id from sessionUUID where uuid = ?", sessionUUID).Scan(&userID)
+		if err == sql.ErrNoRows {
+			return 0, nil
+		}
+		if err != nil {
+			// No user id for the sessionUUID.
+			return 0, err
+		}
+		// Found the user id.
+		if userID != 0 {
+			// log.Println("userId from db", userId)
+			s.mapUserID[sessionUUID] = userID
+			return userID, nil
 		}
 	}
 	// No cookie
@@ -224,34 +215,32 @@ func (s *Sessions) getUserIdfromSessionUUID(req *http.Request) (int, error) {
 
 // Get session from cache.
 // If not cached, cache it.
-func (s *Sessions) getSessionFromUserId(userId int) (*Session, error) {
-	sessionTemp := s.sessions[userId]
-	session := &sessionTemp
-	if session.UserName != "" {
-		log.Println("From cache:", &session, *session)
+func (s *Sessions) getSessionFromUserID(userID int) (session *SessionData, err error) {
+	// From the cache.
+	session = s.mapSessionData[userID]
+	// No cached nor outdated.
+	if session != nil && !session.Outdated {
 		return session, nil
 	}
-	return s.cacheSession(userId)
+	// Cache from db.
+	// log.Println("Getting session data from cache:")
+	return s.cacheSession(userID)
 }
 
 // Cache session data and return it.
-func (s *Sessions) cacheSession(userId int) (*Session, error) {
-	// Get data from db(s).
-	var session Session
-	err := db.QueryRow("select id, name, permission from user where id = ?", userId).Scan(&session.UserId, &session.UserName, &session.Permission)
-	// log.Println("Retrive from db:", session.UserName)
+func (s *Sessions) cacheSession(userID int) (session *SessionData, err error) {
+	session = &SessionData{}
+	err = db.QueryRow("select id, name, permission from user where id = ?", userID).Scan(&session.UserID, &session.UserName, &session.Permission)
 	if err != nil {
 		return nil, err
 	}
 	// Cache it.
-	if session.UserName != "" {
-		s.sessions[userId] = session
-	}
-	return &session, nil
+	s.mapSessionData[userID] = session
+	return session, nil
 }
 
-// Clean the cache session.
+// CleanSessions clean the cache session.
 func (s *Sessions) CleanSessions() {
-	s.sessions = map[int]Session{}
+	s.mapSessionData = map[int]*SessionData{}
 	log.Println("Sessions cache cleaned")
 }

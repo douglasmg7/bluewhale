@@ -16,7 +16,7 @@ import (
 
 // Change name template data.
 type changeNameTplData struct {
-	Session     *Session
+	Session     *SessionData
 	HeadMessage string
 	NewName     valueMsg
 	Password    valueMsg
@@ -24,7 +24,7 @@ type changeNameTplData struct {
 
 // Change email template data.
 type changeEmailTplData struct {
-	Session     *Session
+	Session     *SessionData
 	HeadMessage string
 	NewEmail    valueMsg
 	Password    valueMsg
@@ -35,9 +35,9 @@ type changeEmailTplData struct {
 **************************************************************************************************/
 
 // Account page.
-func userAccountHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func userAccountHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 		Name        string
 		Email       string
@@ -47,7 +47,7 @@ func userAccountHandler(w http.ResponseWriter, req *http.Request, _ httprouter.P
 	}{Session: session}
 
 	// Get user data.
-	err := db.QueryRow("select name, email, mobile, rg, cpf from user where id = ?", session.UserId).Scan(&data.Name, &data.Email, &data.Mobile, &data.RG, &data.CPF)
+	err := db.QueryRow("select name, email, mobile, rg, cpf from user where id = ?", session.UserID).Scan(&data.Name, &data.Email, &data.Mobile, &data.RG, &data.CPF)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,7 +57,7 @@ func userAccountHandler(w http.ResponseWriter, req *http.Request, _ httprouter.P
 }
 
 // Change name page.
-func userChangeName(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func userChangeName(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	var data changeNameTplData
 	data.Session = session
 	err = tmplUserChangeName.ExecuteTemplate(w, "userChangeName.tpl", data)
@@ -65,7 +65,7 @@ func userChangeName(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 }
 
 // Change name post.
-func userChangeNamePost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func userChangeNamePost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	var data changeNameTplData
 	data.Session = session
 	// Check fields.
@@ -90,21 +90,19 @@ func userChangeNamePost(w http.ResponseWriter, req *http.Request, _ httprouter.P
 		log.Fatal(err)
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(data.NewName.Value, session.UserId)
+	_, err = stmt.Exec(data.NewName.Value, session.UserID)
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Force session to be refreshed from db.
-	// session.Outdated()
-	sessions.SessionOutdated(session.UserId)
-	log.Println("userChangeNamePost", *session)
+	// Sinalize to session be refreshed from db.
+	session.Outdated = true
 	// Redirect to account page.
 	http.Redirect(w, req, "/user/account", http.StatusSeeOther)
 	return
 }
 
 // Change email page.
-func userChangeEmail(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func userChangeEmail(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	var data changeEmailTplData
 	data.Session = session
 	err = tmplUserChangeEmail.ExecuteTemplate(w, "userChangeEmail.tpl", data)
@@ -112,7 +110,7 @@ func userChangeEmail(w http.ResponseWriter, req *http.Request, _ httprouter.Para
 }
 
 // Change Email post.
-func userChangeEmailPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func userChangeEmailPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	var data changeEmailTplData
 	data.Session = session
 	// Check fields.
@@ -183,7 +181,7 @@ func userChangeEmailPost(w http.ResponseWriter, req *http.Request, _ httprouter.
 }
 
 // Change Email confirmation.
-func userChangeEmailConfirmation(w http.ResponseWriter, req *http.Request, ps httprouter.Params, session *Session) {
+func userChangeEmailConfirmation(w http.ResponseWriter, req *http.Request, ps httprouter.Params, session *SessionData) {
 	var msgData messageTplData
 	msgData.Session = session
 	// Find email certify.
@@ -223,7 +221,7 @@ func userChangeEmailConfirmation(w http.ResponseWriter, req *http.Request, ps ht
 		log.Fatal(err)
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(newEmail, session.UserId)
+	_, err = stmt.Exec(newEmail, session.UserID)
 	if err != nil {
 		log.Fatal(err)
 	}

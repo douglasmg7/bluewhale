@@ -11,9 +11,9 @@ import (
 )
 
 // Blog index.
-func blogIndex(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func blogIndex(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 	}{session, ""}
 	// fmt.Println("session: ", data.Session)

@@ -12,9 +12,9 @@ import (
 )
 
 // Student by email.
-func studentByIdHandler(w http.ResponseWriter, req *http.Request, p httprouter.Params, session *Session) {
+func studentByIdHandler(w http.ResponseWriter, req *http.Request, p httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 		Name        string
 		Email       string
@@ -32,13 +32,13 @@ func studentByIdHandler(w http.ResponseWriter, req *http.Request, p httprouter.P
 }
 
 // List all stundents.
-func allStudentHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func allStudentHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	type student struct {
 		Id   string
 		Name string
 	}
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 		Students    []student
 	}{session, "", []student{}}
@@ -67,9 +67,9 @@ func allStudentHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Pa
 }
 
 // New student page.
-func newStudentHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func newStudentHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 		Name        valueMsg
 		Email       valueMsg
@@ -82,9 +82,9 @@ func newStudentHandler(w http.ResponseWriter, req *http.Request, _ httprouter.Pa
 }
 
 // Save new student.
-func newStudentHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *Session) {
+func newStudentHandlerPost(w http.ResponseWriter, req *http.Request, _ httprouter.Params, session *SessionData) {
 	data := struct {
-		Session     *Session
+		Session     *SessionData
 		HeadMessage string
 		Name        valueMsg
 		Email       valueMsg

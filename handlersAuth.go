@@ -18,7 +18,7 @@ import (
 )
 
 type signinTplData struct {
-	Session          *Session
+	Session          *SessionData
 	HeadMessage      string
 	Email            valueMsg
 	Password         valueMsg
@@ -28,7 +28,7 @@ type signinTplData struct {
 	SuccessMsgFooter string
 }
 type signupTplData struct {
-	Session         *Session
+	Session         *SessionData
 	HeadMessage     string
 	Name            valueMsg
 	Email           valueMsg
@@ -38,14 +38,14 @@ type signupTplData struct {
 	SuccessMsg      string
 }
 type passwordRecoveryTplData struct {
-	Session          *Session
+	Session          *SessionData
 	HeadMessage      string
 	Email            valueMsg
 	WarnMsgFooter    string
 	SuccessMsgFooter string
 }
 type passwordResetTplData struct {
-	Session          *Session
+	Session          *SessionData
 	HeadMessage      string
 	Email            valueMsg
 	EmailConfirm     valueMsg
