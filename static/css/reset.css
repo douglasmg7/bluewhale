@@ -74,13 +74,10 @@ textarea {
   box-sizing: border-box;
 }
 
-.button,
-button,
-input[type='button'],
-input[type='submit'] {
-    /* color: var(--white-lighter); */
-    /* background-color: #138496; */
-    /* border: 0.1rem solid #117787; */
+.btn {
+    color: var(--white-lighter);
+    background-color: #138496;
+    border: 0.1rem solid #117787;
     border-radius: .4rem;
     cursor: pointer;
     display: inline-block;
@@ -97,28 +94,24 @@ input[type='submit'] {
     margin-top: 2rem;
 }
 
-.button:focus, .button:hover,
-button:focus,
-button:hover,
-input[type='button']:focus,
-input[type='button']:hover,
-input[type='submit']:focus,
-input[type='submit']:hover {
-    /* color: var(--white-lighter); */
-    /* background-color: #0f6a78; */
-    /* border-color: #0e5f6c; */
+.btn:focus, 
+.btn:hover {
+    color: var(--white-lighter);
+    background-color: #0f6a78;
+    border-color: #0e5f6c;
     outline: 0;
 }
 
-.button[disabled],
-button[disabled],
-input[type='button'][disabled],
-input[type='submit'][disabled] {
+.btn[disabled] {
   cursor: default;
   opacity: .5;
 }
 
-.btn-success {
+.button.btn-success,
+button.btn-success,
+input[type='button'].btn-success,
+input[type='submit'].btn-success
+{
   color: var(--white-lighter);
   background-color: #218838;
   /* border-color: #1e7a32; */
